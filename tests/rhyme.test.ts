@@ -117,3 +117,30 @@ test('超预算在读音识别之前拒绝，避免词对和读音展开',async(
   assert.throws(()=>pronunciation(words[0].text),/无法识别/);
   assert.throws(()=>resolvePairInputs(words),/总字数超过 20,000/);
 });
+
+test('押韵搜索按押数分区：多押在前、只押声调最后，结果不带押韵对数',async()=>{
+  const {hotSearchKey,rhymeEnding,searchRhymes,tierLabel,trailingRhymes}=await import('../shared/library.ts');
+  const {compareMutual}=await import('../shared/pair-comparison.ts');
+  assert.equal(rhymeEnding(pronunciation('月光')),'ang');assert.equal(rhymeEnding(pronunciation('希望')),'ang');assert.equal(rhymeEnding(pronunciation('从前')),'an');
+  assert.equal(trailingRhymes(compareMutual(pronunciation('光芒'),pronunciation('苍茫'))),2);
+  assert.equal(trailingRhymes(compareMutual(pronunciation('旋律'),pronunciation('情绪'))),1);
+  assert.equal(trailingRhymes(compareMutual(pronunciation('飞翔'),pronunciation('温柔'))),0);
+  assert.deepEqual([0,1,2,3,4,5,11].map(tierLabel),['只押声调','单押','双押','三押','四押','五押','11押']);
+  const word=(id:string,text:string,pair_count:number)=>({word:{id,text,normalized:text,n:[...text].length,pair_count},readings:pronunciation(text)});
+  const entries=[word('a','光芒',1),word('b','苍茫',3),word('c','匆忙',5),word('d','旋律',9),word('e','温柔',1),word('f','帮忙',1),word('g','闪闪发光芒',1)];
+  const found=searchRhymes({text:'帮忙',normalized:'帮忙',readings:pronunciation('帮忙')},entries);
+  assert.equal(found.exact?.text,'帮忙');assert.equal(found.query?.ending,'ang');
+  assert.deepEqual(found.tiers.map(t=>t.label),['双押','单押','只押声调']);
+  assert.deepEqual(found.tiers[2].items.map(x=>x.word.text),['温柔']);
+  assert.deepEqual(found.tiers[0].items.map(x=>x.word.text),['苍茫','光芒','闪闪发光芒']);
+  assert.deepEqual(found.tiers[1].items.map(x=>x.word.text),['匆忙']);
+  assert.ok(found.tiers.flatMap(t=>t.items).every(x=>!('pair_count' in x.word)),'对外结果不暴露押韵对数');
+  assert.ok(!found.tiers.flatMap(t=>t.items).some(x=>x.word.text==='旋律'));
+  const tone=searchRhymes({text:'飞翔',normalized:'飞翔',readings:pronunciation('飞翔')},entries);
+  assert.equal(tone.tiers.at(-1)?.tier,0);assert.ok(tone.tiers.at(-1)?.items.some(x=>x.word.text==='温柔'&&x.valid&&x.kind==='tone'));
+  const long=searchRhymes({text:'灿烂光芒',normalized:'灿烂光芒',readings:pronunciation('灿烂光芒')},[word('h','斑斓光芒',1),...entries]);
+  assert.equal(long.tiers[0].label,'四押');assert.equal(long.tiers[0].items[0].word.text,'斑斓光芒');
+  assert.equal(searchRhymes({text:'忙',normalized:'忙',readings:pronunciation('忙')},entries).tiers[0].label,'单押');
+  assert.equal(hotSearchKey(' 光芒！'),'光芒');
+  for(const garbage of ['','光','abc','光芒abc','　',null,123,'光'.repeat(13),'光'.repeat(65)])assert.equal(hotSearchKey(garbage),null,String(garbage));
+});
