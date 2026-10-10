@@ -64,13 +64,13 @@
   "pre_migration_freeze_version": "efee5155-c835-4d3e-b4ab-aa73d56e08cc",
   "compatible_rollback_baseline": "0f4a0e13-d840-4117-a117-3220fd7b4eef",
   "browser_mobile_verified_date": "2026-10-10",
-  "production_preview_screenshot": "docs/screenshots/mobile.jpg",
+  "production_preview_screenshot": "docs/screenshots/home-mobile-dark.jpg",
   "visual_style": "minimal_blue_white_rhyme_lab",
   "visual_style_verified_date": "2026-10-10",
   "visual_style_record": "records/2026-10-06-rhyme-lab-verification.json",
   "production_screenshots": [
-    "docs/screenshots/mobile.jpg",
-    "docs/screenshots/desktop.jpg"
+    "docs/screenshots/home-mobile-dark.jpg",
+    "docs/screenshots/home-desktop-dark.jpg"
   ],
   "submission_recovery": {
     "request_status_api": true,
