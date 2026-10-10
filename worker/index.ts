@@ -8,8 +8,8 @@ import { compareRecordedRhyme } from '../shared/lookup';
 import { previewPairs, resolvePairInputs, validatePairWorkload } from '../shared/pairs';
 import type { ResolvedWord } from '../shared/pairs';
 import type { RhymingWord, Word, RhymePair } from '../shared/lookup';
-import { groupLibrary, libraryWord, searchLibrary, SEARCH_LIMIT, wordTiers } from '../shared/library';
-import type { LibraryIndex, LibrarySearch } from '../shared/library';
+import { hotSearchKey, searchRhymes } from '../shared/library';
+import type { HotWord, RhymeSearch } from '../shared/library';
 import { digest, hashPassword, verifyPassword, validateAccount } from './auth';
 
 type User = { id: string; username: string; role: 'user' | 'admin'; disabled: number };
@@ -197,36 +197,41 @@ app.get('/api/words', async c => {
 });
 const LIBRARY_LIMIT = 5000;
 async function libraryWords(db: D1Database) {
-  const [words, pairs, counts] = await Promise.all([
-    db.prepare(`${wordSelect} WHERE ${activeWord} ORDER BY pair_count DESC,w.created_at DESC,w.id DESC LIMIT ?`).bind(LIBRARY_LIMIT + 1).all(),
-    db.prepare(`SELECT left_word_id,right_word_id,left_readings,right_readings FROM rhyme_pairs WHERE status='active'`).all(),
-    db.prepare(`SELECT (SELECT COUNT(*) FROM words w WHERE ${activeWord}) AS words,(SELECT COUNT(*) FROM rhyme_pairs WHERE status='active') AS pairs`).first(),
-  ]);
-  const tiers = wordTiers(pairs.results.map(pair => ({ left: String(pair.left_word_id), right: String(pair.right_word_id), leftReadings: JSON.parse(String(pair.left_readings)) as Syllable[], rightReadings: JSON.parse(String(pair.right_readings)) as Syllable[] })));
-  const entries = words.results.slice(0, LIBRARY_LIMIT).map(row => {
-    const readings = JSON.parse(String(row.readings)) as Syllable[];
-    return { word: libraryWord(publicWord(row), readings, tiers.get(String(row.id)) ?? 0), readings };
-  });
-  return { entries, counts, truncated: words.results.length > LIBRARY_LIMIT };
+  const words = await db.prepare(`${wordSelect} WHERE ${activeWord} ORDER BY pair_count DESC,w.created_at DESC,w.id DESC LIMIT ?`).bind(LIBRARY_LIMIT).all();
+  return words.results.map(row => ({ word: publicWord(row) as Word, readings: JSON.parse(String(row.readings)) as Syllable[] }));
 }
-app.get('/api/library', async c => {
-  if(!c.get('pairReady'))return c.json(pausedError,503);
-  const { entries, counts, truncated } = await libraryWords(c.env.DB);
-  return c.json({ groups: groupLibrary(entries.map(entry => entry.word)), truncated, counts } satisfies LibraryIndex & { counts: unknown });
-});
 app.get('/api/library/search', async c => {
   if(!c.get('pairReady'))return c.json(pausedError,503);
   const text = (c.req.query('q') || '').slice(0, 64), normalized = normalize(text);
-  const { entries, counts } = await libraryWords(c.env.DB);
-  const empty: LibrarySearch = { query: null, error: '', exact: null, rhymes: [], sameEnding: [], contains: [], totals: { rhymes: 0, sameEnding: 0, contains: 0 } };
-  if (!normalized) return c.json({ search: empty, counts });
+  const empty: RhymeSearch = { query: null, error: '', exact: null, tiers: [] };
+  if (!normalized) return c.json({ search: empty });
   let readings: Syllable[];
   try { validateText(text, 1); readings = pronunciation(text); }
-  catch (e) {
-    const contains = entries.filter(entry => entry.word.normalized.includes(normalized)).map(entry => entry.word);
-    return c.json({ search: { ...empty, error: (e as Error).message, contains: contains.slice(0, SEARCH_LIMIT), totals: { ...empty.totals, contains: contains.length } }, counts });
-  }
-  return c.json({ search: { ...searchLibrary({ text, normalized, readings }, entries), error: '' } satisfies LibrarySearch, counts });
+  catch (e) { return c.json({ search: { ...empty, error: (e as Error).message } }); }
+  return c.json({ search: { ...searchRhymes({ text, normalized, readings }, await libraryWords(c.env.DB)), error: '' } satisfies RhymeSearch });
+});
+// search_counts/search_hits come from an additive migration; until it is applied these degrade to "no hot words".
+const HOT_LIMIT = 12, HOT_MIN_COUNT = 2, HITS_PER_CLIENT_DAY = 40;
+app.get('/api/search/hot', async c => {
+  try {
+    const { results } = await c.env.DB.prepare('SELECT normalized FROM search_counts WHERE count>=? ORDER BY count DESC,last_searched_at DESC LIMIT ?').bind(HOT_MIN_COUNT, HOT_LIMIT).all<{ normalized: string }>();
+    return c.json({ items: results.map(row => ({ text: row.normalized }) satisfies HotWord) });
+  } catch { return c.json({ items: [] as HotWord[] }); }
+});
+app.post('/api/search/hits', async c => {
+  const body = await c.req.json().catch(() => null) as { q?: unknown } | null;
+  const key = hotSearchKey(body?.q);
+  if (!key) return c.json({ recorded: false });
+  const at = now(), day = at.slice(0, 10);
+  const client = await digest(c.get('user')?.id || c.req.header('CF-Connecting-IP') || 'local');
+  try {
+    const hit = await c.env.DB.prepare(`INSERT INTO search_hits(client,day,normalized) SELECT ?,?,? WHERE (SELECT COUNT(*) FROM search_hits WHERE client=? AND day=?)<? ON CONFLICT DO NOTHING RETURNING normalized`)
+      .bind(client, day, key, client, day, HITS_PER_CLIENT_DAY).first();
+    if (!hit) return c.json({ recorded: false });
+    await c.env.DB.prepare(`INSERT INTO search_counts(normalized,count,first_searched_at,last_searched_at) VALUES(?,1,?,?) ON CONFLICT(normalized) DO UPDATE SET count=count+1,last_searched_at=excluded.last_searched_at`).bind(key, at, at).run();
+    if (Math.random() < 0.05) c.executionCtx.waitUntil(c.env.DB.prepare('DELETE FROM search_hits WHERE day<?').bind(new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10)).run());
+    return c.json({ recorded: true });
+  } catch { return c.json({ recorded: false }); }
 });
 app.get('/api/words/:id/rhymes', async c => {
   if(!c.get('pairReady'))return c.json(pausedError,503);
