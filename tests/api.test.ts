@@ -580,3 +580,44 @@ test('管理接口匿名、过期和退出会话返回 401，普通账号仍 403
   await denied({Cookie:target.sessionCookie()},403);
   assert.equal((await client()('/auth/login',ordinaryAccount)).status,200,'未授权重置不能改变目标用户密码');
 });
+
+test('词库按韵脚分组并标注押数；任意词搜索列出可押韵、同韵脚和包含该词的已收录词', async () => {
+  const author = client();
+  assert.equal((await author('/auth/register', { username: 'lib' + tag, password })).status, 201);
+  const saved = await author('/rhymes', batch(['光芒', '苍茫', '匆忙']));
+  assert.equal(saved.status, 201, JSON.stringify(saved.data));
+  const before = dbState();
+  const index = await publicApi('/library');
+  assert.equal(index.status, 200);
+  assert.equal(index.data.truncated, false);
+  assert.equal(index.data.counts.words, index.data.groups.reduce((sum: number, group: any) => sum + group.count, 0));
+  const ang = index.data.groups.find((group: any) => group.ending === 'ang');
+  assert.ok(ang, JSON.stringify(index.data.groups.map((group: any) => group.ending)));
+  for (const text of ['光芒', '苍茫', '匆忙']) assert.ok(ang.items.some((item: any) => item.normalized === text));
+  assert.equal(ang.items.find((item: any) => item.normalized === '光芒').tier, 2, '光芒 ↔ 苍茫 末两字韵母都押上，为双押');
+  for (const group of index.data.groups) for (let i = 1; i < group.items.length; i++) assert.ok(group.items[i - 1].pair_count >= group.items[i].pair_count, '组内按押韵对数排序');
+  assert.deepEqual(index.data.groups.map((group: any) => group.ending), [...index.data.groups.map((group: any) => group.ending)].sort((a: string, b: string) => a.localeCompare(b)));
+
+  const search = await publicApi('/library/search?q=' + encodeURIComponent('帮忙'));
+  assert.equal(search.status, 200);
+  assert.equal(search.data.search.exact, null);
+  assert.equal(search.data.search.query.ending, 'ang');
+  const rhymed = search.data.search.rhymes.map((item: any) => item.word.normalized);
+  for (const text of ['光芒', '苍茫', '匆忙']) assert.ok(rhymed.includes(text), JSON.stringify(rhymed));
+  assert.ok(search.data.search.rhymes.every((item: any) => item.valid));
+  assert.equal(search.data.search.rhymes.find((item: any) => item.word.normalized === '苍茫').tier, 2);
+  assert.ok(search.data.search.rhymes.findIndex((item: any) => item.word.normalized === '苍茫') < search.data.search.rhymes.findIndex((item: any) => item.word.normalized === '匆忙'), '双押排在单押之前');
+  const exact = await publicApi('/library/search?q=' + encodeURIComponent('光芒'));
+  assert.equal(exact.data.search.exact.normalized, '光芒');
+  assert.ok(exact.data.search.contains.every((item: any) => item.normalized !== '光芒'));
+  const single = await publicApi('/library/search?q=' + encodeURIComponent('忙'));
+  assert.equal(single.status, 200);
+  assert.ok(single.data.search.sameEnding.some((item: any) => item.word.normalized === '匆忙' && item.tier === 1));
+  assert.ok(single.data.search.contains.some((item: any) => item.normalized === '匆忙'));
+  const invalid = await publicApi('/library/search?q=abc');
+  assert.equal(invalid.status, 200);
+  assert.match(invalid.data.search.error, /汉字/);
+  const blank = await publicApi('/library/search?q=');
+  assert.equal(blank.data.search.query, null);
+  assert.deepEqual(dbState(), before, '词库与搜索只读，不写入任何内容');
+});

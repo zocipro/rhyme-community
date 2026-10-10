@@ -117,3 +117,32 @@ test('超预算在读音识别之前拒绝，避免词对和读音展开',async(
   assert.throws(()=>pronunciation(words[0].text),/无法识别/);
   assert.throws(()=>resolvePairInputs(words),/总字数超过 20,000/);
 });
+
+test('词库按末字韵部分组，组内按押韵对数排序，并标注单押/双押/三押',async()=>{
+  const {groupLibrary,libraryWord,rhymeEnding,searchLibrary,tierLabel,trailingRhymes,wordTiers}=await import('../shared/library.ts');
+  const {compareMutual}=await import('../shared/pair-comparison.ts');
+  assert.equal(rhymeEnding(pronunciation('月光')),'ang');assert.equal(rhymeEnding(pronunciation('希望')),'ang');assert.equal(rhymeEnding(pronunciation('从前')),'an');
+  assert.equal(trailingRhymes(compareMutual(pronunciation('光芒'),pronunciation('苍茫'))),2);
+  assert.equal(trailingRhymes(compareMutual(pronunciation('旋律'),pronunciation('情绪'))),1);
+  assert.equal(trailingRhymes(compareMutual(pronunciation('光芒'),pronunciation('锋芒'))),1);
+  assert.equal(trailingRhymes(compareMutual(pronunciation('天空'),pronunciation('笑容'))),1);
+  assert.deepEqual([0,1,2,3,4,5,6].map(tierLabel),['','单押','双押','三押','四押','五押','多押']);
+  const word=(id:string,text:string,pair_count:number)=>({id,text,normalized:text,n:[...text].length,pair_count});
+  const tiers=wordTiers([{left:'a',right:'b',leftReadings:pronunciation('光芒'),rightReadings:pronunciation('苍茫')},{left:'a',right:'c',leftReadings:pronunciation('光芒'),rightReadings:pronunciation('锋芒')}]);
+  assert.equal(tiers.get('a'),2);assert.equal(tiers.get('c'),1);
+  const entries=[word('a','光芒',2),word('b','苍茫',1),word('c','锋芒',1),word('d','旋律',1),word('e','情绪',3)].map(w=>({word:libraryWord(w,pronunciation(w.text),tiers.get(w.id)??0),readings:pronunciation(w.text)}));
+  const groups=groupLibrary(entries.map(x=>x.word));
+  assert.deepEqual(groups.map(g=>g.ending),['ang','ü']);
+  assert.deepEqual(groups[0].items.map(x=>x.text),['光芒','苍茫','锋芒']);
+  assert.deepEqual(groups[1].items.map(x=>x.text),['情绪','旋律']);
+  assert.deepEqual(groups[0].finals,['ang']);
+  const found=searchLibrary({text:'匆忙',normalized:'匆忙',readings:pronunciation('匆忙')},entries);
+  assert.equal(found.exact,null);assert.equal(found.query?.ending,'ang');
+  assert.deepEqual(found.rhymes.map(x=>x.word.text),['光芒','苍茫','锋芒']);
+  assert.ok(found.rhymes.every(x=>x.valid));
+  const single=searchLibrary({text:'忙',normalized:'忙',readings:pronunciation('忙')},entries);
+  assert.equal(single.rhymes.length,0);assert.deepEqual(single.sameEnding.map(x=>x.tier),[1,1,1]);
+  const exact=searchLibrary({text:'光芒',normalized:'光芒',readings:pronunciation('光芒')},entries);
+  assert.equal(exact.exact?.text,'光芒');assert.ok(!exact.rhymes.some(x=>x.word.text==='光芒'));
+  assert.deepEqual(searchLibrary({text:'光',normalized:'光',readings:pronunciation('光')},entries).contains.map(x=>x.text),['光芒']);
+});
