@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const base = 'https://yy.zoci.pro';
+const base = 'https://ya.zoci.pro';
 const before = JSON.parse(await readFile(new URL('../records/2026-10-05-pairs-production-before.json',import.meta.url),'utf8'));
 async function get(path){const response=await fetch(base+'/api'+path);assert.equal(response.status,200);return response.json();}
 async function post(path,body){const response=await fetch(base+'/api'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:response.status,data:await response.json()};}

@@ -11,7 +11,7 @@ assert.ok(['baseline', 'verify'].includes(mode), 'Use baseline or verify explici
 const expectedVersion = process.argv[3] || null;
 if(expectedVersion) assert.match(expectedVersion, /^[a-f0-9-]{36}$/, 'Expected a Worker version ID.');
 const root = fileURLToPath(new URL('..', import.meta.url));
-const base = 'https://yy.zoci.pro';
+const base = 'https://ya.zoci.pro';
 const baselinePath = new URL('../records/2026-10-08-production-baseline.json', import.meta.url);
 const archive = JSON.parse(await readFile(new URL('../records/2026-10-05-pairs-production-before.json', import.meta.url), 'utf8'));
 const center = archive.topics.find(row => row.normalized === '嘻哈');
