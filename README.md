@@ -10,6 +10,38 @@
 
 完整源码：[zocipro/rhyme-community](https://github.com/zocipro/rhyme-community)。上线门槛见 `READINESS.md`，已验证结果见 `VERIFICATION.md`，资源 ID 见 `deployment.json` 与 `wrangler.jsonc`。
 
+## 截图
+
+本地 `wrangler dev` + 本地 D1 测试数据，酸绿 Cypher 配色。深色为默认，浅色由页头切换。
+
+### 词库首页（搜索框 + 热门词汇）
+
+![桌面 · 深色首页](docs/screenshots/home-desktop-dark.jpg)
+![桌面 · 浅色首页](docs/screenshots/home-desktop-light.jpg)
+![手机 · 深色首页](docs/screenshots/home-mobile-dark.jpg)
+![手机 · 浅色首页](docs/screenshots/home-mobile-light.jpg)
+
+### 搜索结果（按单押 / 双押 / 三押分区）
+
+![桌面 · 深色搜索](docs/screenshots/search-desktop-dark.jpg)
+![桌面 · 浅色搜索](docs/screenshots/search-desktop-light.jpg)
+![手机 · 深色搜索](docs/screenshots/search-mobile-dark.jpg)
+![手机 · 浅色搜索](docs/screenshots/search-mobile-light.jpg)
+
+### 对等互查
+
+![桌面 · 深色互查](docs/screenshots/group-desktop-dark.jpg)
+![桌面 · 浅色互查](docs/screenshots/group-desktop-light.jpg)
+![手机 · 深色互查](docs/screenshots/group-mobile-dark.jpg)
+![手机 · 浅色互查](docs/screenshots/group-mobile-light.jpg)
+
+### 我的
+
+![桌面 · 深色我的](docs/screenshots/mine-desktop-dark.jpg)
+![桌面 · 浅色我的](docs/screenshots/mine-desktop-light.jpg)
+![手机 · 深色我的](docs/screenshots/mine-mobile-dark.jpg)
+![手机 · 浅色我的](docs/screenshots/mine-mobile-light.jpg)
+
 ## 词库：搜索押韵
 
 首页（词库）是一个押韵搜索框。输入任意词，用项目既有的韵部与声调规则比对全部已收录词，结果按末尾连续押上韵母的字数分区：单押、双押、三押、四押…（数据支持几押就显示几押，多押在前）；只押声调的合法押韵列在最后。查询词本身单独标出，不混入分区。
