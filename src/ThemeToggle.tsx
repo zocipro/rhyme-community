@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light'|'dark';
-const themeColors:Record<Theme,string> = {light:'#f4eee1',dark:'#120e0e'};
+const themeColors:Record<Theme,string> = {light:'#f5f3f0',dark:'#090c15'};
 function storedTheme():Theme|null{
   try{const value=localStorage.getItem('sc-theme');return value==='light'||value==='dark'?value:null;}catch{return null;}
 }
