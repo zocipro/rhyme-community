@@ -1,14 +1,17 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Plus, Sparkles, Check, X, LogIn, ArrowLeft, BookOpen, PenLine, UserRound, Shield, Search, Music2, LoaderCircle, ChevronRight, Trash2, Disc3, Eye, EyeOff } from 'lucide-react';
-import { kindLabels, normalize, rhymeFinal, validateText } from '../shared/rhyme-core';
+import { Plus, Sparkles, X, LogIn, ArrowLeft, BookOpen, PenLine, UserRound, Shield, Search, Music2, LoaderCircle, ChevronRight, Trash2, Disc3, Eye, EyeOff } from 'lucide-react';
+import { kindLabels, normalize, validateText } from '../shared/rhyme-core';
 import { compareMutual, validatePairWorkload } from '../shared/pair-comparison';
 import type { Syllable, Comparison } from '../shared/rhyme-core';
 import type { Word, RhymingWord, RhymePair, ScoreEntry } from '../shared/lookup';
 import { WordInput } from './WordInput';
 import { ThemeToggle } from './ThemeToggle';
-import { Library } from './Library';
-import type { LibraryIndex, LibrarySearch } from '../shared/library';
+import { Alignment } from './Alignment';
+import { RhymeFinder } from './RhymeFinder';
+import { RhymeGroup } from './RhymeGroup';
+import { hotSearchKey } from '../shared/library';
+import type { HotWord, RhymeSearch, SearchWord } from '../shared/library';
 import '@fontsource/anton/latin.css';
 import './style.css';
 
@@ -26,7 +29,7 @@ function initialSubmission():UnconfirmedSubmission|null{
   try{const value=JSON.parse(sessionStorage.getItem('rhyme-unconfirmed-v1')||'null');if(value&&typeof value.userId==='string'&&typeof value.username==='string'&&typeof value.requestId==='string'&&Array.isArray(value.items)&&value.items.length>=2&&value.items.length<=50&&value.items.every((x:{text:string;readings:string[]})=>typeof x.text==='string'&&Array.isArray(x.readings)&&x.readings.every(y=>typeof y==='string')))return value;}catch{/* Confirmation still works in this tab without storage. */}
   return null;
 }
-type NavigationState = { view:View; screen:Screen; pane:Pane; word:Word|null };
+type NavigationState = { view:View; screen:Screen; pane:Pane; word:SearchWord|null };
 const blankItem = ():DraftItem => ({id:crypto.randomUUID(),text:'',choices:[]});
 function initialDraft():{items:DraftItem[];requestId:string}{
   try {
@@ -64,17 +67,6 @@ function WordReadings({data,onChange,disabled,labelPrefix}:{data:Syllable[];onCh
   const [open,setOpen]=useState(false);
   return <details className="sc-word-readings" onToggle={event=>setOpen(event.currentTarget.open)}><summary><span className="sc-reading-title">读音</span><span className="sc-reading-preview">{data.slice(0,8).map(syllable=>syllable.pinyin).join(' ')}{data.length>8?` … · 共 ${data.length} 字`:''}</span><span className="sc-reading-toggle">{data.some(syllable=>syllable.options.length>1)?'调整':'查看'}<ChevronRight size={13}/></span></summary>{open&&<Readings data={data} disabled={disabled} labelPrefix={labelPrefix} onChange={onChange}/>}</details>;
 }
-function Alignment({result,readOnly=false}:{result:Comparison;readOnly?:boolean}){
-  return <div className={`sc-alignment ${result.kind==='perfect'&&!result.same?'sc-perfect':''}`}>
-    <div className="sc-alignment-head"><strong>逐字对照</strong><span>韵母 / 声调</span></div>
-    <div className="sc-pairs">{result.rows.map((r,i)=><div className="sc-pair" key={i}>
-      <div className="sc-pair-words"><span>{r.target.char}</span><span className="sc-pair-divider">/</span><strong>{r.answer?.char||'—'}</strong></div>
-      <div className={r.finalMatch?'sc-match':'sc-mismatch'}><span>{r.target.final} / {r.answer?.final||'—'}{r.finalMatch&&r.target.final!==r.answer?.final&&<small className="sc-rhyme-family">同韵 {rhymeFinal(r.target.final)}</small>}</span>{r.finalMatch?<Check size={13}/>:<X size={13}/>}</div>
-      <div className={r.toneMatch?'sc-match':'sc-mismatch'}><span>{r.target.tone||'轻'} / {r.answer?(r.answer.tone||'轻'):'—'}</span>{r.toneMatch?<Check size={13}/>:<X size={13}/>}</div>
-    </div>)}</div>
-    <div className="sc-result-note">{readOnly?<><Sparkles size={16}/>{kindLabels[result.kind]} · {result.n} 押</>:result.same?'同一个词不能组成押韵':result.valid?<><Sparkles size={16}/>{kindLabels[result.kind]} · +{result.points} 分</>:<>每个位置的韵母或声调至少押上一项</>}</div>
-  </div>;
-}
 function RecordedDetails({pair}:{pair:RhymePair}){
   const [open,setOpen]=useState(false);
   return <details className="sc-record-details" onToggle={event=>setOpen(event.currentTarget.open)}><summary>查看逐字对照</summary>{open&&<Alignment result={pair.comparison} readOnly/>}</details>;
@@ -86,23 +78,12 @@ function PairPreviewCard({pair,items,onEdit,disabled}:{pair:PreviewPair;items:Dr
     {open&&<><p className="sc-help">比较双方末尾 {pair.comparison.n} 字，每字至少押上一项。</p>{pair.duplicate&&<p className="sc-error">{pair.duplicate.author} 已最先提交这组押韵 · {date(pair.duplicate.created_at)}。本次全部词语暂不收录。</p>}{pair.duplicate&&<p className="sc-help">下方展示已收录时的读音和对照，不产生新积分。</p>}<Alignment result={pair.duplicate?.comparison||pair.comparison} readOnly={!!pair.duplicate}/><div className="sc-pair-edit">{[pair.leftIndex,pair.rightIndex].map(index=><button key={index} type="button" className="sc-link" disabled={disabled} aria-label={`修改词语 ${index+1}：${items[index].text}`} onClick={()=>onEdit(items[index].id)}><PenLine size={14}/>修改词语 {String(index+1).padStart(2,'0')}</button>)}</div></>}
   </details>;
 }
-function LookupCard({item,selectedWord,onWord}:{item:RhymingWord;selectedWord:Word;onWord:(word:Word)=>void}){
-  const [open,setOpen]=useState(false);
-  const reverse=item.association==='direct'&&item.pair.right.normalized===selectedWord.normalized;
-  const left=reverse?item.pair.right:item.pair.left,right=reverse?item.pair.left:item.pair.right;
-  return <article className="sc-lookup-card">
-    <button className="sc-lookup-word" onClick={()=>onWord(item.word)} aria-label={`反查${item.word.text}`}><strong>{item.word.text}</strong><span className={`sc-badge sc-badge-${item.association==='group'?'group':item.pair.kind}`}>{item.association==='group'?'同组词':kindLabels[item.pair.kind]}</span><ChevronRight size={17}/></button>
-    {item.association==='group'&&<p className="sc-lookup-source">实际收录：{item.pair.left.text} ↔ {item.pair.right.text}</p>}
-    <p className="sc-lookup-author"><span><span className="sc-credit-name">{item.pair.author}</span> 最先提交{item.association==='group'?'这组关系':''}</span><span className="sc-credit-dot" aria-hidden="true">·</span><time dateTime={item.pair.created_at}>{date(item.pair.created_at)}</time></p>
-    <details onToggle={e=>setOpen(e.currentTarget.open)}><summary>{item.association==='group'?'查看实际收录关系':'查看这组押韵的逐字对照'}</summary>{open&&<><p className="sc-lookup-source">{left.text} ↔ {right.text}</p><Alignment result={item.pair.comparison} readOnly/></>}</details>
-  </article>;
-}
 function App(){
   const [user,setUser]=useState<User|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState('');
   const [view,setView]=useState<View>('library'),[screen,setScreen]=useState<Screen>(()=>initialSubmission()||(history.state?.rhymeNavigation?.view==='library'&&history.state?.rhymeNavigation?.screen==='compose')?'compose':'library'),[pane,setPane]=useState<Pane>('write');
-  const [library,setLibrary]=useState<LibraryIndex|null>(null),[search,setSearch]=useState<LibrarySearch|null>(null),[counts,setCounts]=useState({words:0,pairs:0}),[query,setQuery]=useState(''),[appliedQuery,setAppliedQuery]=useState(''),[searchComposition,setSearchComposition]=useState(0);
-  const [lookupWord,setLookupWord]=useState<Word|null>(null),[rhymes,setRhymes]=useState<RhymingWord[]>([]),[rhymePage,setRhymePage]=useState(0),[rhymeMore,setRhymeMore]=useState(false),[rhymeLoading,setRhymeLoading]=useState(false),[rhymeError,setRhymeError]=useState('');
-  const [wordLoading,setWordLoading]=useState(true),[wordsLoaded,setWordsLoaded]=useState(false),[wordError,setWordError]=useState('');
+  const [search,setSearch]=useState<RhymeSearch|null>(null),[hot,setHot]=useState<HotWord[]|null>(null),[query,setQuery]=useState(''),[appliedQuery,setAppliedQuery]=useState(''),[searchComposition,setSearchComposition]=useState(0);
+  const [lookupWord,setLookupWord]=useState<SearchWord|null>(null),[rhymes,setRhymes]=useState<RhymingWord[]>([]),[rhymePage,setRhymePage]=useState(0),[rhymeMore,setRhymeMore]=useState(false),[rhymeLoading,setRhymeLoading]=useState(false),[rhymeError,setRhymeError]=useState('');
+  const [wordLoading,setWordLoading]=useState(false),[wordError,setWordError]=useState('');
   const [auth,setAuth]=useState<'login'|'register'|'setup'|null>(location.pathname==='/setup'?'setup':null),[username,setUsername]=useState(''),[password,setPassword]=useState(''),[authError,setAuthError]=useState(''),[busy,setBusy]=useState(false);
   const [draft,setDraft]=useState(initialDraft),[submitError,setSubmitError]=useState(''),[preview,setPreview]=useState<Preview|null>(null),[previewError,setPreviewError]=useState(''),[previewBusy,setPreviewBusy]=useState(false),[previewRevision,setPreviewRevision]=useState(0);
   const [records,setRecords]=useState<Records|null>(null),[recordPage,setRecordPage]=useState(0),[recordLoading,setRecordLoading]=useState(false),[recordError,setRecordError]=useState(''),[recordTab,setRecordTab]=useState<'pairs'|'scoreEntries'|'users'|'logs'>('pairs');
@@ -114,7 +95,7 @@ function App(){
   const [composingWordId,setComposingWordId]=useState<string|null>(null),[previewLimit,setPreviewLimit]=useState(40);
   const submissionFlight=useRef(false),unconfirmedRef=useRef(unconfirmed);unconfirmedRef.current=unconfirmed;
   const opener=useRef<HTMLElement|null>(null),busyRef=useRef(false),userRequest=useRef(0),recoveryChecked=useRef('');busyRef.current=busy;
-  const wordAttempt=useRef({q:''}),searchComposing=useRef(false),recordAttempt=useRef(0);
+  const wordAttempt=useRef({q:''}),searchComposing=useRef(false),recordedSearches=useRef(new Set<string>()),recordAttempt=useRef(0);
   const wordRequest=useRef(0),rhymeRequest=useRef(0),recordRequest=useRef(0),previewRequest=useRef(0),pendingSubmit=useRef<'submit'|'recover'|null>(null),draftRef=useRef(draft);
   const viewRef=useRef(view),userRef=useRef(user);viewRef.current=view;userRef.current=user;
   draftRef.current=draft;
@@ -143,16 +124,19 @@ function App(){
   function sessionExpired(intent:'submit'|'recover'|null=null){userRequest.current++;recordRequest.current++;setUser(null);setRecords(null);setManage(null);setResetPassword('');setReason('');pendingSubmit.current=intent;openAuth();setAuthError('登录已过期，请重新登录。内容和读音已保留。');}
   async function loadWords(q=query){
     if(q!==appliedQuery){setSearch(null);setAppliedQuery(q);}
-    wordAttempt.current={q};const request=++wordRequest.current;setWordLoading(true);setWordError('');
-    try{
-      if(normalize(q)){const data=await api<{search:LibrarySearch;counts:typeof counts}>(`/library/search?q=${encodeURIComponent(q)}`);if(request!==wordRequest.current)return false;setSearch(data.search);setCounts(data.counts);}
-      else{const data=await api<LibraryIndex&{counts:typeof counts}>('/library');if(request!==wordRequest.current)return false;setLibrary({groups:data.groups,truncated:data.truncated});setSearch(null);setCounts(data.counts);}
-      setAppliedQuery(q);setWordsLoaded(true);return true;
-    }
+    wordAttempt.current={q};const request=++wordRequest.current;setWordError('');
+    if(!normalize(q)){setWordLoading(false);return true;}
+    setWordLoading(true);
+    try{const data=await api<{search:RhymeSearch}>(`/library/search?q=${encodeURIComponent(q)}`);if(request!==wordRequest.current)return false;setSearch(data.search);setAppliedQuery(q);return true;}
     catch(e){if(request===wordRequest.current)setWordError((e as Error).message);return false;}
     finally{if(request===wordRequest.current)setWordLoading(false);}
   }
-  async function selectWord(word:Word,p=0){
+  function recordSearch(q:string){
+    const key=hotSearchKey(q);if(!key||recordedSearches.current.has(key))return;
+    recordedSearches.current.add(key);api('/search/hits',{q:key}).catch(()=>recordedSearches.current.delete(key));
+  }
+  async function commitSearch(q:string){setQuery(q);if(await loadWords(q))recordSearch(q);}
+  async function selectWord(word:SearchWord,p=0){
     const request=++rhymeRequest.current;setRhymeLoading(true);setRhymeError('');
     if(!p){setLookupWord(word);setRhymes([]);setRhymePage(0);setRhymeMore(false);setView('library');setScreen('lookup');setNotice('');}
     try{const data=await api<{word:Word;items:RhymingWord[];hasMore:boolean}>(`/words/${word.id}/rhymes?page=${p}`);if(request!==rhymeRequest.current)return;setLookupWord(data.word);setRhymes(previous=>p?[...previous,...data.items]:data.items);setRhymePage(p);setRhymeMore(data.hasMore);}
@@ -169,8 +153,10 @@ function App(){
     finally{if(request===recordRequest.current)setRecordLoading(false);}
   }
   async function refreshActiveRecords(){const current=viewRef.current;return current==='library'||!userRef.current?true:loadRecords(current);}
-  useEffect(()=>{refreshUser().catch(e=>setNotice(e.message)).finally(()=>setReady(true));loadWords('');},[]);
+  useEffect(()=>{refreshUser().catch(e=>setNotice(e.message)).finally(()=>setReady(true));api<{items:HotWord[]}>('/search/hot').then(data=>setHot(data.items)).catch(()=>setHot([]));},[]);
   useEffect(()=>{if(searchComposing.current||query===wordAttempt.current.q)return;const timer=setTimeout(()=>loadWords(query),320);return()=>clearTimeout(timer);},[query,searchComposition]);
+  // A live result only counts as a search once the user has paused on it.
+  useEffect(()=>{if(!search?.query||search.error)return;const settled=appliedQuery;const timer=setTimeout(()=>recordSearch(settled),1500);return()=>clearTimeout(timer);},[search]);
   useEffect(()=>{
     recordRequest.current++;setRecords(null);setRecordPage(0);setRecordError('');setRecordLoading(false);
     if(ready&&user&&view!=='library'&&(view!=='admin'||user.role==='admin'))loadRecords(view);
@@ -245,7 +231,7 @@ function App(){
   function removeWord(id:string){const index=draft.items.findIndex(item=>item.id===id);const next=draft.items[index+1]||draft.items[index-1];editDraft(items=>items.filter(item=>item.id!==id));if(next)setFocusWordId(next.id);}
   function changeChoice(id:string,index:number,value:string){editDraft(items=>items.map(item=>{if(item.id!==id)return item;const choices=resolveItem(item,dictionary?.pronunciation).data.map(x=>x.pinyin);choices[index]=value;return {...item,choices};}));}
   function showLibrary(){rhymeRequest.current++;recordRequest.current++;setRhymeLoading(false);setView('library');setScreen('library');setNotice('');}
-  function openComposer(word?:Word){
+  function openComposer(word?:SearchWord){
     rhymeRequest.current++;recordRequest.current++;setRhymeLoading(false);setView('library');setScreen('compose');setPane('write');setNotice('');
     if(word&&!draft.items.some(item=>normalize(item.text)===word.normalized))editDraft(items=>{const empty=items.findIndex(item=>!normalize(item.text));if(empty!==-1)return items.map((item,i)=>i===empty?{...item,text:word.text,choices:[]}:item);return items.length<50?[...items,{...blankItem(),text:word.text}]:items;});
   }
@@ -339,8 +325,8 @@ function App(){
     <header className="sc-header" inert={dialogOpen}><div className="sc-shell sc-header-inner"><a className="sc-brand" href="/" onClick={e=>{e.preventDefault();showLibrary();}}><span className="sc-brand-mark" aria-hidden="true">韵</span><span className="sc-wordmark">softcloud<span className="sc-dot">.</span></span><span className="sc-eq" aria-hidden="true"><i/><i/><i/><i/></span><span className="sc-product-name">押韵共创</span></a><nav aria-label="主导航"><button className={view==='library'&&screen!=='compose'?'sc-nav-active':''} aria-current={view==='library'&&screen!=='compose'?'page':undefined} onClick={showLibrary}><Music2 size={16}/>词库</button><button className={view==='library'&&screen==='compose'?'sc-nav-active':''} aria-current={view==='library'&&screen==='compose'?'page':undefined} onClick={()=>openComposer()}><PenLine size={16}/>想押韵</button><button className={view==='mine'?'sc-nav-active':''} aria-current={view==='mine'?'page':undefined} onClick={()=>navigate('mine')}><UserRound size={16}/>我的</button>{user?.role==='admin'&&<button className={view==='admin'?'sc-nav-active':''} onClick={()=>navigate('admin')}><Shield size={16}/>管理</button>}</nav><div className="sc-account"><ThemeToggle/>{user?<><span className="sc-account-name">{user.username}</span><span className="sc-points">{user.score} 分</span><button className="sc-link" disabled={busy} onClick={logout}>退出</button></>:<button className="sc-btn sc-btn-small" disabled={!ready} onClick={()=>openAuth()}><LogIn size={15}/>登录 / 注册</button>}</div></div></header>
     <main className="sc-shell sc-main" inert={dialogOpen}>{notice&&<div role="status" className="sc-notice"><span>{notice}</span><button aria-label="关闭提示" onClick={()=>setNotice('')}><X size={16}/></button></div>}
     {view==='library'?<><h1 className="sc-screen-reader-only">押韵共创 · {screen==='compose'?'想押韵':screen==='lookup'?'押韵互查':'词库'}</h1>
-      <div className="sc-game-grid"><aside className="sc-panel sc-topic-panel"><div className="sc-panel-heading"><h2>押韵词库</h2><span className="sc-count">{wordsLoaded?counts.words:'—'}</span></div><div className="sc-mobile-only sc-library-intro"><p>按韵脚分组 · 输入任意词找押韵</p><Disc3 className="sc-intro-record" size={25} strokeWidth={1.5} aria-hidden="true"/></div><form className="sc-search" role="search" onSubmit={e=>{e.preventDefault();loadWords(query);}}><Search size={17}/><input aria-label="搜索押韵词" placeholder="输入任意词，找出押韵" value={query} onChange={e=>setQuery(e.target.value)} onCompositionStart={()=>{searchComposing.current=true;}} onCompositionEnd={()=>{searchComposing.current=false;setSearchComposition(value=>value+1);}}/><button type="submit" aria-label="搜索">查找</button>{query&&<button type="button" className="sc-search-clear" aria-label="清空搜索" onClick={()=>{setQuery('');loadWords('');document.querySelector<HTMLInputElement>('[aria-label="搜索押韵词"]')?.focus();}}><X size={15}/></button>}</form><Library library={library} search={search} query={appliedQuery} loading={wordLoading} error={wordError} selectedId={lookupWord?.id} onWord={selectWord} onCompose={openComposer} onRetry={()=>loadWords(wordAttempt.current.q)}/><div className="sc-library-count"><span>收录词语<strong>{wordsLoaded?counts.words:'—'}<small>个</small></strong></span><span title="每两个词记一对，同一个词可以参与多对押韵。">押韵词对<strong>{wordsLoaded?counts.pairs:'—'}<small>对</small></strong></span></div></aside>
-      <section className="sc-panel sc-play-panel" aria-label={screen==='compose'?'想押韵':'押韵互查'}>{screen==='compose'?composer:screen==='lookup'&&lookupWord?<div className="sc-lookup-panel"><div className="sc-challenge-heading"><span className="sc-pill">押韵互查</span><button className="sc-link" onClick={showLibrary}><ArrowLeft size={14}/>返回词库</button></div><h2 className="sc-target">{lookupWord.text}</h2><p className="sc-meta">{rhymeError?'暂时无法读取整组押韵':rhymeLoading&&!rhymes.length?'正在读取整组押韵…':<>整组 {rhymes.length}{rhymeMore?'＋':''} 个其他词 · 点词继续互查</>}</p><div className="sc-lookup-results" aria-busy={rhymeLoading}>{rhymeError&&<div className="sc-inline-state" role="alert"><p>{rhymeError}</p><button className="sc-link" onClick={()=>selectWord(lookupWord,rhymes.length?rhymePage+1:0)}>重新读取押韵</button></div>}{rhymes.length?rhymes.map(item=><LookupCard key={item.word.id} item={item} selectedWord={lookupWord} onWord={selectWord}/>):<div className="sc-empty">{rhymeLoading?<><LoaderCircle size={24} className="sc-spin"/><p>正在读取押韵…</p></>:!rhymeError&&<><Disc3 size={30} strokeWidth={1.5} aria-hidden="true"/><p>这个词还没有有效押韵。<br/>写下新的灵感吧。</p></>}</div>}{rhymeMore&&<button className="sc-load-more" disabled={rhymeLoading} onClick={()=>selectWord(lookupWord,rhymePage+1)}>加载更多押韵</button>}</div><div className="sc-lookup-action"><button className="sc-btn" disabled={rhymeLoading} onClick={()=>openComposer(lookupWord)}><PenLine size={17}/>我来想一个押韵</button></div></div>:<div className="sc-start"><div className="sc-start-icon sc-record-icon"><Disc3 size={48} strokeWidth={1.35} aria-hidden="true"/></div><span className="sc-eyebrow">RHYME LAB / 说唱押韵共创</span><span className="sc-sticker" aria-hidden="true">先到<br/>先记</span><h2>选一个词，<span className="sc-highlight">找到整组灵感</span></h2><p>选词互查，或写下你自己的押韵。<br/>每对关系，只记录最先提交者。</p><button className="sc-btn" onClick={()=>openComposer()}><Plus size={18}/>我来想一个押韵</button><div className="sc-rules"><div><span>01</span><strong>韵母押</strong><p>对应韵母属于同韵部<br/>得 N 分</p></div><div><span>02</span><strong>声调押</strong><p>对应声调全部相同<br/>得 N 分</p></div><div><span>03</span><strong>混合押韵</strong><p>逐字押声调或韵母<br/>得 N 分</p></div><div className="sc-gold-rule"><span><Sparkles size={16}/></span><strong>完美押韵</strong><p>韵母 + 声调都押上<br/>得 2N 分</p></div></div><small>N 是两个词中较短的汉字数，比较双方末尾 N 字。</small><div className="sc-ticker" aria-hidden="true"><div>{[0,1].map(round=>['单押','双押','三押','韵母押','声调押','混合押韵','完美押韵'].map(label=><span key={round+label}>{label}</span>))}</div></div></div>}</section></div>
+      <div className="sc-game-grid"><aside className="sc-panel sc-topic-panel sc-finder"><div className="sc-finder-head"><span className="sc-eyebrow">RHYME LAB / 说唱押韵共创</span><span className="sc-sticker" aria-hidden="true">先到<br/>先记</span><h2>输入一个词，<span className="sc-highlight">找出所有押韵</span></h2></div><form className="sc-search" role="search" onSubmit={e=>{e.preventDefault();commitSearch(query);}}><Search size={20}/><input aria-label="搜索押韵词" placeholder="比如：光芒、说唱、自由" value={query} onChange={e=>setQuery(e.target.value)} onCompositionStart={()=>{searchComposing.current=true;}} onCompositionEnd={()=>{searchComposing.current=false;setSearchComposition(value=>value+1);}} enterKeyHint="search"/>{query&&<button type="button" className="sc-search-clear" aria-label="清空搜索" onClick={()=>{setQuery('');loadWords('');document.querySelector<HTMLInputElement>('[aria-label="搜索押韵词"]')?.focus();}}><X size={16}/></button>}<button type="submit" aria-label="搜索">找押韵</button></form><RhymeFinder search={search} query={appliedQuery} hot={hot} loading={wordLoading} error={wordError} selectedId={lookupWord?.id} onWord={selectWord} onCompose={openComposer} onHot={commitSearch} onRetry={()=>loadWords(wordAttempt.current.q)}/></aside>
+      <section className="sc-panel sc-play-panel" aria-label={screen==='compose'?'想押韵':'押韵互查'}>{screen==='compose'?composer:screen==='lookup'&&lookupWord?<RhymeGroup word={lookupWord} items={rhymes} loading={rhymeLoading} error={rhymeError} more={rhymeMore} onWord={selectWord} onMore={()=>selectWord(lookupWord,rhymePage+1)} onRetry={()=>selectWord(lookupWord,rhymes.length?rhymePage+1:0)} onCompose={openComposer} onBack={showLibrary} date={date}/>:<div className="sc-start"><div className="sc-start-icon sc-record-icon"><Disc3 size={48} strokeWidth={1.35} aria-hidden="true"/></div><span className="sc-eyebrow">RHYME LAB / 说唱押韵共创</span><span className="sc-sticker" aria-hidden="true">先到<br/>先记</span><h2>选一个词，<span className="sc-highlight">找到整组灵感</span></h2><p>选词互查，或写下你自己的押韵。<br/>每对关系，只记录最先提交者。</p><button className="sc-btn" onClick={()=>openComposer()}><Plus size={18}/>我来想一个押韵</button><div className="sc-rules"><div><span>01</span><strong>韵母押</strong><p>对应韵母属于同韵部<br/>得 N 分</p></div><div><span>02</span><strong>声调押</strong><p>对应声调全部相同<br/>得 N 分</p></div><div><span>03</span><strong>混合押韵</strong><p>逐字押声调或韵母<br/>得 N 分</p></div><div className="sc-gold-rule"><span><Sparkles size={16}/></span><strong>完美押韵</strong><p>韵母 + 声调都押上<br/>得 2N 分</p></div></div><small>N 是两个词中较短的汉字数，比较双方末尾 N 字。</small><div className="sc-ticker" aria-hidden="true"><div>{[0,1].map(round=>['单押','双押','三押','韵母押','声调押','混合押韵','完美押韵'].map(label=><span key={round+label}>{label}</span>))}</div></div></div>}</section></div>
     </>:<><div className="sc-page-heading"><div><div className="sc-eyebrow">{view==='mine'?'灵感档案':'内容与账号'}</div><h1>{view==='mine'?'我的押韵':'共创管理'}<span>.</span></h1><p>{view==='mine'?`你的原创积累，共 ${user?.score||0} 分。`:'撤回后保留首次归属，关联积分自动扣回。'}</p></div></div><section className="sc-panel sc-record-panel">{!ready?<div className="sc-empty" role="status"><LoaderCircle size={24} className="sc-spin"/><p>正在确认登录状态…</p></div>:!user?<div className="sc-profile-gate"><div className="sc-start-icon"><UserRound size={30}/></div><h2>让灵感有个名字</h2><p>登录后，你的押韵与积分<br/>都会留在创作档案里。</p><button className="sc-btn" onClick={()=>openAuth()}>登录 / 注册</button></div>:<><div className="sc-mobile-only sc-profile-summary"><div><strong>{user.username}</strong><span>{user.score} 分 · 我的原创积累</span></div><button className="sc-link" disabled={busy} onClick={logout}>退出登录</button></div><div className="sc-tabs" role="tablist" aria-label={view==='mine'?'我的记录':'管理记录'}>{recordTabs.map(tab=><button key={tab} role="tab" id={`records-tab-${tab}`} aria-controls="records-panel" aria-selected={recordTab===tab} tabIndex={recordTab===tab?0:-1} className={recordTab===tab?'sc-tab-active':''} onClick={()=>setRecordTab(tab)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const index=recordTabs.indexOf(tab),next=e.key==='Home'?recordTabs[0]:e.key==='End'?recordTabs[recordTabs.length-1]:recordTabs[(index+(e.key==='ArrowRight'?1:recordTabs.length-1))%recordTabs.length];setRecordTab(next);document.getElementById(`records-tab-${next}`)?.focus();}}}>{({pairs:'押韵关系',scoreEntries:'积分来源',users:'账号',logs:'处理记录'})[tab]}</button>)}</div>{recordError&&<div className="sc-inline-state" role="alert"><p>{recordError}</p><button className="sc-link" onClick={()=>loadRecords(view,recordAttempt.current)}>重新读取记录</button></div>}<div className="sc-records" id="records-panel" role="tabpanel" tabIndex={0} aria-labelledby={`records-tab-${recordTab}`} aria-busy={recordLoading}>{recordLoading&&!records?<div className="sc-empty"><LoaderCircle size={24} className="sc-spin"/><p>正在读取记录…</p></div>:!records?null:<>
       {recordTab==='pairs'&&records.pairs.map(pair=><article className="sc-record" key={pair.id}><div><strong>{pair.left.text} ↔ {pair.right.text}</strong><p>{kindLabels[pair.kind]} · {pair.n} 押 · {pair.author} 最先提交</p><small>{date(pair.created_at)} · {pair.status==='withdrawn'?'已撤回':`+${pair.points} 分`}</small><RecordedDetails pair={pair}/></div>{view==='admin'&&pair.status==='active'&&<button className="sc-link sc-danger" onClick={()=>{openManage({type:'pair',id:pair.id,text:`${pair.left.text} ↔ ${pair.right.text}`});}}>撤回</button>}</article>)}
       {recordTab==='scoreEntries'&&records.scoreEntries?.map(entry=><article className="sc-record" key={entry.id}><div><strong>{entry.left_text} ↔ {entry.right_text}</strong><p>{entry.source==='legacy'?'历史积分':'原创押韵积分'} · {date(entry.created_at)}</p><small>{entry.active?`+${entry.points} 分`:'已撤回 / 不计分'}</small></div></article>)}
