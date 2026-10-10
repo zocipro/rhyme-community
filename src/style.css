@@ -1,10 +1,10 @@
 /* ==========================================================================
    押韵共创 · softcloud design system — "Cypher"
-   Dark: midnight-navy stage with brushed metallic gold. Light: paper white with lacquer red.
-   Accent is brand/action only. Verification keeps its own semantics, always with text labels:
-   blue = 押上; 未押上 = coral (dark) / burnt vermilion (light), dashed badge;
-   完美押韵 = bright original gold with a ✦ badge, never a solid fill, so it reads apart from the accent.
-   --sc-accent / --sc-accent-fill are fills (pair with --sc-on-accent); --sc-accent-text is the AA-safe text/outline tone.
+   Restrained warm monochrome built around one hue: the 完美押韵 gold (#ffd047 / #7f5600) is the
+   only chromatic colour, so a perfect rhyme always reads as the reward. Dark = ivory ink on warm graphite;
+   light = black ink on warm paper. Accent is brand/action only; verification keeps its own semantics,
+   always with text labels: blue = 押上, coral/red dashed badge = 未押上, gold ✦ tint = 完美押韵.
+   --sc-accent / --sc-accent-fill are fills (pair with --sc-on-accent); --sc-accent-text is the text/outline tone.
    ========================================================================== */
 
 :root{
@@ -21,26 +21,25 @@
   --sc-beat:625ms;
   --sc-control:44px;
 
-  --sc-bg:#090c15;
-  --sc-surface:#0f1320;
-  --sc-surface-2:#151b2b;
-  --sc-surface-3:#1e2537;
-  --sc-text:#f4efe2;
-  --sc-muted:#b6b5b0;
-  --sc-subtle:#9a9a97;
-  --sc-border:#1c2335;
-  --sc-border-strong:#2f3a52;
-  --sc-accent:#c9a14a;
-  --sc-accent-hover:#dbb65f;
-  --sc-on-accent:#14110a;
-  --sc-accent-text:#d8b569;
-  --sc-accent-soft:rgba(201,161,74,.14);
-  /* Brushed-metal gold: the darkest stop still keeps --sc-on-accent above AA. */
-  --sc-accent-fill:linear-gradient(135deg,#ecd08a 0%,#cfa64e 46%,#a9802f 100%);
-  --sc-accent-fill-hover:linear-gradient(135deg,#f3dc9d 0%,#dbb65f 46%,#b88d38 100%);
-  --sc-btn-bg:var(--sc-accent-fill);
-  --sc-btn-fg:#14110a;
-  --sc-btn-hover:var(--sc-accent-fill-hover);
+  --sc-bg:#100f0d;
+  --sc-surface:#171614;
+  --sc-surface-2:#1e1d1a;
+  --sc-surface-3:#292724;
+  --sc-text:#f3efe6;
+  --sc-muted:#b1aca2;
+  --sc-subtle:#959086;
+  --sc-border:#262421;
+  --sc-border-strong:#3b3935;
+  --sc-accent:#ece7dc;
+  --sc-accent-hover:#f8f4ec;
+  --sc-on-accent:#100f0d;
+  --sc-accent-text:#ece7dc;
+  --sc-accent-soft:rgba(236,231,220,.08);
+  --sc-accent-fill:var(--sc-accent);
+  --sc-accent-fill-hover:var(--sc-accent-hover);
+  --sc-btn-bg:var(--sc-accent);
+  --sc-btn-fg:var(--sc-on-accent);
+  --sc-btn-hover:var(--sc-accent-hover);
   --sc-match:#7cc8ff;
   --sc-match-soft:rgba(124,200,255,.13);
   --sc-danger:#ff7565;
@@ -48,13 +47,13 @@
   --sc-perfect:#ffd047;
   --sc-perfect-soft:rgba(255,208,71,.12);
   --sc-perfect-border:rgba(255,208,71,.38);
-  --sc-overlay:rgba(3,5,12,.72);
-  --sc-shadow-sm:0 1px 0 rgba(230,236,255,.03) inset;
+  --sc-overlay:rgba(4,3,2,.7);
+  --sc-shadow-sm:0 1px 0 rgba(255,250,240,.03) inset;
   --sc-shadow-md:0 12px 32px -14px rgba(0,0,0,.8);
   --sc-shadow-lg:0 40px 100px -30px rgba(0,0,0,.9);
   --sc-sticker-shadow:3px 3px 0 #000;
-  --sc-ring:0 0 0 3px rgba(216,181,105,.3);
-  --sc-dots:radial-gradient(rgba(225,232,255,.05) 1px,transparent 1.4px);
+  --sc-ring:0 0 0 3px rgba(236,231,220,.26);
+  --sc-dots:radial-gradient(rgba(255,250,240,.05) 1px,transparent 1.4px);
 
   color-scheme:dark;
   font-family:var(--sc-font-sans);
@@ -66,22 +65,19 @@
   -moz-osx-font-smoothing:grayscale;
 }
 :root[data-sc-theme=light]{
-  --sc-bg:#f5f3f0;--sc-surface:#fdfcfb;--sc-surface-2:#ece9e5;--sc-surface-3:#e0dcd6;
-  --sc-text:#1c1819;--sc-muted:#4d4747;--sc-subtle:#5e5857;--sc-border:#e2ded8;--sc-border-strong:#c9c3bb;
-  --sc-accent:#9e1b2d;--sc-accent-hover:#b3243a;--sc-on-accent:#fff8f6;--sc-accent-text:#9e1b2d;--sc-accent-soft:#f6e2e3;
-  --sc-accent-fill:linear-gradient(135deg,#b02538 0%,#9e1b2d 55%,#87142a 100%);
-  --sc-accent-fill-hover:linear-gradient(135deg,#c02e42 0%,#b3243a 55%,#9a1a30 100%);
-  --sc-btn-bg:var(--sc-accent-fill);--sc-btn-fg:#fff8f6;--sc-btn-hover:var(--sc-accent-fill-hover);
+  --sc-bg:#f6f5f1;--sc-surface:#fffefb;--sc-surface-2:#edebe5;--sc-surface-3:#e2dfd8;
+  --sc-text:#1a1916;--sc-muted:#4c4a45;--sc-subtle:#5e5b55;--sc-border:#e4e1da;--sc-border-strong:#cac6bd;
+  --sc-accent:#1a1916;--sc-accent-hover:#33312c;--sc-on-accent:#fffefb;--sc-accent-text:#1a1916;--sc-accent-soft:#ebe8e1;
   --sc-match:#08529e;--sc-match-soft:#e2eefb;
-  --sc-danger:#a8360a;--sc-danger-soft:#fbe8dc;
+  --sc-danger:#b42318;--sc-danger-soft:#fbe8e5;
   --sc-perfect:#7f5600;--sc-perfect-soft:#fff0c4;--sc-perfect-border:#e7c766;
-  --sc-overlay:rgba(28,24,25,.42);
-  --sc-shadow-sm:0 1px 2px rgba(28,24,25,.05);
-  --sc-shadow-md:0 12px 30px -14px rgba(28,24,25,.2);
-  --sc-shadow-lg:0 30px 80px -24px rgba(28,24,25,.3);
-  --sc-sticker-shadow:3px 3px 0 #1c1819;
-  --sc-ring:0 0 0 3px rgba(158,27,45,.2);
-  --sc-dots:radial-gradient(rgba(28,24,25,.06) 1px,transparent 1.4px);
+  --sc-overlay:rgba(26,25,22,.42);
+  --sc-shadow-sm:0 1px 2px rgba(26,25,22,.05);
+  --sc-shadow-md:0 12px 30px -14px rgba(26,25,22,.2);
+  --sc-shadow-lg:0 30px 80px -24px rgba(26,25,22,.3);
+  --sc-sticker-shadow:3px 3px 0 #1a1916;
+  --sc-ring:0 0 0 3px rgba(26,25,22,.18);
+  --sc-dots:radial-gradient(rgba(26,25,22,.06) 1px,transparent 1.4px);
   color-scheme:light;
 }
 
@@ -250,7 +246,7 @@ select{color:var(--sc-text)}
 .sc-tier-section .sc-tier-head h3{--sc-tilt:-3deg;padding:3px 10px;border-radius:5px;border:1.5px solid currentColor;color:var(--sc-muted);font-size:var(--sc-text-lg);transform:rotate(var(--sc-tilt))}
 .sc-tier-section-1 .sc-tier-head h3{color:var(--sc-accent-text)}
 .sc-tier-section-2 .sc-tier-head h3{border-color:var(--sc-accent);background:var(--sc-accent-fill);color:var(--sc-on-accent);box-shadow:2px 2px 0 rgba(0,0,0,.55)}
-.sc-tier-section-3 .sc-tier-head h3,.sc-tier-section-4 .sc-tier-head h3{--sc-tilt:3deg;border-color:var(--sc-text);background:var(--sc-text);color:var(--sc-bg);box-shadow:2px 2px 0 var(--sc-accent)}
+.sc-tier-section-3 .sc-tier-head h3,.sc-tier-section-4 .sc-tier-head h3{--sc-tilt:3deg;border-color:var(--sc-text);background:var(--sc-text);color:var(--sc-bg);box-shadow:3px 3px 0 var(--sc-subtle)}
 .sc-tier-section:hover .sc-tier-head h3{animation:sc-bounce var(--sc-beat) var(--sc-ease) infinite}
 .sc-chip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px;padding-top:var(--sc-space-3)}
 .sc-word-chip{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;min-height:58px;padding:8px 12px;border:1px solid var(--sc-border-strong);border-radius:var(--sc-radius-md);background:var(--sc-surface-2);text-align:left;color:var(--sc-text)}
