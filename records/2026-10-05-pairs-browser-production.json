@@ -1,0 +1,35 @@
+{
+  "url": "https://yy.zoci.pro",
+  "date": "2026-10-05",
+  "passed": true,
+  "resources": {
+    "javascript": "index-ViTzTawy.js",
+    "css": "index-B0B1TOET.css"
+  },
+  "mobile": {
+    "widths": [
+      320,
+      390
+    ],
+    "documentMatchesViewport": true,
+    "fixedSubmitBottom": {
+      "320x568": 490,
+      "390x844": 764
+    }
+  },
+  "libraryWordCarriedIntoComposer": "充实",
+  "preview": {
+    "words": 3,
+    "pairs": 3,
+    "points": 8,
+    "saved": false
+  },
+  "publicLegacyWorkflowTerms": false,
+  "keyboard": {
+    "tabFocusInsideLogin": true,
+    "escapeClosesLogin": true
+  },
+  "consoleErrors": 0,
+  "previewDraftCleared": true,
+  "screenshot": "../rhyme-pairs-live.png"
+}

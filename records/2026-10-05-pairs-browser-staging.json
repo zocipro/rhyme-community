@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "userId": "477bd9de-e376-4cec-9721-af798076a725",
+  "score": 12,
+  "batchWords": 3,
+  "batchPairs": 3,
+  "loginContinuation": true,
+  "reverseDuplicateRetainsDraft": true,
+  "reloadRetainsReadings": true,
+  "layouts": [
+    "320x568",
+    "390x844",
+    "1360x900"
+  ],
+  "keyboardViewport": "320x350",
+  "maxWords": 50,
+  "maxPairPreviews": 1225,
+  "fixedMobileSubmit": true,
+  "consoleErrors": 0,
+  "testAccountDisabled": true,
+  "productionTestWrites": 0
+}

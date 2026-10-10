@@ -1,0 +1,128 @@
+{
+  "passed": true,
+  "date": "2026-10-08",
+  "checkedAt": "2026-10-08T15:46:40.184Z",
+  "url": "https://yy.zoci.pro",
+  "deployment": {
+    "id": "72fdcf41-5772-4b4e-8bff-cd02bbef37d3",
+    "createdAt": "2026-10-08T15:42:50.069874Z",
+    "version": "365a894a-c223-4ebb-8a67-92fab85945a6",
+    "percentage": 100
+  },
+  "resources": [
+    {
+      "path": "/",
+      "bytes": 1601,
+      "sha256": "601e7b6c384a9b53a759005bcc06bb42cf935ff7dab1694218ce5cf87552bbc6"
+    },
+    {
+      "path": "/assets/index-C3eiradB.js",
+      "bytes": 556744,
+      "sha256": "79c01dffa6fd7cc7ad0e0aa044197e1275be3848dc3b09e2461e4fcfee1e68a0",
+      "localBuildMatches": true
+    },
+    {
+      "path": "/assets/index-D9qEvimw.css",
+      "bytes": 37670,
+      "sha256": "87a3854668547a1c803c90c2748ce0e4f7691ee4cd74f1b9405f4c361c3373db",
+      "localBuildMatches": true
+    }
+  ],
+  "contentWrites": 0,
+  "transportRetries": 0,
+  "transportFailures": [],
+  "rawContentOrCredentialsRecorded": false,
+  "baselineCapturedAt": "2026-10-08T15:20:24.135Z",
+  "counts": {
+    "words": 58,
+    "pairs": 52,
+    "activeWords": 58,
+    "activePairs": 52,
+    "scoreEntries": 52,
+    "users": 2,
+    "totalScore": 219
+  },
+  "data": {
+    "existingPersistentRowsUnchanged": true,
+    "existingPerUserScoreSourcesUnchanged": true,
+    "newWords": 0,
+    "newPairs": 0,
+    "newScoreEntries": 0,
+    "newUsers": 0
+  },
+  "api": {
+    "historicalGroupChecks": [
+      {
+        "id": "legacy-word-4613d7a3-c5a0-4d83-abee-fddabd2bded4",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 9
+      },
+      {
+        "id": "legacy-word-0365c410-7738-484e-ab31-ffe32873b217",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-46f84b51-fe10-41c0-84c5-0c2e1d33a7eb",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-6b55ac31-ad57-4bb0-868e-2098faa66742",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-7ec707c6-3ec9-498a-8e0c-6e7bd3651bfa",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-84645eed-6d18-4145-9151-74f3403cdba6",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-8ee5ce28-a474-431d-ad48-3bbc678abd5a",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-ca1c3b3e-9d1e-408e-8036-68d1967f9450",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-d49ff52b-8cca-42cb-99e3-fba252a423c3",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      },
+      {
+        "id": "legacy-word-e6d9d65c-4978-40c9-8022-a77922d48fa0",
+        "results": 9,
+        "historicalOtherMembersPresent": 9,
+        "direct": 1
+      }
+    ],
+    "existingApiPairRecordsVerified": 52,
+    "duplicatePreview": true,
+    "invisibleNormalization": true,
+    "syllabicNasalScoring": true,
+    "strictReadingLength": true,
+    "jsonObjectValidation": true,
+    "workloadBudgets": true,
+    "fiftyWordsFifteenCharactersPreview": true,
+    "legacyWritersClosed": true,
+    "anonymousStatusAndProfileRejected": true,
+    "anonymousAdminRejected": true
+  }
+}

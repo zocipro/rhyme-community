@@ -1,0 +1,12 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE users (id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE COLLATE NOCASE, password_hash TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user','admin')), disabled INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL);
+CREATE TABLE sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), expires_at INTEGER NOT NULL);
+CREATE INDEX sessions_user ON sessions(user_id);
+CREATE TABLE topics (id TEXT PRIMARY KEY, text TEXT NOT NULL, normalized TEXT NOT NULL UNIQUE, readings TEXT NOT NULL, n INTEGER NOT NULL CHECK(n >= 2), author_id TEXT NOT NULL REFERENCES users(id), status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','withdrawn')), created_at TEXT NOT NULL);
+CREATE INDEX topics_created ON topics(created_at DESC);
+CREATE TABLE answers (id TEXT PRIMARY KEY, topic_id TEXT NOT NULL REFERENCES topics(id), text TEXT NOT NULL, normalized TEXT NOT NULL UNIQUE, readings TEXT NOT NULL, kind TEXT NOT NULL CHECK(kind IN ('final','tone','perfect')), points INTEGER NOT NULL, author_id TEXT NOT NULL REFERENCES users(id), status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','withdrawn')), created_at TEXT NOT NULL);
+CREATE INDEX answers_topic ON answers(topic_id, created_at DESC);
+CREATE INDEX answers_author ON answers(author_id, status);
+CREATE TABLE moderation (id TEXT PRIMARY KEY, entity_type TEXT NOT NULL CHECK(entity_type IN ('topic','answer','user')), entity_id TEXT NOT NULL, admin_id TEXT NOT NULL REFERENCES users(id), reason TEXT NOT NULL, action TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+CREATE TABLE rate_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, reset_at INTEGER NOT NULL);

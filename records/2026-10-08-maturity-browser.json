@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-08",
+  "checks": [
+    "保存成功后 /me 503 仍显示收录成功，4分，草稿清空",
+    "连接断开后浏览器透明重放原POST：后台返回同批次，积分只加一次",
+    "401 自动打开登录窗口，原提交登录后收录成功，积分12分",
+    "staging 匿名三词草稿/选定 yue4 刷新保留，登录续提保存3对40分",
+    "已保存但JSON响应截断：草稿/读音保留；刷新查询原批次成功，14分，无重复加分",
+    "确认已保存旧提交只增加原2分，新草稿“长安/常山”仍完整保留",
+    "未保存的503：刷新后查无原批次，原词语/读音保留，重试仅加一次2分",
+    "词库和互查503各显示独立错误/重试，重试原查询成功，不显示虚假空状态",
+    "Escape关闭登录后焦点返回入口；Shift+Tab到关闭按钮；管理账号页返回“我的”恢复押韵关系页签",
+    "staging 320×568 无横向/纵向页面溢出、按钮490px；390×400 模拟键盘按钮388px、读音flex、框内2px焦点线；667×375 横屏按钮307.6px且读音可达；1360×900 双栏，按钮848.7px；无控制台错误"
+  ],
+  "scope": "local fault proxy and independent staging; no production writes",
+  "realDeviceKeyboard": false,
+  "stagingVersion": "13b12e5f-9170-49c6-9419-2f4c4c42cf8c",
+  "finalPublication": {
+    "productionVersion": "365a894a-c223-4ebb-8a67-92fab85945a6",
+    "stagingVersion": "63281e0b-ba1c-4b1f-bea7-18e2b0c73118",
+    "assets": [
+      "/assets/index-C3eiradB.js",
+      "/assets/index-D9qEvimw.css"
+    ],
+    "stage320": {
+      "viewport": [
+        320,
+        568
+      ],
+      "documentSize": [
+        320,
+        568
+      ],
+      "ctaBottom": 490
+    },
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "documentSize": [
+        390,
+        844
+      ],
+      "ctaBottom": 764
+    },
+    "desktop": {
+      "viewport": [
+        1360,
+        900
+      ],
+      "documentWidth": 1360,
+      "documentScrollY": 0,
+      "ctaBottom": 848.6875
+    },
+    "consoleErrors": [],
+    "screenshots": [
+      "../rhyme-maturity-mobile-live.jpg",
+      "../rhyme-maturity-desktop-live.jpg"
+    ],
+    "productionPreviewDraftCleared": true,
+    "shortscreenRecord": "records/2026-10-08-maturity-shortscreen.json"
+  }
+}

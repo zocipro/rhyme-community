@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-10",
+  "checkedAt": "2026-10-09T16:14:17.385Z",
+  "productionVersion": "cdb26d96-28a3-4b96-b14c-4322c5446e6c",
+  "stagingVersion": "f73703f8-88c6-4161-a016-c414ac76aa05",
+  "url": "https://yy.zoci.pro",
+  "items": [
+    {
+      "path": "/assets/index-BCh6VTg8.js",
+      "bytes": 278400,
+      "sha256": "7ef39df299d2d6e187542598e3e7e659c9eb2cb931ac322426586cd864e7fffb",
+      "matchesBuild": true
+    },
+    {
+      "path": "/assets/index-CqdD_voX.css",
+      "bytes": 45936,
+      "sha256": "15f1f637ea0258f8eb2bad74e57ffad6d21aba7ad495133165a4763139910ded",
+      "matchesBuild": true
+    },
+    {
+      "path": "/assets/pronunciation-AmcN1Yln.js",
+      "bytes": 287843,
+      "sha256": "e192b9e7f2a5dd824d8b64e9b5a8261d0c160cd90b77edc91cde43fb0de9796d",
+      "matchesBuild": true
+    }
+  ]
+}

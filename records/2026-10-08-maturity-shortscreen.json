@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-08",
+  "environment": "isolated_local_worker_d1",
+  "productionContentWrites": 0,
+  "before": {
+    "viewport": [
+      320,
+      350
+    ],
+    "ctaBottom": 362.984375,
+    "paneHeight": 8,
+    "fixedActionHeight": 188.984375
+  },
+  "after": {
+    "viewport": [
+      320,
+      350
+    ],
+    "ctaBottom": 284.6015625,
+    "fixedActionHeight": 89,
+    "visibleAlerts": 1,
+    "feedbackInScrollablePane": true
+  },
+  "simulatedKeyboard": {
+    "viewport": [
+      390,
+      400
+    ],
+    "ctaBottom": 388,
+    "paneHeight": 132.5,
+    "paneScrollOnError": 0,
+    "visibleAlerts": 1,
+    "readingsDisplay": "flex",
+    "focusOutlineOffset": "-2px",
+    "oneClickSubmitAfterFocusOut": true,
+    "restoredViewport": [
+      390,
+      844
+    ],
+    "restoredKeyboardFlag": false,
+    "restoredCtaBottom": 764
+  },
+  "responseDamageRecovery": {
+    "savedPairs": 1,
+    "points": 16,
+    "reloadConfirmsSavedResultOnce": true
+  },
+  "physicalDeviceKeyboard": false,
+  "screenshot": "../rhyme-maturity-short-error.jpg",
+  "temporaryServicesStopped": true,
+  "temporaryCredentialsRemoved": true
+}

@@ -1,0 +1,2 @@
+# Local development only. Copy to .dev.vars and replace this value.
+BOOTSTRAP_TOKEN=replace-with-a-long-random-token-for-local-development

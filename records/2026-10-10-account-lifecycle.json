@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-10",
+  "productionVersion": "bea4ec9d-9b2e-4e59-b781-25d7c029e429",
+  "stagingVersion": "631e4bb7-2301-40fc-9e65-b110dcad7bf2",
+  "sourceRepository": "https://github.com/zocipro/rhyme-community",
+  "fixes": [
+    "Sign-in allowance exhaustion does not prevent current-session logout",
+    "Invalid administrative sessions return 401; authenticated ordinary accounts still return 403",
+    "Record loading follows current ready/account/role/view and navigation revision",
+    "Late record responses validate view and account; authentication or moderation callbacks preserve the current page",
+    "Session expiration closes management before opening login",
+    "Closed personal record details do not create alignment cards; full saved comparison remains available when expanded"
+  ],
+  "tests": {
+    "workerD1Integration": {
+      "passed": 11,
+      "failed": 0,
+      "newCoverage": [
+        "logout after 12 failed sign-ins and a verified 429",
+        "current-session invalidation with other device retained",
+        "anonymous, invalid token, expired admin session and logged-out admin session yield 401 without changing content, scores, audit or target credentials",
+        "ordinary accounts rejected with 403; valid admin read remains 200"
+      ]
+    },
+    "typecheck": "passed",
+    "build": "passed",
+    "rules": "unchanged from previous 13/13 verification",
+    "wordInputComponent": "unchanged from previous 6/6 verification"
+  },
+  "frontendEvidence": "records/2026-10-10-account-lifecycle-browser.json",
+  "productionReadOnlyEvidence": "records/2026-10-10-account-lifecycle-production-readonly.json",
+  "assetEvidence": "records/2026-10-10-account-lifecycle-assets.json",
+  "productionContentWrites": 0,
+  "screenshots": [
+    "docs/screenshots/mobile.jpg",
+    "docs/screenshots/desktop.jpg"
+  ],
+  "limitations": [
+    "Browser lifecycle faults use clearly scoped local display-fixture API; actual auth and rejection are verified separately with real local Worker/D1",
+    "Physical mobile input methods and keyboard are not tested"
+  ]
+}

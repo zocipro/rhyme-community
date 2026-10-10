@@ -1,0 +1,130 @@
+{
+  "production_url": "https://yy.zoci.pro",
+  "staging_url": "https://rhyme-community-staging.shangqianbeibiantu.workers.dev",
+  "account_id": "c4189ba6ee17ce5a0f2af1faa536c5ac",
+  "production_database_id": "352be9ba-ecc6-4240-b5d8-277741a449bd",
+  "staging_database_id": "bd5d4b12-eda9-4e4b-8ed8-2474d952917d",
+  "source_deployment_version": "bea4ec9d-9b2e-4e59-b781-25d7c029e429",
+  "production_active_version": "bea4ec9d-9b2e-4e59-b781-25d7c029e429",
+  "staging_source_deployment_version": "631e4bb7-2301-40fc-9e65-b110dcad7bf2",
+  "verified_date": "2026-10-10",
+  "timezone": "Asia/Shanghai",
+  "production_topics_at_handoff": 0,
+  "production_answers_at_handoff": 0,
+  "administrator_initialization": "owner_sets_username_and_password_using_private_one_time_link",
+  "staging_integration_tests": "passed",
+  "status": "deployed_and_verified",
+  "workers_dev_url": "https://rhyme-community.shangqianbeibiantu.workers.dev",
+  "custom_domain_verified_date": "2026-10-01",
+  "custom_domain_https": "verified",
+  "latest_verified_counts": {
+    "words": 64,
+    "pairs": 67,
+    "total_score": 279
+  },
+  "mixed_rhyme_rule": "every_position_matches_final_or_tone",
+  "mixed_rhyme_verified_date": "2026-10-01",
+  "mobile_layout_verified_date": "2026-10-10",
+  "mobile_layout": "separate_screens_with_pinned_navigation_and_actions",
+  "rhyme_family_verified_date": "2026-10-01",
+  "rhyme_family_rule": "explicit_shared_rhyme_families_allow_different_medials",
+  "rhyme_family_regrade_record": "records/2026-10-01-rhyme-families-production.json",
+  "reciprocal_lookup_verified_date": "2026-10-05",
+  "reciprocal_lookup": "connected_component_of_active_pairs_with_actual_edge_attribution",
+  "public_attribution": "earliest_rhyme_pair_submitter_only",
+  "group_lookup_verified_date": "2026-10-05",
+  "group_lookup_record": "records/2026-10-05-pairs-production-readonly.json",
+  "previous_production_version": "cdb26d96-28a3-4b96-b14c-4322c5446e6c",
+  "content_model": "direct_undirected_pairs",
+  "pair_submission": {
+    "min_words": 2,
+    "max_words": 50,
+    "all_pairs_required": true,
+    "any_duplicate_rejects_batch": true,
+    "fixed_transaction_statements": 4,
+    "idempotency": "user_and_requestId_with_payload_hash"
+  },
+  "historical_migration": {
+    "name": "0003_direct_pairs.sql",
+    "legacy_tables_preserved": true,
+    "per_user_scores_preserved": true,
+    "audit": "records/2026-10-05-pairs-production-audit.json",
+    "baseline_counts": {
+      "words": 49,
+      "pairs": 36,
+      "legacy_score_entries": 36,
+      "total_score": 144
+    }
+  },
+  "content_write_paused": false,
+  "pair_model_ready": true,
+  "pre_migration_freeze_version": "efee5155-c835-4d3e-b4ab-aa73d56e08cc",
+  "compatible_rollback_baseline": "0f4a0e13-d840-4117-a117-3220fd7b4eef",
+  "browser_mobile_verified_date": "2026-10-10",
+  "production_preview_screenshot": "docs/screenshots/mobile.jpg",
+  "visual_style": "minimal_blue_white_rhyme_lab",
+  "visual_style_verified_date": "2026-10-10",
+  "visual_style_record": "records/2026-10-06-rhyme-lab-verification.json",
+  "production_screenshots": [
+    "docs/screenshots/mobile.jpg",
+    "docs/screenshots/desktop.jpg"
+  ],
+  "submission_recovery": {
+    "request_status_api": true,
+    "persisted_unconfirmed_request": true,
+    "same_request_retry": true,
+    "preserves_newer_draft": true,
+    "expired_session_continuation": true,
+    "verified_date": "2026-10-10",
+    "response_body_timeout_ms": 20000,
+    "preserves_newer_readings": true
+  },
+  "batch_workload": {
+    "max_total_characters": 10000,
+    "max_comparison_positions": 20000,
+    "checked_before_pronunciation": true
+  },
+  "maturity_record": "READINESS.md",
+  "maturity_tests": {
+    "rules": 13,
+    "integration": 11,
+    "failures": 0,
+    "word_input_component": 6,
+    "auth_atomicity_and_login_races": "passed"
+  },
+  "maturity_shortscreen_record": "records/2026-10-08-maturity-shortscreen.json",
+  "current_assets": [
+    "/assets/index-Ctk70gI5.js",
+    "/assets/index-CqdD_voX.css",
+    "/assets/pronunciation-CB5diBOZ.js"
+  ],
+  "maturity_production_record": "records/2026-10-10-account-lifecycle-production-readonly.json",
+  "production_asset_hashes": {
+    "/assets/index-Ctk70gI5.js": "13ffa64d31ffa682d072eb422c7590e999c23933d47dd9cad4ba21f8de241c57",
+    "/assets/index-CqdD_voX.css": "15f1f637ea0258f8eb2bad74e57ffad6d21aba7ad495133165a4763139910ded",
+    "/assets/pronunciation-CB5diBOZ.js": "1e2d7378d1a84d6a6c75872a2430a7dc4e37bc17dad8e167749c20700e5f2f0e"
+  },
+  "production_content_writes_this_round": 0,
+  "last_total_score_audit": {
+    "date": "2026-10-10",
+    "total_score": 279,
+    "record": "records/2026-10-10-account-lifecycle-production-readonly.json"
+  },
+  "count_labels_record": "records/2026-10-09-count-labels.json",
+  "count_labels_screenshot": "../rhyme-counts-live.jpg",
+  "workspace_ui_record": "records/2026-10-09-workspace-ui.json",
+  "workspace_production_record": "records/2026-10-09-workspace-production-readonly.json",
+  "input_recovery_record": "records/2026-10-10-input-recovery.json",
+  "input_recovery_browser_record": "records/2026-10-10-input-recovery-browser.json",
+  "local_response_body_fault_record": "records/2026-10-10-input-recovery-save.json",
+  "pronunciation_dictionary_loading": "lazy_on_composer",
+  "comparison_rendering": {
+    "hidden_cards_mounted": false,
+    "initial_visible_pairs": 40,
+    "load_more_pairs": 40,
+    "all_pairs_validated": true
+  },
+  "account_lifecycle_record": "records/2026-10-10-account-lifecycle.json",
+  "github_repository": "https://github.com/zocipro/rhyme-community",
+  "github_visibility": "public"
+}

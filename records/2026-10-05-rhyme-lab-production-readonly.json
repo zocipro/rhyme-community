@@ -1,0 +1,20 @@
+{
+  "url": "https://yy.zoci.pro",
+  "health": {
+    "ok": true
+  },
+  "statuses": {
+    "health": 200,
+    "words": 200
+  },
+  "counts": {
+    "words": 58,
+    "pairs": 52
+  },
+  "version": "57fb266c-bb22-4719-80f0-eb6658c09c43",
+  "assets": [
+    "index-QVbYmDNc.js",
+    "index-CTSddY0X.css"
+  ],
+  "verifiedAt": "2026-10-04T18:19:01.868Z"
+}

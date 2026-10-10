@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-10",
+  "localUrl": "http://127.0.0.1:54981",
+  "coldLibraryWithoutDictionary": true,
+  "searchFailureClearsOldQuery": true,
+  "libraryPagination": 35,
+  "dictionaryFailureDraftRecovery": {
+    "word1": "word-ef3992d6-d4e2-416f-83df-4d07b347bde7",
+    "selectedReading": "le4",
+    "resumeComposer": true
+  },
+  "longCollapsed": {
+    "hiddenPairCards": 0,
+    "summary": "2 个词 · 1 对关系合计 +10000 分查看核验",
+    "syllableCards": 0,
+    "totalNodes": 302,
+    "wordLengths": [
+      5000,
+      5000
+    ]
+  },
+  "longInputFocus": {
+    "fieldBottom": 551.484375,
+    "fieldLeft": 24,
+    "fieldRight": 366,
+    "fieldTop": 371.484375,
+    "fullyInside": true,
+    "paneBottom": 672.5,
+    "paneLeft": 16,
+    "paneRight": 374,
+    "paneTop": 224.59375
+  },
+  "hangingBodyUnblocksAfterTimeout": true,
+  "confirmedOldSavePreservesNewDraft": {
+    "text": "音乐",
+    "reading": "le4",
+    "score": "1354 分"
+  },
+  "fiftyWordsClosed": {
+    "footer": "50 个词 · 1225 对关系正在核验…查看核验",
+    "hiddenPairs": 0,
+    "readingCards": 0,
+    "totalNodes": 1271,
+    "words": 50
+  },
+  "fullPairPagination": {
+    "cards": 1225,
+    "lastPair": "山山山山山山山山山山山山山山丰 ↔ 山山山山山山山山山山山山山山丱",
+    "moreButton": false
+  },
+  "lastWordEdit": {
+    "activeLabel": "50词语 50",
+    "focusedValue": "山山山山山山山山山山山山山山丱",
+    "hiddenCards": 0
+  },
+  "mobile320": {
+    "focusInside": true,
+    "focusedField": {
+      "bottom": 398.984375,
+      "left": 22,
+      "right": 298,
+      "top": 315.984375
+    },
+    "height": 568,
+    "navTop": 500,
+    "overflow": false,
+    "pane": {
+      "bottom": 399,
+      "left": 14,
+      "right": 306,
+      "top": 220.59375
+    },
+    "submitBottom": 490,
+    "width": 320
+  },
+  "scoreKeyboard": {
+    "active": "records-panel",
+    "clientHeight": 205,
+    "scrollHeight": 3312,
+    "scrollTop": 185
+  },
+  "keyboardSpace": {
+    "field": {
+      "bottom": 247.6953125,
+      "left": 24,
+      "right": 366,
+      "top": 191.6953125
+    },
+    "fullyInside": true,
+    "height": 450,
+    "overflow": false,
+    "pane": {
+      "bottom": 294.1015625,
+      "left": 16,
+      "right": 374,
+      "top": 145.1953125
+    },
+    "submitBottom": 382.6015625,
+    "width": 390
+  },
+  "keyboard320": {
+    "width": 320,
+    "height": 360,
+    "keyboardMode": true,
+    "focusInside": true,
+    "submitBottom": 350,
+    "overflow": false
+  },
+  "staging": {
+    "url": "https://rhyme-community-staging.shangqianbeibiantu.workers.dev/",
+    "preview": "音乐(le4) ↔ 新客: perfect +4",
+    "serverReady": true,
+    "layouts": [
+      {
+        "height": 844,
+        "overflow": false,
+        "submitBottom": 764,
+        "submitTop": 674.5,
+        "submitWithinViewport": true,
+        "width": 390
+      },
+      {
+        "height": 568,
+        "overflow": false,
+        "submitBottom": 490,
+        "submitTop": 401,
+        "submitWithinViewport": true,
+        "width": 320
+      },
+      {
+        "height": 720,
+        "overflow": false,
+        "submitBottom": 655.40625,
+        "submitTop": 558.90625,
+        "submitWithinViewport": true,
+        "width": 1280
+      }
+    ]
+  }
+}

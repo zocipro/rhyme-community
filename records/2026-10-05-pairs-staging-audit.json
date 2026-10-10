@@ -1,0 +1,14 @@
+{
+  "environment": "staging",
+  "phase": "after",
+  "legacyFieldsUnchanged": true,
+  "firstAuthorsTimesReadingsUnchanged": true,
+  "perUserScoresUnchanged": true,
+  "legacyScoreEntries": 17,
+  "migratedPairs": 17,
+  "totalScore": 326,
+  "counts": {
+    "pairs": 16,
+    "words": 22
+  }
+}

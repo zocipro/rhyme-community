@@ -1,0 +1,14 @@
+{
+  "assets": {
+    "/assets/index-KQO4Eo-R.js": "7f27b74af5eba8a5d3f09a745612e462c1ef7aff7c61805ea8c34550c74fa22b",
+    "/assets/index-KGU7lwcg.css": "6431a6213f832b9b479065dcf6007fcddcf1697b27c719748cea4a349852bb76"
+  },
+  "health": {
+    "ok": true
+  },
+  "counts": {
+    "words": 64,
+    "pairs": 67
+  },
+  "production_content_writes": 0
+}

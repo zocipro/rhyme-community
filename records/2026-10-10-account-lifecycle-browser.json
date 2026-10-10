@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-10",
+  "scope": "Actual compiled frontend in browser, local display-fixture HTTP API; not a real account/session or D1 test",
+  "initialIdentity": {
+    "before": "navigate to mine while /me pending; after identity returns records remain empty",
+    "after": "waiting state followed by one personal record without another navigation"
+  },
+  "adminExpiry": {
+    "before": [
+      "欢迎回来",
+      "撤回无效押韵"
+    ],
+    "after": [
+      "欢迎回来"
+    ],
+    "focusedInsideLogin": true,
+    "apiResponse": "Local fixture 401; real Worker authorization statuses separately tested in integration"
+  },
+  "authBackNavigation": {
+    "duringAuth": "押韵共创 · 词库",
+    "afterAuth": "押韵共创 · 词库",
+    "dialogs": 0,
+    "signedInUserShown": true
+  },
+  "moderationNavigation": {
+    "afterBackAndNavigate": "我的押韵.",
+    "afterOperation": "我的押韵.",
+    "tabs": [
+      "押韵关系",
+      "积分来源"
+    ],
+    "recordCount": 1,
+    "requestDeltas": {
+      "me": 2,
+      "profile": 2,
+      "admin": 1,
+      "words": 2
+    },
+    "meaning": "one admin request to initially load admin; both subsequent record requests are profile"
+  },
+  "ordinaryAccountOldAdminHistory": {
+    "finalHeading": "我的押韵.",
+    "recordCount": 1,
+    "tabs": [
+      "押韵关系",
+      "积分来源"
+    ],
+    "adminNavigationVisible": false,
+    "errors": 0
+  },
+  "longClosedRecord": {
+    "n": 5000,
+    "before": {
+      "closedAlignmentRows": 5000,
+      "totalDomNodes": 65093
+    },
+    "after": {
+      "closedAlignmentRows": 0,
+      "totalDomNodes": 82
+    },
+    "expandedRows": 5000,
+    "lastCharacters": "山/衫",
+    "closedAgainRows": 0
+  },
+  "stagingLayout": {
+    "version": "631e4bb7-2301-40fc-9e65-b110dcad7bf2",
+    "frontend": "/assets/index-Ctk70gI5.js",
+    "390x844": {
+      "loginButtonBottom": 413.6953125,
+      "horizontalOverflow": false
+    },
+    "320x568": {
+      "loginButtonBottom": 412.6953125,
+      "navigationTop": 500,
+      "horizontalOverflow": false
+    }
+  },
+  "productionContentWrites": 0,
+  "physicalMobileKeyboardOrImeTested": false
+}

@@ -1,0 +1,102 @@
+{
+  "verification_date": "2026-10-06",
+  "timezone": "Asia/Shanghai",
+  "url": "https://yy.zoci.pro",
+  "production_version": "17d5785c-77bd-4ea4-a1ee-362c0347c52a",
+  "staging_version": "8bc91927-753b-4ac9-9804-495178ff3ec7",
+  "assets": [
+    "index-B8Q4WFZo.js",
+    "index-CvkN5ulL.css"
+  ],
+  "health": {
+    "ok": true
+  },
+  "statuses": {
+    "health": 200,
+    "words": 200
+  },
+  "counts": {
+    "words": 58,
+    "pairs": 52
+  },
+  "api_schema_and_scoring_unchanged": true,
+  "unchanged_sha256": {
+    "worker/index.ts": "91f3c73d17683814967a0d3981c16c36e964b15978e86aa218417694544bc5a1",
+    "worker/auth.ts": "e0815ab0976aa2f222df845b9a7d271276526295f159676cc69e9ba84761055f",
+    "shared/rhyme.ts": "06baa3ba1453ce3db447485d99c3b959d7c74b2ff7ab5e6d74388bd9980496eb",
+    "shared/pairs.ts": "9ceedeaff5f389f7002280e2172f76d3244fa88e81635143dac87bf5fecef865",
+    "shared/lookup.ts": "ef70dc1513a461006682f1496c45f843d47769128c71ef96f82fbe3fd67d91fc",
+    "migrations/0001_initial.sql": "d1f64348359e035c38bad065ff450348c451426669467bfbb3c52f2d7225225e",
+    "migrations/0002_mixed_rhyme.sql": "af25c38d9b19ac84cdae100c896f6a03fd055bfccd840606c223ee543a0d45f7",
+    "migrations/0003_direct_pairs.sql": "f6cadab820fc357e51a7b3956cfcfbba0b493e0933a0e7dfa8d00b249552d6d1"
+  },
+  "content_writes": {
+    "production": 0,
+    "staging": 0
+  },
+  "checks": {
+    "build": "passed",
+    "anonymous_preview": "passed",
+    "polyphonic_choice": "passed",
+    "blue_red_gold_labels": "passed",
+    "login_draft_readings_preserved": "passed",
+    "refresh_draft_readings_preserved": "passed",
+    "add_delete_and_long_input_scroll": "passed",
+    "duplicate_prompt_and_disabled_submit": "passed",
+    "direct_group_attribution": "passed",
+    "mutual_lookup_and_bring_word": "passed",
+    "keyboard_tabs_and_dialog_trap": "passed",
+    "input_border_scrollbar_separation": "passed",
+    "browser_errors": 0,
+    "staging_qa_account_disabled": true,
+    "temporary_credentials_removed": true
+  },
+  "viewports": [
+    {
+      "width": 1360,
+      "height": 900,
+      "scrollWidth": 1360,
+      "submitBottom": 848.6875
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "submitBottom": 764,
+      "inputLeft": 24,
+      "inputRight": 366,
+      "paneLeft": 16,
+      "paneRight": 374
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "scrollHeight": 568,
+      "submitBottom": 490
+    },
+    {
+      "width": 320,
+      "height": 350,
+      "scrollWidth": 320,
+      "scrollHeight": 350,
+      "submitBottom": 340,
+      "simulation": "keyboard_space",
+      "inputLeft": 22,
+      "inputRight": 298
+    }
+  ],
+  "physical_device_keyboard_tested": false,
+  "contrast_ratios": {
+    "primary_text": 12.15,
+    "secondary_text": 5.19,
+    "primary_button": 4.57,
+    "match": 5.31,
+    "mismatch": 5.65,
+    "perfect": 5.96
+  },
+  "screenshots": [
+    "../rhyme-lab-mobile-live.jpg",
+    "../rhyme-lab-desktop-live.jpg"
+  ]
+}

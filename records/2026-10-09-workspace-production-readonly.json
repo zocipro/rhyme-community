@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "baselineCapturedAt": "2026-10-09T13:44:32.285Z",
+  "capturedAt": "2026-10-09T13:52:42.881Z",
+  "originalRowsUnchanged": true,
+  "originalPerAccountScoreSourcesUnchanged": true,
+  "changed": [],
+  "missing": [],
+  "schemaChanges": [],
+  "newRows": {
+    "words": 0,
+    "rhyme_pairs": 0,
+    "submissions": 0,
+    "score_entries": 0,
+    "users": 0
+  },
+  "scoreAudit": {
+    "beforeTotal": 279,
+    "afterTotal": 279,
+    "totalDelta": 0,
+    "newActiveSourcePoints": 0,
+    "changedCurrentScoreHashes": 0,
+    "deltaExplainedByNewSources": true
+  },
+  "counts": {
+    "words": 64,
+    "activeWords": 64,
+    "pairs": 67,
+    "activePairs": 67,
+    "submissions": 3,
+    "scoreEntries": 67,
+    "users": 2,
+    "totalScore": 279
+  },
+  "contentWrites": 0,
+  "credentialOrRawContentValuesRecorded": false,
+  "deployments": {
+    "production": {
+      "id": "7fdefd1e-77e3-4815-99a0-34514291f3be",
+      "createdAt": "2026-10-09T13:52:15.441337Z",
+      "versions": [
+        {
+          "id": "77b67a0a-f956-4846-8a29-54416b92aa52",
+          "percentage": 100
+        }
+      ]
+    },
+    "staging": {
+      "id": "a116c342-5daa-4ac1-ad8b-c7e5cca149fa",
+      "createdAt": "2026-10-09T13:48:16.56267Z",
+      "versions": [
+        {
+          "id": "2b35ee29-e18f-4bf6-8e17-4c6277df9c37",
+          "percentage": 100
+        }
+      ]
+    }
+  }
+}

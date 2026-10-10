@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-09",
+  "verifiedAt": "2026-10-09T12:12:21.572994+00:00",
+  "url": "https://yy.zoci.pro",
+  "productionVersion": "cf5ed208-c38d-46d1-88d0-6029a9766376",
+  "stagingVersion": "b785a55d-6f47-44d0-8b34-de866e431903",
+  "counts": {
+    "words": 64,
+    "pairs": 67
+  },
+  "definitions": {
+    "words": "unique normalized words participating in active rhyme pairs",
+    "pairs": "active unique undirected rhyme pairs"
+  },
+  "change": "clarify labels and add word/pair units; counting API and data unchanged",
+  "contentWrites": 0,
+  "build": "passed",
+  "stageMobileWidths": [
+    320,
+    390
+  ],
+  "stageHorizontalOverflow": false,
+  "productionUiText": "收录词语64个 / 押韵词对67对",
+  "assetsMatchBuild": true,
+  "assetSha256": {
+    "/assets/index-CPhppNAF.js": "38845976972aa581f57f124d826d456d9aa26d7f9b2838fc08b1997070ea0d11",
+    "/assets/index-BoigV3Tx.css": "9425d3547f30d3424f63b2bfd2d6114184624e4fbf947fe85bb9b79ace45870c"
+  },
+  "screenshot": "../rhyme-counts-live.jpg"
+}

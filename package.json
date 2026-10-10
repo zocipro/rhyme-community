@@ -1,0 +1,34 @@
+{
+  "name": "rhyme-community",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "test": "tsx --test tests/rhyme.test.ts",
+    "worker": "wrangler dev --port 8787",
+    "types": "wrangler types",
+    "deploy": "pnpm run build && wrangler deploy",
+    "bootstrap": "node scripts/bootstrap.mjs",
+    "test:integration": "node scripts/test-integration.mjs"
+  },
+  "dependencies": {
+    "react": "latest",
+    "react-dom": "latest",
+    "hono": "latest",
+    "pinyin-pro": "latest",
+    "lucide-react": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "@vitejs/plugin-react": "latest",
+    "wrangler": "latest",
+    "tsx": "latest",
+    "@cloudflare/workers-types": "latest",
+    "@types/node": "latest"
+  }
+}

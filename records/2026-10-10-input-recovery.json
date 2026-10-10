@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-10",
+  "url": "https://yy.zoci.pro",
+  "productionVersion": "cdb26d96-28a3-4b96-b14c-4322c5446e6c",
+  "stagingVersion": "f73703f8-88c6-4161-a016-c414ac76aa05",
+  "fixes": [
+    "20-second timeout covers response body; unconfirmed save retains original requestId and payload",
+    "IME composition stays local until committed; cancellation preserves selected readings; trailing input commits once",
+    "focused growing textarea scrolls within its own pane",
+    "dictionary loads only on composer; recovery verifies draft storage before reload",
+    "collapsed readings and hidden pair cards are not mounted; visible results load 40 at a time",
+    "new search failure cannot display or paginate the old query",
+    "score panel is keyboard focusable",
+    "registration and administrator setup create account and session atomically",
+    "login session creation rechecks current credential hash and disabled state"
+  ],
+  "validation": {
+    "rules": {
+      "passed": 13,
+      "failed": 0
+    },
+    "integration": {
+      "passed": 9,
+      "failed": 0,
+      "newAssertions": [
+        "registration session failure rolls back account and can retry",
+        "administrator session failure rolls back initialization and can retry",
+        "password reset and disable during login cannot create stale sessions"
+      ]
+    },
+    "wordInputReactDom": {
+      "passed": 6,
+      "failed": 0
+    },
+    "typecheck": "passed",
+    "productionBuild": "passed"
+  },
+  "initialJavaScript": {
+    "previousBytes": 562045,
+    "currentBytes": 278400,
+    "previousGzipBytes": 226121,
+    "currentGzipBytes": 86940,
+    "dictionaryExcludedOnColdLibrary": true,
+    "deviceSpeedNotMeasured": true
+  },
+  "production": {
+    "contentWrites": 0,
+    "originalRowsAndScoresUnchanged": true,
+    "words": 64,
+    "activePairs": 67,
+    "totalScore": 279,
+    "liveAssetsMatchBuild": true
+  },
+  "evidence": {
+    "browser": "records/2026-10-10-input-recovery-browser.json",
+    "savedResponseBodyFault": "records/2026-10-10-input-recovery-save.json",
+    "productionReadOnly": "records/2026-10-10-input-recovery-production-readonly.json",
+    "assets": "records/2026-10-10-input-recovery-assets.json",
+    "screenshots": [
+      "../rhyme-reliable-mobile-live.jpg",
+      "../rhyme-reliable-desktop-live.jpg"
+    ]
+  },
+  "limits": [
+    "Keyboard space simulated by desktop browser viewport, not physical iOS/Android keyboard",
+    "IME regression dispatches native events through actual React DOM in jsdom; physical input method not tested",
+    "All save faults and auth failure/race tests use isolated local Worker/D1, not production"
+  ]
+}

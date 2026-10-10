@@ -1,0 +1,50 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "rhyme-community",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-26",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rhyme-community",
+      "database_id": "352be9ba-ecc6-4240-b5d8-277741a449bd",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "env": {
+    "staging": {
+      "name": "rhyme-community-staging",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "rhyme-community-staging",
+          "database_id": "bd5d4b12-eda9-4e4b-8ed8-2474d952917d",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "routes": []
+    }
+  },
+  "account_id": "c4189ba6ee17ce5a0f2af1faa536c5ac",
+  "routes": [
+    {
+      "pattern": "yy.zoci.pro",
+      "custom_domain": true
+    }
+  ]
+}

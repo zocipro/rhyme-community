@@ -1,0 +1,77 @@
+{
+  "verified_date": "2026-10-05",
+  "environment": "staging",
+  "base_url": "https://rhyme-community-staging.shangqianbeibiantu.workers.dev",
+  "passed": true,
+  "local": {
+    "command": "pnpm test:integration",
+    "passed": true,
+    "tests": 4,
+    "execution_ms": 2626.128417,
+    "legacy_fixture_answers": 15,
+    "legacy_fixture_group_members": 10,
+    "assertions": [
+      "Create old schema, seed historical users/topics/answers, then apply 0003 migration",
+      "Per-user historical scores and all legacy ledger source rows preserved",
+      "Earliest withdrawn reverse pair remains first owner while later active pronunciation/kind/points become display payload",
+      "Legal selected le4 and chang2 pronunciations survive migration",
+      "Topic-only word hidden, withdrawn topic-related word hidden, old tables and moderation retained",
+      "Ten old group members each find the other nine with actual direct or group associations",
+      "Anonymous submit rejected, old write routes 410, regular registration cannot gain admin, HttpOnly SameSite cookie, origin CSRF rejected",
+      "Three words save three pairs, server scores ignore client score override",
+      "Invalid pair or existing/withdrawn normalized reverse pair rejects whole batch with no words/pairs/submissions/ledger partial writes",
+      "Request ID same-body retry returns same saved IDs and no extra score; changed body 409",
+      "New combination reuses existing word without a second pair claim",
+      "Chosen polyphonic reading consistent across all pairs in a batch; later combination saves its own legitimate reading",
+      "Mixed/final/tone/perfect rhyme, ang/iang rhyme family, dictionary neutral tone, minimum tail length, seven-word full length",
+      "Concurrent overlapping batches produce one winner, no loser-only word, no partial ledger; loser score unchanged",
+      "Transitive graph lookup uses actual recorded edges; withdrawal bridge splits group and deducts actual score owner",
+      "Reverse direct pair left/right align with comparison target/answer",
+      "50 words save all 1225 pairs with fixed statement transaction, 49 results paginate 30+19, retries do not add entries",
+      "Direct SQLite row counts after overlap concurrency confirm exactly three new words: no hidden orphan word left by failed batch"
+    ]
+  },
+  "remote": {
+    "command": "NODE_USE_ENV_PROXY=1 node scripts/verify-pairs-staging.mjs",
+    "passed": true,
+    "result": {
+      "passed": true,
+      "userIds": [
+        "aa606a42-d861-4b90-b94c-077d335a3834",
+        "bc03d212-de8b-4260-8a59-e6a95cbf2b7d"
+      ],
+      "submissionId": "faf0e391-b826-4dd9-955c-ffeacf5593ec",
+      "batchPairs": 3,
+      "bulkSubmissionId": "a6cbe85c-fd6d-4be0-afa7-e84531c8b3aa",
+      "bulkWords": 50,
+      "bulkPairs": 1225,
+      "concurrentWinnerPairs": 3,
+      "score": 21607
+    },
+    "assertions": [
+      "Old write routes return 410 and ordinary account cannot call admin APIs",
+      "Anonymous preview computes three perfect pairs from three random-prefixed words",
+      "Three pairs stored with real first submitter/time and server-derived 84 points",
+      "Same request ID replay preserves IDs/score; changed payload 409",
+      "Standardized punctuation/blank/invisible reverse pair duplicate 409",
+      "Any duplicate or invalid pair blocks entire submission and loser-only word never appears",
+      "All three words reverse query other two with same pair owner/time and read-only zero comparison points",
+      "Adding new pair through shared word extends group; group result references actual saved relation",
+      "Concurrent overlapping batches yield statuses 201/409, loser-only word absent, only winner receives score",
+      "Actual Cloudflare D1 saves 50 words and all 1225 pairs in one transaction",
+      "Bulk graph returns 49 distinct direct members across pages",
+      "Logout/login restores score and profile ledger; further queries do not add points"
+    ],
+    "cleanup": {
+      "passed": true,
+      "users_disabled": true,
+      "sessions_deleted": true,
+      "content_and_first_attribution_retained": true
+    },
+    "initial_attempt": {
+      "site_failure": false,
+      "reason": "QA fixture contained 49 suffix characters; fixture-length assertion stopped before bulk submission. Fixed to 50; complete retry passed. Both initial-attempt accounts were disabled in finally."
+    }
+  },
+  "production_test_content_written": false
+}

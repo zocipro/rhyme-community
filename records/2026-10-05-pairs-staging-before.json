@@ -1,0 +1,338 @@
+{
+  "environment": "staging",
+  "topics": [
+    {
+      "id": "28b37e7d-5969-40dc-991f-5325cd2b1426",
+      "text": "海海林春山风江峰山林雪云云松松花说唱",
+      "normalized": "海海林春山风江峰山林雪云云松松花说唱",
+      "readings": "[{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"林\",\"pinyin\":\"lin2\",\"final\":\"in\",\"tone\":2,\"options\":[\"lin2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"峰\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"林\",\"pinyin\":\"lin2\",\"final\":\"in\",\"tone\":2,\"options\":[\"lin2\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"说\",\"pinyin\":\"shuo1\",\"final\":\"uo\",\"tone\":1,\"options\":[\"shuo1\",\"shui4\",\"yue4\"]},{\"char\":\"唱\",\"pinyin\":\"chang4\",\"final\":\"ang\",\"tone\":4,\"options\":[\"chang4\"]}]",
+      "n": 18,
+      "author_id": "1a3e7c73-1284-43bd-b959-6bd626e322b2",
+      "status": "active",
+      "created_at": "2026-10-02T08:45:58.821Z"
+    },
+    {
+      "id": "4e916d7e-d904-404e-af4b-1d446d9c1301",
+      "text": "山河",
+      "normalized": "山河",
+      "readings": "[{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"河\",\"pinyin\":\"he2\",\"final\":\"e\",\"tone\":2,\"options\":[\"he2\"]}]",
+      "n": 2,
+      "author_id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "status": "active",
+      "created_at": "2026-09-30T19:16:54.292Z"
+    },
+    {
+      "id": "600b8ce1-e281-445a-ba70-a57a49a93be8",
+      "text": "山河天地人",
+      "normalized": "山河天地人",
+      "readings": "[{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"河\",\"pinyin\":\"he2\",\"final\":\"e\",\"tone\":2,\"options\":[\"he2\"]},{\"char\":\"天\",\"pinyin\":\"tian1\",\"final\":\"ian\",\"tone\":1,\"options\":[\"tian1\"]},{\"char\":\"地\",\"pinyin\":\"di4\",\"final\":\"i\",\"tone\":4,\"options\":[\"di4\",\"de0\"]},{\"char\":\"人\",\"pinyin\":\"ren2\",\"final\":\"en\",\"tone\":2,\"options\":[\"ren2\"]}]",
+      "n": 5,
+      "author_id": "554e4b4e-49ba-4815-868a-e82bfdc37ee1",
+      "status": "active",
+      "created_at": "2026-09-30T19:58:05.029Z"
+    },
+    {
+      "id": "bb34b5ad-3606-4082-8889-35bf2a0b1692",
+      "text": "丹泽",
+      "normalized": "丹泽",
+      "readings": "[{\"char\":\"丹\",\"pinyin\":\"dan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"dan1\"]},{\"char\":\"泽\",\"pinyin\":\"ze2\",\"final\":\"e\",\"tone\":2,\"options\":[\"ze2\",\"shi4\"]}]",
+      "n": 2,
+      "author_id": "cd28ccc3-89de-4e6d-be90-a219f65cfab3",
+      "status": "active",
+      "created_at": "2026-09-30T19:16:58.654Z"
+    },
+    {
+      "id": "c81a7791-913d-4009-95ee-2720ec8bcd13",
+      "text": "云端",
+      "normalized": "云端",
+      "readings": "[{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"端\",\"pinyin\":\"duan1\",\"final\":\"uan\",\"tone\":1,\"options\":[\"duan1\"]}]",
+      "n": 2,
+      "author_id": "60551dd4-db25-4bbf-86f8-61b17239aa23",
+      "status": "active",
+      "created_at": "2026-09-30T20:25:52.885Z"
+    },
+    {
+      "id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松嘻哈",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松嘻哈",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"嘻\",\"pinyin\":\"xi1\",\"final\":\"i\",\"tone\":1,\"options\":[\"xi1\"]},{\"char\":\"哈\",\"pinyin\":\"ha1\",\"final\":\"a\",\"tone\":1,\"options\":[\"ha1\",\"ha3\",\"ha4\"]}]",
+      "n": 18,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:28.008Z"
+    },
+    {
+      "id": "d04e835a-a573-4c84-aae5-8b01efa4ec36",
+      "text": "星火",
+      "normalized": "星火",
+      "readings": "[{\"char\":\"星\",\"pinyin\":\"xing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"xing1\"]},{\"char\":\"火\",\"pinyin\":\"huo3\",\"final\":\"uo\",\"tone\":3,\"options\":[\"huo3\"]}]",
+      "n": 2,
+      "author_id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "status": "active",
+      "created_at": "2026-09-30T19:16:59.473Z"
+    },
+    {
+      "id": "fd6e32e9-43a7-4907-94fc-2dd9f0d503cc",
+      "text": "说唱",
+      "normalized": "说唱",
+      "readings": "[{\"char\":\"说\",\"pinyin\":\"shuo1\",\"final\":\"uo\",\"tone\":1,\"options\":[\"shuo1\",\"shui4\",\"yue4\"]},{\"char\":\"唱\",\"pinyin\":\"chang4\",\"final\":\"ang\",\"tone\":4,\"options\":[\"chang4\"]}]",
+      "n": 2,
+      "author_id": "b04e4e4b-fb68-4bc9-8a94-2bc5b13831ea",
+      "status": "active",
+      "created_at": "2026-10-01T05:39:57.103Z"
+    }
+  ],
+  "answers": [
+    {
+      "id": "12c9f38a-cc60-4442-ba64-9173b1a25be5",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松稀疤",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松稀疤",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"稀\",\"pinyin\":\"xi1\",\"final\":\"i\",\"tone\":1,\"options\":[\"xi1\"]},{\"char\":\"疤\",\"pinyin\":\"ba1\",\"final\":\"a\",\"tone\":1,\"options\":[\"ba1\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:32.021Z"
+    },
+    {
+      "id": "17d56ef2-4459-4d5f-93c6-d91f57c6ff6a",
+      "topic_id": "d04e835a-a573-4c84-aae5-8b01efa4ec36",
+      "text": "苹果",
+      "normalized": "苹果",
+      "readings": "[{\"char\":\"苹\",\"pinyin\":\"ping2\",\"final\":\"ing\",\"tone\":2,\"options\":[\"ping2\",\"peng1\"]},{\"char\":\"果\",\"pinyin\":\"guo3\",\"final\":\"uo\",\"tone\":3,\"options\":[\"guo3\"]}]",
+      "kind": "final",
+      "points": 2,
+      "author_id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "status": "active",
+      "created_at": "2026-09-30T19:16:59.895Z"
+    },
+    {
+      "id": "30f5c9d3-cf7c-4efa-b62f-fba8528a0f77",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松溪沙",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松溪沙",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"溪\",\"pinyin\":\"xi1\",\"final\":\"i\",\"tone\":1,\"options\":[\"xi1\"]},{\"char\":\"沙\",\"pinyin\":\"sha1\",\"final\":\"a\",\"tone\":1,\"options\":[\"sha1\",\"sha4\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:29.733Z"
+    },
+    {
+      "id": "3c171ea1-2597-4114-803c-3cc15cc33b10",
+      "topic_id": "4e916d7e-d904-404e-af4b-1d446d9c1301",
+      "text": "干渴",
+      "normalized": "干渴",
+      "readings": "[{\"char\":\"干\",\"pinyin\":\"gan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"gan1\",\"gan4\"]},{\"char\":\"渴\",\"pinyin\":\"ke3\",\"final\":\"e\",\"tone\":3,\"options\":[\"ke3\"]}]",
+      "kind": "final",
+      "points": 2,
+      "author_id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "status": "active",
+      "created_at": "2026-09-30T19:16:57.802Z"
+    },
+    {
+      "id": "4c6f02e7-eaf1-4620-a141-9452247ed11e",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松披纱",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松披纱",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"披\",\"pinyin\":\"pi1\",\"final\":\"i\",\"tone\":1,\"options\":[\"pi1\"]},{\"char\":\"纱\",\"pinyin\":\"sha1\",\"final\":\"a\",\"tone\":1,\"options\":[\"sha1\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:29.223Z"
+    },
+    {
+      "id": "4f458445-1cec-4c14-84cf-f6ee448415eb",
+      "topic_id": "fd6e32e9-43a7-4907-94fc-2dd9f0d503cc",
+      "text": "云星河风星山云山山山海天星河海地多样",
+      "normalized": "云星河风星山云山山山海天星河海地多样",
+      "readings": "[{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"星\",\"pinyin\":\"xing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"xing1\"]},{\"char\":\"河\",\"pinyin\":\"he2\",\"final\":\"e\",\"tone\":2,\"options\":[\"he2\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"星\",\"pinyin\":\"xing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"xing1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"天\",\"pinyin\":\"tian1\",\"final\":\"ian\",\"tone\":1,\"options\":[\"tian1\"]},{\"char\":\"星\",\"pinyin\":\"xing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"xing1\"]},{\"char\":\"河\",\"pinyin\":\"he2\",\"final\":\"e\",\"tone\":2,\"options\":[\"he2\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"地\",\"pinyin\":\"di4\",\"final\":\"i\",\"tone\":4,\"options\":[\"di4\",\"de0\"]},{\"char\":\"多\",\"pinyin\":\"duo1\",\"final\":\"uo\",\"tone\":1,\"options\":[\"duo1\"]},{\"char\":\"样\",\"pinyin\":\"yang4\",\"final\":\"iang\",\"tone\":4,\"options\":[\"yang4\"]}]",
+      "kind": "perfect",
+      "points": 4,
+      "author_id": "b04e4e4b-fb68-4bc9-8a94-2bc5b13831ea",
+      "status": "active",
+      "created_at": "2026-10-01T05:39:58.055Z"
+    },
+    {
+      "id": "85d1248f-875c-4417-b92e-acb92c842b3a",
+      "topic_id": "600b8ce1-e281-445a-ba70-a57a49a93be8",
+      "text": "风云星底任",
+      "normalized": "风云星底任",
+      "readings": "[{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"星\",\"pinyin\":\"xing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"xing1\"]},{\"char\":\"底\",\"pinyin\":\"di3\",\"final\":\"i\",\"tone\":3,\"options\":[\"di3\",\"de0\"]},{\"char\":\"任\",\"pinyin\":\"ren4\",\"final\":\"en\",\"tone\":4,\"options\":[\"ren4\",\"ren2\"]}]",
+      "kind": "mixed",
+      "points": 5,
+      "author_id": "60551dd4-db25-4bbf-86f8-61b17239aa23",
+      "status": "active",
+      "created_at": "2026-09-30T20:30:30.832Z"
+    },
+    {
+      "id": "8c4a0db8-1698-4dac-b7c3-e10657cd12c5",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松滴答",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松滴答",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"滴\",\"pinyin\":\"di1\",\"final\":\"i\",\"tone\":1,\"options\":[\"di1\"]},{\"char\":\"答\",\"pinyin\":\"da2\",\"final\":\"a\",\"tone\":2,\"options\":[\"da2\",\"da1\"]}]",
+      "kind": "final",
+      "points": 18,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:31.213Z"
+    },
+    {
+      "id": "a15a298c-e9d6-49a9-8a04-669f5faef65d",
+      "topic_id": "4e916d7e-d904-404e-af4b-1d446d9c1301",
+      "text": "斑驳",
+      "normalized": "斑驳",
+      "readings": "[{\"char\":\"斑\",\"pinyin\":\"ban1\",\"final\":\"an\",\"tone\":1,\"options\":[\"ban1\"]},{\"char\":\"驳\",\"pinyin\":\"bo2\",\"final\":\"o\",\"tone\":2,\"options\":[\"bo2\"]}]",
+      "kind": "tone",
+      "points": 2,
+      "author_id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "status": "active",
+      "created_at": "2026-09-30T19:16:58.246Z"
+    },
+    {
+      "id": "c86134bb-4406-48db-b096-46f3c08ddb2d",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松踢踏",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松踢踏",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"踢\",\"pinyin\":\"ti1\",\"final\":\"i\",\"tone\":1,\"options\":[\"ti1\"]},{\"char\":\"踏\",\"pinyin\":\"ta4\",\"final\":\"a\",\"tone\":4,\"options\":[\"ta4\",\"ta1\"]}]",
+      "kind": "final",
+      "points": 18,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:31.617Z"
+    },
+    {
+      "id": "d9016dc6-b702-443a-858b-3833f346f061",
+      "topic_id": "28b37e7d-5969-40dc-991f-5325cd2b1426",
+      "text": "海海林春山风江峰山林雪云云松松花多样",
+      "normalized": "海海林春山风江峰山林雪云云松松花多样",
+      "readings": "[{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"林\",\"pinyin\":\"lin2\",\"final\":\"in\",\"tone\":2,\"options\":[\"lin2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"峰\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\"]},{\"char\":\"山\",\"pinyin\":\"shan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"shan1\"]},{\"char\":\"林\",\"pinyin\":\"lin2\",\"final\":\"in\",\"tone\":2,\"options\":[\"lin2\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"多\",\"pinyin\":\"duo1\",\"final\":\"uo\",\"tone\":1,\"options\":[\"duo1\"]},{\"char\":\"样\",\"pinyin\":\"yang4\",\"final\":\"iang\",\"tone\":4,\"options\":[\"yang4\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "1a3e7c73-1284-43bd-b959-6bd626e322b2",
+      "status": "active",
+      "created_at": "2026-10-02T08:46:00.152Z"
+    },
+    {
+      "id": "e0401e52-8cf6-44f6-930a-1e71d976587f",
+      "topic_id": "4e916d7e-d904-404e-af4b-1d446d9c1301",
+      "text": "丹泽",
+      "normalized": "丹泽",
+      "readings": "[{\"char\":\"丹\",\"pinyin\":\"dan1\",\"final\":\"an\",\"tone\":1,\"options\":[\"dan1\"]},{\"char\":\"泽\",\"pinyin\":\"ze2\",\"final\":\"e\",\"tone\":2,\"options\":[\"ze2\",\"shi4\"]}]",
+      "kind": "perfect",
+      "points": 4,
+      "author_id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "status": "withdrawn",
+      "created_at": "2026-09-30T19:16:56.360Z"
+    },
+    {
+      "id": "e25779ab-170e-4833-ac95-6e1b554de5d2",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松西瓜",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松西瓜",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"西\",\"pinyin\":\"xi1\",\"final\":\"i\",\"tone\":1,\"options\":[\"xi1\"]},{\"char\":\"瓜\",\"pinyin\":\"gua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"gua1\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:28.768Z"
+    },
+    {
+      "id": "ee907d66-3cc3-40ca-aa13-73da3fda0e1b",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松批发",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松批发",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"批\",\"pinyin\":\"pi1\",\"final\":\"i\",\"tone\":1,\"options\":[\"pi1\"]},{\"char\":\"发\",\"pinyin\":\"fa1\",\"final\":\"a\",\"tone\":1,\"options\":[\"fa1\",\"fa4\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:30.787Z"
+    },
+    {
+      "id": "f50046a2-e53c-42ad-b213-39a139706e00",
+      "topic_id": "600b8ce1-e281-445a-ba70-a57a49a93be8",
+      "text": "唳冫喰匷倃傅勔仒风云星底任",
+      "normalized": "唳冫喰匷倃傅勔仒风云星底任",
+      "readings": "[{\"char\":\"唳\",\"pinyin\":\"li4\",\"final\":\"i\",\"tone\":4,\"options\":[\"li4\"]},{\"char\":\"冫\",\"pinyin\":\"bing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"bing1\"]},{\"char\":\"喰\",\"pinyin\":\"can1\",\"final\":\"an\",\"tone\":1,\"options\":[\"can1\",\"sun1\",\"qi1\"]},{\"char\":\"匷\",\"pinyin\":\"jue2\",\"final\":\"üe\",\"tone\":2,\"options\":[\"jue2\"]},{\"char\":\"倃\",\"pinyin\":\"jiu4\",\"final\":\"iou\",\"tone\":4,\"options\":[\"jiu4\"]},{\"char\":\"傅\",\"pinyin\":\"fu4\",\"final\":\"u\",\"tone\":4,\"options\":[\"fu4\"]},{\"char\":\"勔\",\"pinyin\":\"mian3\",\"final\":\"ian\",\"tone\":3,\"options\":[\"mian3\"]},{\"char\":\"仒\",\"pinyin\":\"bing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"bing1\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"星\",\"pinyin\":\"xing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"xing1\"]},{\"char\":\"底\",\"pinyin\":\"di3\",\"final\":\"i\",\"tone\":3,\"options\":[\"di3\",\"de0\"]},{\"char\":\"任\",\"pinyin\":\"ren4\",\"final\":\"en\",\"tone\":4,\"options\":[\"ren4\",\"ren2\"]}]",
+      "kind": "mixed",
+      "points": 5,
+      "author_id": "554e4b4e-49ba-4815-868a-e82bfdc37ee1",
+      "status": "active",
+      "created_at": "2026-09-30T19:58:06.025Z"
+    },
+    {
+      "id": "f7709c15-a255-41f6-a34e-87a3d3460565",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松青蛙",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松青蛙",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"青\",\"pinyin\":\"qing1\",\"final\":\"ing\",\"tone\":1,\"options\":[\"qing1\"]},{\"char\":\"蛙\",\"pinyin\":\"wa1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"wa1\"]}]",
+      "kind": "tone",
+      "points": 18,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:32.413Z"
+    },
+    {
+      "id": "ffe0706c-c87a-496d-ae94-ae58a6a4101f",
+      "topic_id": "c8ee5233-e110-41dc-879c-d754227916e7",
+      "text": "雪雪花花雪风花花海秋春光江云春松低洼",
+      "normalized": "雪雪花花雪风花花海秋春光江云春松低洼",
+      "readings": "[{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"雪\",\"pinyin\":\"xue3\",\"final\":\"üe\",\"tone\":3,\"options\":[\"xue3\"]},{\"char\":\"风\",\"pinyin\":\"feng1\",\"final\":\"eng\",\"tone\":1,\"options\":[\"feng1\",\"feng3\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"花\",\"pinyin\":\"hua1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"hua1\"]},{\"char\":\"海\",\"pinyin\":\"hai3\",\"final\":\"ai\",\"tone\":3,\"options\":[\"hai3\"]},{\"char\":\"秋\",\"pinyin\":\"qiu1\",\"final\":\"iou\",\"tone\":1,\"options\":[\"qiu1\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"光\",\"pinyin\":\"guang1\",\"final\":\"uang\",\"tone\":1,\"options\":[\"guang1\"]},{\"char\":\"江\",\"pinyin\":\"jiang1\",\"final\":\"iang\",\"tone\":1,\"options\":[\"jiang1\"]},{\"char\":\"云\",\"pinyin\":\"yun2\",\"final\":\"ün\",\"tone\":2,\"options\":[\"yun2\"]},{\"char\":\"春\",\"pinyin\":\"chun1\",\"final\":\"uen\",\"tone\":1,\"options\":[\"chun1\"]},{\"char\":\"松\",\"pinyin\":\"song1\",\"final\":\"ong\",\"tone\":1,\"options\":[\"song1\"]},{\"char\":\"低\",\"pinyin\":\"di1\",\"final\":\"i\",\"tone\":1,\"options\":[\"di1\"]},{\"char\":\"洼\",\"pinyin\":\"wa1\",\"final\":\"ua\",\"tone\":1,\"options\":[\"wa1\"]}]",
+      "kind": "perfect",
+      "points": 36,
+      "author_id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "status": "active",
+      "created_at": "2026-10-02T09:34:30.264Z"
+    }
+  ],
+  "scores": [
+    {
+      "id": "1a3e7c73-1284-43bd-b959-6bd626e322b2",
+      "username": "互查测试220e0362",
+      "score": 36
+    },
+    {
+      "id": "409b65a8-fc2c-473d-85bb-796b8a219fb1",
+      "username": "互查测试4a0aebb0",
+      "score": 0
+    },
+    {
+      "id": "554e4b4e-49ba-4815-868a-e82bfdc37ee1",
+      "username": "混合测试fdf205b9",
+      "score": 5
+    },
+    {
+      "id": "60551dd4-db25-4bbf-86f8-61b17239aa23",
+      "username": "手机版测试1001",
+      "score": 5
+    },
+    {
+      "id": "62c10eea-2e55-4503-9848-5d9c202d58c1",
+      "username": "管理员0e58f7e1",
+      "score": 0
+    },
+    {
+      "id": "ac95d9f5-6d0f-4bcf-b313-4ab8329d7aa0",
+      "username": "同组测试fe119a90",
+      "score": 270
+    },
+    {
+      "id": "b04e4e4b-fb68-4bc9-8a94-2bc5b13831ea",
+      "username": "同韵测试b7a87c89",
+      "score": 4
+    },
+    {
+      "id": "cd28ccc3-89de-4e6d-be90-a219f65cfab3",
+      "username": "作者乙0e58f7e1",
+      "score": 0
+    },
+    {
+      "id": "edcae9f1-b59b-449b-922a-2e91891b2caa",
+      "username": "作者0e58f7e1",
+      "score": 6
+    }
+  ]
+}

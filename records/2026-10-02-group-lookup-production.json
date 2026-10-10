@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "verified_date": "2026-10-02",
+  "production_version": "2a050d1b-dd79-4319-92f7-10c5b074838f",
+  "topic": "嘻哈",
+  "topic_id": "4613d7a3-c5a0-4d83-abee-fddabd2bded4",
+  "checked_words": 10,
+  "results_per_word": [
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9
+  ],
+  "first_authors_preserved": true,
+  "queries_award_no_score": true,
+  "production_writes": false,
+  "counts": {
+    "topics": 14,
+    "answers": 36,
+    "words": 50
+  }
+}

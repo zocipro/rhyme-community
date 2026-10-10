@@ -1,0 +1,11 @@
+{
+  "environment": "production",
+  "applied": true,
+  "verified_remaining_changes": 0,
+  "changed": 3,
+  "changes": [
+    {"id":"8de0f775-62df-4919-84bb-5399b2a1e319","before":{"kind":"tone","points":3},"after":{"kind":"perfect","points":6}},
+    {"id":"93a3703a-0e03-4854-8fac-b4267cdec638","before":{"kind":"mixed","points":3},"after":{"kind":"final","points":3}},
+    {"id":"a45c32ba-2f0e-4e60-a5de-4d1cd87189e6","before":{"kind":"mixed","points":5},"after":{"kind":"final","points":5}}
+  ]
+}

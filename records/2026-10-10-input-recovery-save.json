@@ -1,0 +1,40 @@
+{
+  "verifiedAt": "2026-10-09T16:17:42.904Z",
+  "scope": "isolated local Worker/D1 and fault proxy; read-only final verification",
+  "requestId": "93c00d4e-c4b3-41d8-81c8-68f9e76e641a",
+  "sqlVerification": {
+    "batches": 1,
+    "pairs": 3,
+    "pointsEntries": 3,
+    "awardedPoints": 12,
+    "totalUserScore": 1354
+  },
+  "counts": {
+    "words": 43,
+    "pairs": 602,
+    "batches": 4
+  },
+  "responseBodyFault": {
+    "headersFlushedAt": "2026-10-09T16:03:47.094Z",
+    "clientConnectionClosedAt": "2026-10-09T16:04:07.082Z",
+    "elapsedMs": 19988
+  },
+  "proxySaveEvents": [
+    {
+      "at": "2026-10-09T16:03:47.094Z",
+      "replayed": false,
+      "pairCount": 3,
+      "points": 12
+    }
+  ],
+  "uiEvidenceReportedByRoot": {
+    "afterBodyTimeout": "submission controls unlocked",
+    "draftAfterConfirmation": "new 音乐 draft and le4 reading retained",
+    "confirmedResultReplayed": true,
+    "scoreBefore": 1342,
+    "scoreAfter": 1354
+  },
+  "verificationMethod": "wrangler d1 execute DB --local with SELECT only",
+  "sourceChanges": 0,
+  "remoteWrites": 0
+}

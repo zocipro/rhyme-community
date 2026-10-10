@@ -1,0 +1,48 @@
+{
+  "verified_date": "2026-10-09",
+  "method": "Actual browser interactions: isolated real Worker/D1 and Cloudflare staging; no production fixtures",
+  "source_changes": [
+    "src/main.tsx",
+    "src/style.css"
+  ],
+  "unchanged_backend_shared_migration_files": 8,
+  "build": "TypeScript and Vite passed",
+  "local_browser_checks": [
+    "1280x720 workspace fits viewport; library/result/editor scroll independently",
+    "Add focuses new word; delete focuses adjacent word",
+    "Selected yue4 retained after punctuation and spaces; Han changes resolve new readings",
+    "Long text grows and remeasures after preview rotation; internal scroll in short viewport",
+    "Server preview checks duplicate and mismatching pairs together",
+    "50 words,1225 pairs: 49 issues filtered,1176 eligible; edit jumps to word50; cap button disabled",
+    "Preview503: lookup unfinished, submit disabled, draft retained; retry restores",
+    "Password visibility and login continuation",
+    "Damaged save response: confirm3 pairs once,+8; preserve newer edited draft",
+    "Personal pairs and score entries agree +2/+2/+4; ARIA tabs and keyboard arrows",
+    "Empty personal relations and points have composer action",
+    "Ordinary account can back through old admin history; no403 or loop",
+    "Search503 retries original query; clear restores list and focuses search",
+    "Indirect connected member shows actual saved edge attribution"
+  ],
+  "staging_checks": [
+    "1280x720,390x844,320x568,667x375: no page/horizontal overflow",
+    "Large group results scroll; composer action fixed; current word carried into existing draft",
+    "Selected yue4: three pairs +4/+2/+2,total8, blue and gold alignment",
+    "667x375: 56px input within73.91px pane; action bottom307.60; no console errors"
+  ],
+  "production_checks": [
+    "Compiled asset bytes match; health ok",
+    "64 words,67 pairs,279 points and all original fields and per-account sources unchanged",
+    "Original group shows9 other members and pinned composer action",
+    "390x844/320x568 actions bottom764/490;320x350 keyboard simulation bottom340 and full focused input",
+    "No console errors; anonymous previews only"
+  ],
+  "staging_version": "2b35ee29-e18f-4bf6-8e17-4c6277df9c37",
+  "production_version": "77b67a0a-f956-4846-8a29-54416b92aa52",
+  "production_content_writes": 0,
+  "physical_mobile_keyboard_tested": false,
+  "screenshots": [
+    "../rhyme-workspace-mobile-live.jpg",
+    "../rhyme-workspace-desktop-live.jpg"
+  ],
+  "cleanup": "Temporary browser tabs closed; production preview cleared; viewport reset; proxy/Worker and QA credentials/database removed; edit backup/script removed"
+}

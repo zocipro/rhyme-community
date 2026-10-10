@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-08",
+  "userId": "aa01cbdd-136a-45f5-a35a-759542fd5be7",
+  "pairIds": [
+    "ca312a56-f42f-4375-9d2d-fd8172901aa0",
+    "92425f8f-3e08-4607-8cc6-cced26f5e9ea",
+    "912e1663-bf97-4975-9601-43370cab0c49"
+  ],
+  "score": 40,
+  "scoreEntries": 3,
+  "selectedReadingPreserved": true,
+  "allAuthorsMatch": true,
+  "productionWrites": 0,
+  "accountDisabled": true,
+  "sessionsRemaining": 0,
+  "stagingVersion": "13b12e5f-9170-49c6-9419-2f4c4c42cf8c"
+}

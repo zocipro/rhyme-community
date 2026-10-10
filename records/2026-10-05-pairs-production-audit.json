@@ -1,0 +1,14 @@
+{
+  "environment": "production",
+  "phase": "after",
+  "legacyFieldsUnchanged": true,
+  "firstAuthorsTimesReadingsUnchanged": true,
+  "perUserScoresUnchanged": true,
+  "legacyScoreEntries": 36,
+  "migratedPairs": 36,
+  "totalScore": 144,
+  "counts": {
+    "pairs": 36,
+    "words": 49
+  }
+}

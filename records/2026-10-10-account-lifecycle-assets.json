@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-10",
+  "checkedAt": "2026-10-10T12:59:43.995Z",
+  "productionVersion": "bea4ec9d-9b2e-4e59-b781-25d7c029e429",
+  "stagingVersion": "631e4bb7-2301-40fc-9e65-b110dcad7bf2",
+  "url": "https://yy.zoci.pro",
+  "items": [
+    {
+      "path": "/assets/index-Ctk70gI5.js",
+      "bytes": 279068,
+      "sha256": "13ffa64d31ffa682d072eb422c7590e999c23933d47dd9cad4ba21f8de241c57",
+      "matchesBuild": true
+    },
+    {
+      "path": "/assets/index-CqdD_voX.css",
+      "bytes": 45936,
+      "sha256": "15f1f637ea0258f8eb2bad74e57ffad6d21aba7ad495133165a4763139910ded",
+      "matchesBuild": true
+    },
+    {
+      "path": "/assets/pronunciation-CB5diBOZ.js",
+      "bytes": 287843,
+      "sha256": "1e2d7378d1a84d6a6c75872a2430a7dc4e37bc17dad8e167749c20700e5f2f0e",
+      "matchesBuild": true
+    }
+  ],
+  "api": [
+    {
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "path": "/api/me",
+      "status": 200,
+      "anonymous": true
+    },
+    {
+      "path": "/api/admin/records",
+      "status": 401
+    },
+    {
+      "path": "/api/profile",
+      "status": 401
+    },
+    {
+      "path": "/api/words",
+      "status": 200,
+      "counts": {
+        "words": 64,
+        "pairs": 67
+      }
+    }
+  ],
+  "contentWrites": 0
+}

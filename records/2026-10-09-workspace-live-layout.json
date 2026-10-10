@@ -1,0 +1,53 @@
+{
+  "verifiedDate": "2026-10-09",
+  "url": "https://yy.zoci.pro",
+  "viewportChecks": [
+    {
+      "actionBottom": 764,
+      "height": 844,
+      "pageHeight": 844,
+      "pageWidth": 390,
+      "pane": "compare",
+      "width": 390
+    },
+    {
+      "actionBottom": 490,
+      "height": 568,
+      "pageHeight": 568,
+      "pageWidth": 320,
+      "pane": "compare",
+      "width": 320
+    },
+    {
+      "actionBottom": 340,
+      "focusedBounds": {
+        "bottom": 253,
+        "height": 56,
+        "left": 22,
+        "right": 298,
+        "top": 197,
+        "width": 276,
+        "x": 22,
+        "y": 197
+      },
+      "height": 350,
+      "keyboard": "true",
+      "pageHeight": 350,
+      "pageWidth": 320,
+      "pane": "write",
+      "paneBounds": {
+        "bottom": 253,
+        "height": 110,
+        "left": 14,
+        "right": 306,
+        "top": 143,
+        "width": 292,
+        "x": 14,
+        "y": 143
+      },
+      "width": 320
+    }
+  ],
+  "physicalKeyboardTested": false,
+  "productionContentWrites": 0
+}
