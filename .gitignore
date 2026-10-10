@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .wrangler/
+wrangler.ya.json
 .dev.vars*
 *.log
 playwright-report/

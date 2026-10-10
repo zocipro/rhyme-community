@@ -1,6 +1,6 @@
 # 当前上线验收 · 2026-10-10
 
-正式版本 `bea4ec9d-9b2e-4e59-b781-25d7c029e429`，staging 版本 `631e4bb7-2301-40fc-9e65-b110dcad7bf2`。源码仓库 https://github.com/zocipro/rhyme-community，正式地址 https://yy.zoci.pro。
+正式环境现为 Worker `rhyme-community-ya`、https://ya.zoci.pro。源码仓库 https://github.com/zocipro/rhyme-community。下列各节是合入 UI 改版前的验收快照（当时正式地址仍为 yy.zoci.pro，staging Worker 仍在）。
 
 | 本轮要求 | 证据 |
 | --- | --- |

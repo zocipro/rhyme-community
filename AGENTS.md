@@ -10,5 +10,5 @@
 - 原 topics/answers 仅内部归档和只读兼容；旧出题/答题写接口停止接受内容。迁移不把原出题者转为押韵作者，不补造答案之间的关系，保留每位用户已有积分和历史来源。
 - 正式内容全部来自用户；禁止将 fixture、示例或外部词库写入生产。内容撤回保留原文、归属、唯一键和审计，相关积分扣回。
 - 按 pnpm-lock.yaml 安装；规则改动运行 pnpm test，数据库/API 改动运行 pnpm test:integration，发布前 pnpm build。
-- 明确选择 staging 或顶层生产环境；不改其他 Worker、数据库或域名。迁移前暂停内容写入、备份并核对；测试数据仅写 staging。
+- 正式环境只有 Worker `rhyme-community-ya` 与域名 ya.zoci.pro，D1 为 `352be9ba-ecc6-4240-b5d8-277741a449bd`。不改其他 Worker、数据库或域名。迁移前暂停内容写入、备份并核对；不要把测试数据写入生产 D1。
 - 初始化凭证使用 Wrangler Secret；私人管理员设置 HTML 和数据库备份放项目目录外，不加入源码包或公开资产。

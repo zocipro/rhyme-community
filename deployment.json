@@ -1,6 +1,9 @@
 {
-  "production_url": "https://yy.zoci.pro",
-  "staging_url": "https://rhyme-community-staging.shangqianbeibiantu.workers.dev",
+  "production_url": "https://ya.zoci.pro",
+  "production_worker": "rhyme-community-ya",
+  "retired_production_url": "https://yy.zoci.pro",
+  "retired_workers": ["rhyme-community", "rhyme-community-staging"],
+  "staging_url": null,
   "account_id": "c4189ba6ee17ce5a0f2af1faa536c5ac",
   "production_database_id": "352be9ba-ecc6-4240-b5d8-277741a449bd",
   "staging_database_id": "bd5d4b12-eda9-4e4b-8ed8-2474d952917d",
@@ -14,7 +17,7 @@
   "administrator_initialization": "owner_sets_username_and_password_using_private_one_time_link",
   "staging_integration_tests": "passed",
   "status": "deployed_and_verified",
-  "workers_dev_url": "https://rhyme-community.shangqianbeibiantu.workers.dev",
+  "workers_dev_url": null,
   "custom_domain_verified_date": "2026-10-01",
   "custom_domain_https": "verified",
   "latest_verified_counts": {

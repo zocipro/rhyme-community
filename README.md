@@ -6,9 +6,7 @@
 
 | 环境 | 地址 | 说明 |
 | --- | --- | --- |
-| 正式 | https://yy.zoci.pro | 顶层 Worker `rhyme-community`，绑定生产 D1 |
-| 本分支预览 | https://ya.zoci.pro | Workers Builds 从 `cursor/ui-redesign-eff7` 自动部署为 `rhyme-community-ya`，共用生产 D1 |
-| Staging | `rhyme-community-staging` | 独立 D1，仅写测试数据 |
+| 正式 | https://ya.zoci.pro | Worker `rhyme-community-ya`，Workers Builds 从 `main` 自动部署，绑定生产 D1 `352be9ba-ecc6-4240-b5d8-277741a449bd` |
 
 完整源码：[zocipro/rhyme-community](https://github.com/zocipro/rhyme-community)。上线门槛见 `READINESS.md`，已验证结果见 `VERIFICATION.md`，资源 ID 见 `deployment.json` 与 `wrangler.jsonc`。
 
@@ -87,7 +85,7 @@ API 请求读取正文有 20 秒超时。结果未确认的提交另存账号、
 
 `0004` 与仍在运行的旧 Worker 兼容；表未建立时热门词汇为空、搜索不计数。`pnpm run build` 仅在 Workers Builds（`WORKERS_CI=1`）末尾执行 `wrangler d1 migrations apply DB --remote`；失败则构建失败、不部署。本地和测试不执行。`RHYME_SKIP_REMOTE_MIGRATIONS=1` 可关闭。手工补跑：`pnpm exec wrangler d1 migrations apply DB --remote`。
 
-发布正式环境前：先测 staging → 部署兼容写入暂停版本 → `content_write_paused=1` → 备份核对 → 迁移 → 发布 → 解除暂停。迁移末尾设置 `pair_model_ready=1`。测试数据只写 staging。
+发布前：暂停内容写入（`content_write_paused=1`）→ 备份核对 → 迁移 → 发布 → 解除暂停。迁移末尾设置 `pair_model_ready=1`。不要把测试数据写入生产 D1。
 
 ## 开发与验证
 
@@ -109,12 +107,26 @@ pnpm worker                      # http://127.0.0.1:8787
 
 `node scripts/test-word-input.mjs /absolute/temporary/directory/node_modules/jsdom` 对 React 输入组件跑 6 项 IME 回归；官方 jsdom 只装在项目外临时目录，不改锁文件。
 
-`verify-pairs-staging.mjs` 只在独立 staging 写测试内容。`verify-pairs-production-readonly.mjs` 与 `verify-maturity-production-readonly.mjs` 只读正式站。`audit-pair-migration.mjs staging|production before|after` 核对历史字段和积分。数据库备份与私人管理员入口放项目目录外，不进源码包。
+`verify-pairs-production-readonly.mjs` 与 `verify-maturity-production-readonly.mjs` 只读正式站 `ya.zoci.pro`。`audit-pair-migration.mjs production before|after` 核对历史字段和积分。仓库里仍留着已下线的 staging 校验脚本，不要再对它们执行写入。数据库备份与私人管理员入口放项目目录外，不进源码包。
 
 ## 部署
 
-- **正式 `yy.zoci.pro`：** Worker `rhyme-community`，D1 `rhyme-community`。本仓库不自动改正式 Worker；不要把本分支推到 `main` 或手工 `wrangler deploy` 到正式环境。
-- **本分支 `ya.zoci.pro`：** Workers Builds 在 `pnpm run build` 后把 `wrangler.jsonc` 写成 `rhyme-community-ya` 并部署。构建步会把待执行迁移（含 0004）应用到**共用的生产 D1**，因此迁移必须只做加法。
-- **Staging：** `wrangler.jsonc` 的 `env.staging`，独立数据库，用于迁移核对与测试投稿。
+唯一正式环境是 Worker `rhyme-community-ya`、自定义域名 `ya.zoci.pro`，D1 为 `rhyme-community`（`352be9ba-ecc6-4240-b5d8-277741a449bd`）。`wrangler.jsonc` 直接描述该环境；`workers_dev` 关闭。旧 Worker `rhyme-community`、`rhyme-community-staging` 与域名 `yy.zoci.pro` 已删除。
 
-独立部署到自己的 Cloudflare 时，改 `wrangler.jsonc` 中的账号、Worker 名、数据库 ID 与域名，并用 `wrangler secret put BOOTSTRAP_TOKEN` 保存初始化令牌。先向独立 staging 应用迁移并验证，再发布正式环境。`.dev.vars`、真实密钥、备份与会话数据不进仓库。
+Workers Builds 从 `main` 运行 `pnpm run build`（含 `WORKERS_CI=1` 时对上述 D1 执行待应用迁移）再部署。推荐部署命令：
+
+```sh
+npx wrangler deploy
+```
+
+若构建触发器仍生成 `wrangler.ya.json`，下面两段都仍然有效（配置已被写成正式值，生成步骤只是再写一份相同文件）：
+
+```sh
+node scripts/write-ya-config.mjs && npx wrangler deploy -c wrangler.ya.json
+```
+
+```sh
+node -e 'const fs=require("fs");const c=JSON.parse(fs.readFileSync("wrangler.jsonc","utf8"));c.name="rhyme-community-ya";delete c.env;delete c["$schema"];c.workers_dev=false;c.routes=[{pattern:"ya.zoci.pro",custom_domain:true}];fs.writeFileSync("wrangler.ya.json",JSON.stringify(c,null,2))' && npx wrangler deploy -c wrangler.ya.json
+```
+
+独立部署到自己的 Cloudflare 时，改 `wrangler.jsonc` 中的账号、Worker 名、数据库 ID 与域名，并用 `wrangler secret put BOOTSTRAP_TOKEN` 保存初始化令牌。`.dev.vars`、真实密钥、备份与会话数据不进仓库。
