@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fontsource/anton':
+        specifier: ^5.3.0
+        version: 5.3.0
       hono:
         specifier: latest
         version: 4.13.11
@@ -418,6 +421,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource/anton@5.3.0':
+    resolution: {integrity: sha512-OR1D5n124n2XRs66SbX7IjcOSptljEJE8FcDNnlni2y1/M6KpTx7cU2PIWzTSsBj4WFkHPw24On8qw3qkQZuTw==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -1346,6 +1352,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.2':
     optional: true
+
+  '@fontsource/anton@5.3.0': {}
 
   '@img/colour@1.1.0': {}
 
