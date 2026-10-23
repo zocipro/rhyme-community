@@ -1,4 +1,5 @@
-export type Syllable = { char: string; pinyin: string; final: string; tone: number; options: string[] };
+// `colloquial` lists the options that are popular spoken readings rather than dictionary ones.
+export type Syllable = { char: string; pinyin: string; final: string; tone: number; options: string[]; colloquial?: string[] };
 export type RhymeKind = 'final' | 'tone' | 'perfect' | 'mixed' | 'none';
 export type Comparison = { n: number; kind: RhymeKind; points: number; valid: boolean; same: boolean; short: boolean; rows: { target: Syllable; answer?: Syllable; finalMatch: boolean; toneMatch: boolean }[] };
 export const kindLabels: Record<RhymeKind, string> = { final: '韵母押', tone: '声调押', perfect: '完美押韵', mixed: '混合押韵', none: '尚未押上' };

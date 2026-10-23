@@ -144,3 +144,33 @@ test('押韵搜索按押数分区：多押在前、只押声调最后，结果�
   assert.equal(hotSearchKey(' 光芒！'),'光芒');
   for(const garbage of ['','光','abc','光芒abc','　',null,123,'光'.repeat(13),'光'.repeat(65)])assert.equal(hotSearchKey(garbage),null,String(garbage));
 });
+
+test('口语读音只作可选项：默认仍是字典读音，选择后按同一规则计分',async()=>{
+  const {compareMutual}=await import('../shared/pair-comparison.ts');
+  const {COLLOQUIAL_READINGS,withReading}=await import('../shared/finals.ts');
+  const song=pronunciation('很怂')[1];
+  assert.equal(song.pinyin,'song3');assert.ok(song.options.includes('song2'));assert.deepEqual(song.colloquial,['song2']);
+  assert.equal(compareMutual(pronunciation('很怂'),pronunciation('我来')).valid,false);
+  const chosen=pronunciation('很怂',['hen3','song2']);
+  assert.equal(chosen[1].tone,2);assert.equal(chosen[1].final,'ong');
+  const r=compareMutual(chosen,pronunciation('我来'));assert.equal(r.kind,'tone');assert.equal(r.points,2);
+  assert.equal(pronunciation('慫恿')[0].options.includes('song2'),true,'繁体字形同样可选');
+  assert.throws(()=>pronunciation('很怂',['hen3','song9']),/无效/);
+  assert.throws(()=>withReading(song,'song4'),/无效/);
+  assert.equal(pronunciation('说唱')[1].colloquial,undefined,'没有口语读音的字不带额外字段');
+  for(const [char,readings] of Object.entries(COLLOQUIAL_READINGS)){
+    const syllable=pronunciation(char+char)[0];
+    assert.ok(readings.every(reading=>syllable.options.includes(reading)),`${char} 的口语读音应可选`);
+    assert.ok(!syllable.colloquial?.includes(syllable.pinyin),`${char} 默认仍是字典读音`);
+  }
+});
+
+test('读音建议：只推荐让失败词对押上、且不破坏已押上词对的单字改读',async()=>{
+  const {readingHints}=await import('../shared/reading-hints.ts');
+  const hints=readingHints([pronunciation('很怂'),pronunciation('我来'),pronunciation('好用')]);
+  assert.deepEqual(hints.map(({wordIndex,charIndex,from,to,colloquial,fixes})=>({wordIndex,charIndex,from,to,colloquial,fixes})),[{wordIndex:0,charIndex:1,from:'song3',to:'song2',colloquial:true,fixes:1}]);
+  // 改读会让「很怂 ↔ 很好」失去声调押，所以不推荐。
+  assert.deepEqual(readingHints([pronunciation('很怂'),pronunciation('我来'),pronunciation('很好')]),[]);
+  assert.deepEqual(readingHints([pronunciation('说唱'),pronunciation('多样')]),[],'全部押上时没有建议');
+  assert.deepEqual(readingHints([pronunciation('说唱')]),[]);
+});
