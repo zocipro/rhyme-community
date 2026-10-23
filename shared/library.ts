@@ -1,10 +1,11 @@
-import { compareMutual } from './pair-comparison';
+import { bestSpokenComparison, trailingRhymes } from './spoken';
 import { normalize, rhymeFinal } from './rhyme-core';
-import type { Comparison, RhymeKind, Syllable } from './rhyme-core';
+import type { RhymeKind, Syllable } from './rhyme-core';
 import type { Word } from './lookup';
 
 export type SearchWord = Omit<Word, 'pair_count'>;
-export type SearchMatch = { word: SearchWord; pinyin: string[]; kind: RhymeKind; valid: boolean; tier: number };
+// spoken: the match only holds with a common spoken reading (e.g. 怂 as song2).
+export type SearchMatch = { word: SearchWord; pinyin: string[]; kind: RhymeKind; valid: boolean; tier: number; spoken?: boolean };
 export type SearchTier = { tier: number; label: string; items: SearchMatch[]; total: number };
 export type RhymeSearch = {
   query: { text: string; normalized: string; pinyin: string[]; ending: string } | null;
@@ -19,12 +20,7 @@ export function rhymeEnding(readings: readonly Syllable[]): string {
   const last = readings.at(-1);
   return last?.final ? rhymeFinal(last.final) : '';
 }
-// Consecutive trailing positions whose finals share a rhyme family: 1 = 单押, 2 = 双押, ...
-export function trailingRhymes(comparison: Comparison): number {
-  let count = 0;
-  for (let i = comparison.rows.length - 1; i >= 0 && comparison.rows[i].finalMatch; i--) count++;
-  return count;
-}
+export { trailingRhymes };
 const tierNames = ['', '单押', '双押', '三押', '四押', '五押', '六押', '七押', '八押', '九押', '十押'];
 export function tierLabel(tier: number): string {
   return tier <= 0 ? '只押声调' : tierNames[tier] ?? `${tier}押`;
@@ -39,11 +35,11 @@ export function searchRhymes(query: { text: string; normalized: string; readings
   let exact: SearchWord | null = null;
   for (const { word, readings } of words) {
     if (word.normalized === query.normalized) { exact = searchWord(word); continue; }
-    const comparison = compareMutual(query.readings, readings);
+    const best = bestSpokenComparison(query.readings, readings), comparison = best.comparison;
     if (comparison.same) continue;
     const tier = trailingRhymes(comparison);
     if (!tier && !comparison.valid) continue;
-    const match = { word: searchWord(word), pinyin: readings.map(syllable => syllable.pinyin), kind: comparison.kind, valid: comparison.valid, tier, popularity: word.pair_count };
+    const match = { word: searchWord(word), pinyin: best.right.map(syllable => syllable.pinyin), kind: comparison.kind, valid: comparison.valid, tier, ...(best.spoken ? { spoken: true } : {}), popularity: word.pair_count };
     byTier.set(tier, [...(byTier.get(tier) ?? []), match]);
   }
   const quality = (a: SearchMatch & { popularity: number }, b: SearchMatch & { popularity: number }) =>
