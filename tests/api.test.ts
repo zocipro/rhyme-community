@@ -636,3 +636,59 @@ test('热门词汇按搜索次数排序：同一来源每天每词只计一次�
   assert.equal(db(`SELECT COUNT(*) AS count FROM search_counts WHERE normalized LIKE '刷%'`)[0].count, 40, '每个来源每天最多计 40 个词');
   assert.deepEqual(dbState(), before, '搜索计数不触碰词语、押韵、投稿或积分');
 });
+
+test('管理后台：仅管理员可用；撤回全部与恢复同步积分；停用即下线；热门词屏蔽；暂停投稿', async () => {
+  const writer = client(), username = '后台作者' + tag;
+  assert.equal((await writer('/auth/register', { username, password })).status, 201);
+  const saved = await writer('/rhymes', batch(['后台测试山河', '后台测试丹泽', '后台测试干渴']));
+  assert.equal(saved.status, 201, JSON.stringify(saved.data));
+  const id = (await writer('/me')).data.user.id, earned = saved.data.points;
+  for (const path of ['/admin/overview', '/admin/users', `/admin/users/${id}`, '/admin/pairs', '/admin/logs', '/admin/hot']) assert.equal((await writer(path)).status, 403, path);
+  assert.equal((await writer('/admin/users/status', { id, disabled: true, reason: '越权' })).status, 403);
+
+  const overview = await admin('/admin/overview');
+  assert.equal(overview.status, 200);assert.ok(overview.data.totals.active_pairs >= 3);assert.equal(overview.data.paused, false);
+  const listed = (await admin('/admin/users?q=' + encodeURIComponent('后台作者' + tag))).data.items;
+  assert.deepEqual(listed.map((u: any) => [u.username, u.active_pairs, u.score]), [[username, 3, earned]]);
+  assert.equal((await admin(`/admin/users/${id}`)).data.pairs.length, 3);
+  assert.equal((await admin('/admin/pairs?q=' + encodeURIComponent('后台测试') + '&status=active')).data.total, 3);
+
+  assert.equal((await admin('/admin/users/withdraw-all', { id, reason: '' })).status, 400, '撤回全部需要原因');
+  const all = await admin('/admin/users/withdraw-all', { id, reason: '后台批量撤回' });
+  assert.equal(all.status, 200);assert.equal(all.data.withdrawn, 3);
+  assert.equal((await writer('/me')).data.user.score, 0);
+  assert.equal(db(`SELECT COUNT(*) AS n FROM moderation WHERE action='withdraw' AND reason='后台批量撤回'`)[0].n, 3);
+  const pair = (await admin(`/admin/users/${id}?status=withdrawn`)).data.pairs[0];
+  assert.equal((await admin('/admin/restore', { type: 'pair', id: pair.id })).status, 200);
+  assert.equal((await admin('/admin/restore', { type: 'pair', id: pair.id })).status, 404, '已恢复的不能重复恢复');
+  assert.equal((await writer('/me')).data.user.score, pair.points, '恢复后积分回到原作者');
+
+  const me = (await admin('/me')).data.user.id;
+  assert.equal((await admin('/admin/users/status', { id: me, disabled: true, reason: '自我停用' })).status, 400, '不能停用管理员或自己');
+  assert.equal((await admin('/admin/users/status', { id, disabled: true })).status, 400, '停用需要原因');
+  assert.equal((await admin('/admin/users/status', { id, disabled: true, reason: '后台停用测试' })).status, 200);
+  assert.equal((await writer('/me')).data.user, null, '停用后立即下线');
+  const blocked = await client()('/auth/login', { username, password });
+  assert.equal(blocked.status, 403);assert.match(blocked.data.error, /停用/);
+  assert.equal((await client()('/auth/login', { username, password: 'wrong-password-2026' })).status, 401, '密码错误不透露停用状态');
+  assert.equal((await admin('/admin/users/status', { id, disabled: false })).status, 200);
+  assert.equal((await writer('/auth/login', { username, password })).status, 200);
+
+  const hotWord = '押韵热词';
+  assert.ok((await publicApi('/search/hot')).data.items.some((item: any) => item.text === hotWord));
+  assert.equal((await admin('/admin/hot', { text: hotWord, blocked: true })).status, 200);
+  assert.ok(!(await publicApi('/search/hot')).data.items.some((item: any) => item.text === hotWord), '屏蔽后不再上榜');
+  assert.equal((await client()('/search/hits', { q: hotWord })).data.recorded, false, '屏蔽词不再计数');
+  assert.deepEqual((await admin('/admin/hot')).data.blocked, [hotWord]);
+  assert.equal((await admin('/admin/hot', { text: hotWord, blocked: false })).status, 200);
+  assert.ok((await publicApi('/search/hot')).data.items.some((item: any) => item.text === hotWord));
+
+  assert.equal((await admin('/admin/settings', { content_write_paused: true })).status, 200);
+  try {
+    assert.equal((await writer('/rhymes', batch(['后台暂停山河', '后台暂停丹泽']))).status, 503, '暂停后不能投稿');
+    assert.equal((await admin('/admin/withdraw', { type: 'pair', id: pair.id, reason: '暂停中撤回' })).status, 503);
+    assert.equal((await admin('/admin/overview')).data.paused, true);
+  } finally { assert.equal((await admin('/admin/settings', { content_write_paused: false })).status, 200); }
+  const actions = (await admin('/admin/logs')).data.items.filter((log: any) => log.entity_id === id || log.entity_id === pair.id).map((log: any) => log.action);
+  for (const action of ['enable', 'disable', 'restore', 'withdraw']) assert.ok(actions.includes(action), action);
+});

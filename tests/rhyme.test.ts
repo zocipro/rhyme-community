@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { compare, pronunciation, normalize, validateText, rhymeFinal } from '../shared/rhyme.ts';
+import * as rhymeCore from '../shared/rhyme-core.ts';
 const match=(a:string,b:string)=>compare(pronunciation(a),pronunciation(b));
 test('介音不同的同韵部匹配，保留原韵母；不使用字符串包含查韵',()=>{
   const r=match('说唱','多样');
@@ -143,4 +144,33 @@ test('押韵搜索按押数分区：多押在前、只押声调最后，结果�
   assert.equal(searchRhymes({text:'忙',normalized:'忙',readings:pronunciation('忙')},entries).tiers[0].label,'单押');
   assert.equal(hotSearchKey(' 光芒！'),'光芒');
   for(const garbage of ['','光','abc','光芒abc','　',null,123,'光'.repeat(13),'光'.repeat(65)])assert.equal(hotSearchKey(garbage),null,String(garbage));
+});
+
+test('口语读音：怂可选 song2，默认仍是字典读音，能让认怂与不服押上',async()=>{
+  const {resolvePairInputs,previewPairs,compareMutual}=await import('../shared/pairs.ts');
+  const {spokenFixes,isSpoken}=await import('../shared/spoken.ts');
+  const song=pronunciation('认怂');
+  assert.equal(song[1].pinyin,'song3');assert.ok(song[1].options.includes('song2'));assert.ok(isSpoken('怂','song2'));
+  assert.equal(compareMutual(song,pronunciation('不服')).valid,false);
+  assert.deepEqual(spokenFixes(song,pronunciation('不服')),[{side:'left',position:1,char:'怂',reading:'song2'}]);
+  const items=resolvePairInputs([{text:'认怂',readings:['ren4','song2']},{text:'不服'}]);
+  assert.equal(items[0].readings[1].tone,2);assert.equal(items[0].readings[1].final,'ong');
+  const [pair]=previewPairs(items);assert.equal(pair.comparison.valid,true);assert.equal(pair.comparison.kind,'tone');
+  // Only listed characters gain spoken readings; no free tone choice.
+  assert.throws(()=>pronunciation('不服',['bu4','fu3']),/无效/);
+  assert.deepEqual(spokenFixes(pronunciation('山河'),pronunciation('苹果')),[]);
+});
+test('押韵搜索会尝试口语读音，并标记只按口语读音成立的结果',async()=>{
+  const {searchRhymes}=await import('../shared/library.ts');
+  const word=(id:string,text:string)=>({word:{id,text,normalized:text,n:[...text].length,pair_count:1},readings:pronunciation(text)});
+  const found=searchRhymes({text:'不服',normalized:'不服',readings:pronunciation('不服')},[word('a','认怂',),word('b','山河')]);
+  const match=found.tiers.flatMap(t=>t.items).find(x=>x.word.text==='认怂');
+  assert.ok(match?.valid);assert.equal(match?.spoken,true);assert.deepEqual(match?.pinyin,['ren4','song2']);
+  const plain=searchRhymes({text:'帮忙',normalized:'帮忙',readings:pronunciation('帮忙')},[word('c','光芒')]);
+  assert.equal(plain.tiers[0].items[0].spoken,undefined);
+});
+test('拼音显示为声调符号，存储仍为数字调',()=>{
+  const {markedPinyin}=rhymeCore;
+  assert.deepEqual(['song2','gua4','liu2','gui4','lv4','lü3','nü3','xue2','ma0','er2','hng','ng2','m4'].map(markedPinyin),
+    ['sóng','guà','liú','guì','lǜ','lǚ','nǚ','xué','ma','ér','hng','ńg','m̀'].map(x=>x.normalize('NFC')));
 });

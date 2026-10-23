@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronRight, Flame, LoaderCircle, Mic2, Plus, Sparkles } from 'lucide-react';
-import { kindLabels, normalize } from '../shared/rhyme-core';
+import { kindLabels, markedPinyin, normalize } from '../shared/rhyme-core';
 import type { HotWord, RhymeSearch, SearchMatch, SearchTier, SearchWord } from '../shared/library';
 
 type Props = {
@@ -14,9 +14,9 @@ const tierHint = (tier: number) => tierHints[tier] ?? `末尾 ${tier} 字韵母�
 function WordChip({ match, selected, onWord }: { match: SearchMatch; selected: boolean; onWord: (word: SearchWord) => void }) {
   const perfect = match.valid && match.kind === 'perfect';
   return <button type="button" className={`sc-word-chip ${perfect ? 'sc-chip-perfect' : ''} ${match.valid ? '' : 'sc-chip-loose'}`} aria-current={selected ? 'true' : undefined}
-    aria-label={`${match.word.text}，${match.valid ? kindLabels[match.kind] : '未达收录规则'}，查看互押词`} onClick={() => onWord(match.word)}>
+    aria-label={`${match.word.text}，${match.valid ? kindLabels[match.kind] : '未达收录规则'}${match.spoken ? '，按口语读音' : ''}，查看互押词`} onClick={() => onWord(match.word)}>
     <strong>{match.word.text}</strong>
-    <small>{match.pinyin.join(' ')}</small>
+    <small>{match.pinyin.map(markedPinyin).join(' ')}{match.spoken && <span className="sc-spoken-tag">口语</span>}</small>
     {perfect && <Sparkles size={12} aria-hidden="true"/>}
   </button>;
 }
@@ -56,7 +56,7 @@ function Results({ search, query, selectedId, onWord, onCompose }: { search: Rhy
     {search.query && <div className="sc-query-card">
       <span className="sc-query-ending" aria-label={`韵脚 ${search.query.ending}`}>-{search.query.ending}</span>
       <strong>{search.query.text}</strong>
-      <span className="sc-tail">{search.query.pinyin.join(' ')}</span>
+      <span className="sc-tail">{search.query.pinyin.map(markedPinyin).join(' ')}</span>
       {search.exact ? <button type="button" className="sc-link" onClick={() => onWord(search.exact!)}>查看和它互押的词<ChevronRight size={14}/></button>
         : draft && <button type="button" className="sc-link" onClick={() => onCompose(draft)}>用「{search.query.text}」想押韵<ChevronRight size={14}/></button>}
     </div>}

@@ -13,7 +13,7 @@ function applyTheme(theme:Theme){
 }
 
 export function ThemeToggle(){
-  const [theme,setTheme]=useState<Theme>(()=>storedTheme()??'dark');
+  const [theme,setTheme]=useState<Theme>(()=>storedTheme()??'light');
   function toggle(){
     const next=theme==='dark'?'light':'dark';
     setTheme(next);applyTheme(next);
