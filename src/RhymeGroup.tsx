@@ -22,7 +22,9 @@ function Relation({ pair, date }: { pair: RhymePair } & Pick<Props, 'date'>) {
 
 // Every member is shown the same way; the word you arrived from is only highlighted, never a heading.
 export function RhymeGroup({ word, items, loading, error, more, onWord, onMore, onRetry, onCompose, onBack, date }: Props) {
-  const ending = items[0] ? rhymeFinal(items[0].pair.comparison.rows.at(-1)?.target.final ?? '') : '';
+  // Direct pairs are oriented so their left word is the current word; group pairs may start from anyone.
+  const direct = items.find(item => item.association === 'direct');
+  const ending = direct ? rhymeFinal(direct.pair.left.readings.at(-1)?.final ?? '') : '';
   const members = [{ word, association: 'self' as const }, ...items.map(item => ({ word: item.word as SearchWord, association: item.association }))]
     .sort((a, b) => a.word.normalized.localeCompare(b.word.normalized, 'zh-Hans-CN'));
   const pairs = [...new Map(items.map(item => [item.pair.id, item.pair])).values()].sort((a, b) => a.created_at.localeCompare(b.created_at));

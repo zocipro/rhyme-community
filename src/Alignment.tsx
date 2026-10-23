@@ -11,6 +11,6 @@ export function Alignment({result,readOnly=false}:{result:Comparison;readOnly?:b
       <div className={r.finalMatch?'sc-match':'sc-mismatch'}><span>{r.target.final} / {r.answer?.final||'—'}{r.finalMatch&&r.target.final!==r.answer?.final&&<small className="sc-rhyme-family">同韵 {rhymeFinal(r.target.final)}</small>}</span>{r.finalMatch?<Check size={13}/>:<X size={13}/>}</div>
       <div className={r.toneMatch?'sc-match':'sc-mismatch'}><span>{r.target.tone||'轻'} / {r.answer?(r.answer.tone||'轻'):'—'}</span>{r.toneMatch?<Check size={13}/>:<X size={13}/>}</div>
     </div>)}</div>
-    <div className="sc-result-note">{readOnly?<><Sparkles size={16}/>{kindLabels[result.kind]} · {result.n} 押</>:result.same?'同一个词不能组成押韵':result.valid?<><Sparkles size={16}/>{kindLabels[result.kind]} · +{result.points} 分</>:<>每个位置的韵母或声调至少押上一项</>}</div>
+    <div className="sc-result-note">{readOnly?<><Sparkles size={16}/>{kindLabels[result.kind]} · 末尾 {result.n} 字</>:result.same?'同一个词不能组成押韵':result.valid?<><Sparkles size={16}/>{kindLabels[result.kind]} · +{result.points} 分</>:<>每个位置的韵母或声调至少押上一项</>}</div>
   </div>;
 }
