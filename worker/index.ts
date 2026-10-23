@@ -62,7 +62,7 @@ app.use('/api/*', async (c, next) => {
   await next();
 });
 app.use('/api/*', async (c, next) => {
-  if (c.req.method === 'POST' && ['/api/topics','/api/answers','/api/rhymes','/api/admin/withdraw'].includes(c.req.path)) {
+  if (c.req.method === 'POST' && ['/api/topics','/api/answers','/api/rhymes','/api/admin/withdraw','/api/admin/restore','/api/admin/users/withdraw-all'].includes(c.req.path)) {
     const paused = await c.env.DB.prepare("SELECT value FROM settings WHERE key='content_write_paused'").first<{value:string}>();
     if (paused?.value === '1') return c.json(pausedError,503);
   }
@@ -127,7 +127,8 @@ app.post('/api/auth/register', async c => {
 app.post('/api/auth/login', async c => {
   const body = await jsonObject(c); const {username,password} = validateAccount(body.username,body.password);
   const row = await c.env.DB.prepare(`SELECT * FROM users WHERE username=? COLLATE NOCASE`).bind(username).first<User & {password_hash:string}>();
-  if (!row || row.disabled || !await verifyPassword(password,row.password_hash)) return c.json({ error:'用户名或密码不正确' },401);
+  if (!row || !await verifyPassword(password,row.password_hash)) return c.json({ error:'用户名或密码不正确' },401);
+  if (row.disabled) return c.json({ error:'这个账号已被停用，请联系管理员' },403);
   if (!await createSession(c,row,row.password_hash)) return c.json({ error:'用户名或密码不正确' },401);
   return c.json({ok:true});
 });
@@ -214,14 +215,15 @@ app.get('/api/library/search', async c => {
 const HOT_LIMIT = 12, HOT_MIN_COUNT = 2, HITS_PER_CLIENT_DAY = 40;
 app.get('/api/search/hot', async c => {
   try {
-    const { results } = await c.env.DB.prepare('SELECT normalized FROM search_counts WHERE count>=? ORDER BY count DESC,last_searched_at DESC LIMIT ?').bind(HOT_MIN_COUNT, HOT_LIMIT).all<{ normalized: string }>();
+    const blocked = await hotBlocklist(c.env.DB);
+    const { results } = await c.env.DB.prepare('SELECT normalized FROM search_counts WHERE count>=? AND normalized NOT IN (SELECT value FROM json_each(?)) ORDER BY count DESC,last_searched_at DESC LIMIT ?').bind(HOT_MIN_COUNT, JSON.stringify(blocked), HOT_LIMIT).all<{ normalized: string }>();
     return c.json({ items: results.map(row => ({ text: row.normalized }) satisfies HotWord) });
   } catch { return c.json({ items: [] as HotWord[] }); }
 });
 app.post('/api/search/hits', async c => {
   const body = await c.req.json().catch(() => null) as { q?: unknown } | null;
   const key = hotSearchKey(body?.q);
-  if (!key) return c.json({ recorded: false });
+  if (!key || (await hotBlocklist(c.env.DB)).includes(key)) return c.json({ recorded: false });
   const at = now(), day = at.slice(0, 10);
   const client = await digest(c.get('user')?.id || c.req.header('CF-Connecting-IP') || 'local');
   try {
@@ -385,6 +387,148 @@ app.post('/api/admin/reset-password',async c=>{
     c.env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),
     c.env.DB.prepare(`INSERT INTO moderation(id,entity_type,entity_id,admin_id,reason,action,created_at) VALUES(?,'user',?,?,?,'reset-password',?)`).bind(crypto.randomUUID(),user.id,c.get('user')!.id,'管理员重置密码',now())
   ]);return c.json({ok:true});
+});
+// ---------- Admin console ----------
+// Everything below reuses existing tables: disabling uses users.disabled, restores mirror withdraw,
+// and the hot-word blocklist lives in settings, so none of it needs a migration.
+const userStats = `(SELECT COUNT(*) FROM rhyme_pairs p WHERE p.author_id=u.id AND p.status='active') AS active_pairs,
+  (SELECT COUNT(*) FROM rhyme_pairs p WHERE p.author_id=u.id AND p.status='withdrawn') AS withdrawn_pairs,
+  (SELECT COALESCE(SUM(s.points),0) FROM score_entries s JOIN rhyme_pairs p ON p.id=s.pair_id WHERE s.user_id=u.id AND s.status='active' AND p.status='active') AS score,
+  (SELECT MAX(p.created_at) FROM rhyme_pairs p WHERE p.author_id=u.id) AS last_pair_at`;
+const adminUser = (row: Record<string, unknown>) => ({
+  id: String(row.id), username: String(row.username), role: String(row.role), disabled: Number(row.disabled) === 1, created_at: String(row.created_at),
+  active_pairs: Number(row.active_pairs), withdrawn_pairs: Number(row.withdrawn_pairs), score: Number(row.score), last_pair_at: row.last_pair_at ? String(row.last_pair_at) : null,
+});
+const userFilters: Record<string, string> = { all: '1', active: 'u.disabled=0', disabled: 'u.disabled=1', admin: "u.role='admin'" };
+const pairFilters: Record<string, string> = { all: '1', active: "p.status='active'", withdrawn: "p.status='withdrawn'" };
+const isoDaysAgo = (days: number) => new Date(Date.now() - days * 86400000).toISOString();
+function adminReason(value: unknown, fallback?: string): string {
+  const reason = typeof value === 'string' ? value.trim() : '';
+  if (reason.length >= 2 && reason.length <= 200) return reason;
+  if (fallback && !reason) return fallback;
+  throw new Error('请填写 2–200 字的处理原因');
+}
+async function hotBlocklist(db: D1Database): Promise<string[]> {
+  const row = await db.prepare("SELECT value FROM settings WHERE key='hot_blocklist'").first<{ value: string }>();
+  try { const list = JSON.parse(row?.value || '[]'); return Array.isArray(list) ? list.filter(x => typeof x === 'string') : []; } catch { return []; }
+}
+// Ordinary accounts only: admins are managed outside the console, and nobody acts on their own account here.
+async function managedUser(c: Context<AppEnv>, id: unknown) {
+  if (typeof id !== 'string' || !id.trim()) throw new Error('请选择有效的用户账号');
+  const user = await c.env.DB.prepare('SELECT id,username,role,disabled FROM users WHERE id=?').bind(id).first<User>();
+  if (!user) return { error: c.json({ error: '账号不存在' }, 404) };
+  if (user.role === 'admin' || user.id === c.get('user')!.id) return { error: c.json({ error: '只能处理普通用户账号' }, 400) };
+  return { user };
+}
+app.get('/api/admin/overview', async c => {
+  const week = isoDaysAgo(7), fortnight = isoDaysAgo(13).slice(0, 10);
+  const [totals, daily, kinds, top, paused] = await Promise.all([
+    c.env.DB.prepare(`SELECT (SELECT COUNT(*) FROM users) AS users,(SELECT COUNT(*) FROM users WHERE disabled=1) AS disabled_users,(SELECT COUNT(*) FROM users WHERE created_at>=?) AS new_users,
+      (SELECT COUNT(*) FROM rhyme_pairs WHERE status='active') AS active_pairs,(SELECT COUNT(*) FROM rhyme_pairs WHERE status='withdrawn') AS withdrawn_pairs,
+      (SELECT COUNT(*) FROM rhyme_pairs WHERE created_at>=?) AS week_pairs,(SELECT COUNT(*) FROM words w WHERE ${activeWord}) AS words,
+      (SELECT COALESCE(SUM(s.points),0) FROM score_entries s JOIN rhyme_pairs p ON p.id=s.pair_id WHERE s.status='active' AND p.status='active') AS points`).bind(week, week).first(),
+    c.env.DB.prepare(`SELECT substr(created_at,1,10) AS day,COUNT(*) AS pairs FROM rhyme_pairs WHERE created_at>=? GROUP BY day ORDER BY day`).bind(fortnight).all(),
+    c.env.DB.prepare(`SELECT kind,COUNT(*) AS pairs FROM rhyme_pairs WHERE status='active' GROUP BY kind`).all(),
+    c.env.DB.prepare(`SELECT u.*,${userStats} FROM users u ORDER BY score DESC,active_pairs DESC,u.created_at LIMIT 5`).all(),
+    c.env.DB.prepare("SELECT value FROM settings WHERE key='content_write_paused'").first<{ value: string }>(),
+  ]);
+  return c.json({ totals, daily: daily.results, kinds: kinds.results, top: top.results.map(adminUser), paused: paused?.value === '1' });
+});
+app.get('/api/admin/users', async c => {
+  const q = (c.req.query('q') || '').trim().slice(0, 24), status = userFilters[c.req.query('status') || 'all'] ? c.req.query('status') || 'all' : 'all', page = pageNumber(c.req.query('page'));
+  const where = `(?='' OR instr(lower(u.username),lower(?))>0) AND ${userFilters[status]}`;
+  const [rows, total] = await Promise.all([
+    c.env.DB.prepare(`SELECT u.*,${userStats} FROM users u WHERE ${where} ORDER BY u.created_at DESC,u.id DESC LIMIT 31 OFFSET ?`).bind(q, q, page * 30).all(),
+    c.env.DB.prepare(`SELECT COUNT(*) AS n FROM users u WHERE ${where}`).bind(q, q).first<{ n: number }>(),
+  ]);
+  return c.json({ items: rows.results.slice(0, 30).map(adminUser), total: total?.n || 0, hasMore: rows.results.length > 30 });
+});
+app.get('/api/admin/users/:id', async c => {
+  const id = c.req.param('id'), status = pairFilters[c.req.query('status') || 'all'] ? c.req.query('status') || 'all' : 'all', page = pageNumber(c.req.query('page'));
+  const row = await c.env.DB.prepare(`SELECT u.*,${userStats},(SELECT COUNT(*) FROM sessions s WHERE s.user_id=u.id AND s.expires_at>?) AS sessions FROM users u WHERE u.id=?`).bind(Date.now(), id).first();
+  if (!row) return c.json({ error: '账号不存在' }, 404);
+  const pairs = await c.env.DB.prepare(`${pairSelect} WHERE p.author_id=? AND ${pairFilters[status]} ORDER BY p.created_at DESC,p.id DESC LIMIT 31 OFFSET ?`).bind(id, page * 30).all();
+  return c.json({ user: { ...adminUser(row), sessions: Number(row.sessions) }, pairs: pairs.results.slice(0, 30).map(r => publicPair(r)), hasMore: pairs.results.length > 30 });
+});
+app.get('/api/admin/pairs', async c => {
+  if (!c.get('pairReady')) return c.json(pausedError, 503);
+  const q = (c.req.query('q') || '').trim().slice(0, 64), status = pairFilters[c.req.query('status') || 'all'] ? c.req.query('status') || 'all' : 'all', page = pageNumber(c.req.query('page'));
+  const where = `(?='' OR instr(p.left_text,?)>0 OR instr(p.right_text,?)>0 OR instr(lower(u.username),lower(?))>0) AND ${pairFilters[status]}`;
+  const [rows, total] = await Promise.all([
+    c.env.DB.prepare(`${pairSelect} WHERE ${where} ORDER BY p.created_at DESC,p.id DESC LIMIT 31 OFFSET ?`).bind(q, q, q, q, page * 30).all(),
+    c.env.DB.prepare(`SELECT COUNT(*) AS n FROM rhyme_pairs p JOIN users u ON u.id=p.author_id WHERE ${where}`).bind(q, q, q, q).first<{ n: number }>(),
+  ]);
+  return c.json({ items: rows.results.slice(0, 30).map(r => publicPair(r)), total: total?.n || 0, hasMore: rows.results.length > 30 });
+});
+app.get('/api/admin/logs', async c => {
+  const page = pageNumber(c.req.query('page'));
+  const { results } = await c.env.DB.prepare(`SELECT m.*,u.username AS admin,
+    CASE m.entity_type WHEN 'user' THEN (SELECT username FROM users WHERE id=m.entity_id) WHEN 'pair' THEN (SELECT left_text||' ↔ '||right_text FROM rhyme_pairs WHERE id=m.entity_id) END AS target
+    FROM moderation m JOIN users u ON u.id=m.admin_id ORDER BY m.created_at DESC,m.id DESC LIMIT 31 OFFSET ?`).bind(page * 30).all();
+  return c.json({ items: results.slice(0, 30), hasMore: results.length > 30 });
+});
+app.post('/api/admin/users/status', async c => {
+  const body = await jsonObject(c);
+  if (typeof body.disabled !== 'boolean') throw new Error('请选择停用或启用');
+  const found = await managedUser(c, body.id); if (found.error) return found.error;
+  const reason = adminReason(body.reason, body.disabled ? undefined : '管理员恢复账号');
+  await c.env.DB.batch([
+    c.env.DB.prepare('UPDATE users SET disabled=? WHERE id=?').bind(body.disabled ? 1 : 0, found.user.id),
+    // Disabling also signs the account out everywhere.
+    ...(body.disabled ? [c.env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(found.user.id)] : []),
+    c.env.DB.prepare(`INSERT INTO moderation(id,entity_type,entity_id,admin_id,reason,action,created_at) VALUES(?,'user',?,?,?,?,?)`).bind(crypto.randomUUID(), found.user.id, c.get('user')!.id, reason, body.disabled ? 'disable' : 'enable', now()),
+  ]);
+  return c.json({ ok: true });
+});
+app.post('/api/admin/users/withdraw-all', async c => {
+  if (!c.get('pairReady')) return c.json(pausedError, 503);
+  const body = await jsonObject(c);
+  const found = await managedUser(c, body.id); if (found.error) return found.error;
+  const reason = adminReason(body.reason), adminId = c.get('user')!.id, at = now();
+  const active = `SELECT id FROM rhyme_pairs WHERE author_id=? AND status='active'`;
+  const [logged] = await c.env.DB.batch([
+    c.env.DB.prepare(`INSERT INTO moderation(id,entity_type,entity_id,admin_id,reason,action,created_at) SELECT 'mod-'||lower(hex(randomblob(16))),'pair',id,?,?,'withdraw',? FROM rhyme_pairs WHERE author_id=? AND status='active'`).bind(adminId, reason, at, found.user.id),
+    c.env.DB.prepare(`UPDATE score_entries SET status='withdrawn' WHERE status='active' AND pair_id IN (${active})`).bind(found.user.id),
+    c.env.DB.prepare(`UPDATE rhyme_pairs SET status='withdrawn' WHERE author_id=? AND status='active'`).bind(found.user.id),
+  ]);
+  return c.json({ ok: true, withdrawn: logged.meta.changes });
+});
+app.post('/api/admin/restore', async c => {
+  if (!c.get('pairReady')) return c.json(pausedError, 503);
+  const body = await jsonObject(c);
+  if (body.type !== 'pair' || typeof body.id !== 'string') throw new Error('请选择要恢复的押韵关系');
+  const reason = adminReason(body.reason, '管理员恢复押韵');
+  const record = await c.env.DB.prepare("SELECT id FROM rhyme_pairs WHERE id=? AND status='withdrawn'").bind(body.id).first();
+  if (!record) return c.json({ error: '押韵已恢复或不存在' }, 404);
+  await c.env.DB.batch([
+    c.env.DB.prepare(`INSERT INTO moderation(id,entity_type,entity_id,admin_id,reason,action,created_at) SELECT ?,'pair',?,?,?,'restore',? WHERE EXISTS(SELECT 1 FROM rhyme_pairs WHERE id=? AND status='withdrawn')`).bind(crypto.randomUUID(), body.id, c.get('user')!.id, reason, now(), body.id),
+    c.env.DB.prepare("UPDATE rhyme_pairs SET status='active' WHERE id=?").bind(body.id),
+    // Points come back with the pair, exactly the entries the withdraw took away.
+    c.env.DB.prepare("UPDATE score_entries SET status='active' WHERE pair_id=? AND status='withdrawn'").bind(body.id),
+  ]);
+  return c.json({ ok: true });
+});
+app.get('/api/admin/hot', async c => {
+  const [rows, blocked] = await Promise.all([
+    c.env.DB.prepare('SELECT normalized AS text,count,last_searched_at FROM search_counts ORDER BY count DESC,last_searched_at DESC LIMIT 100').all().catch(() => ({ results: [] as Record<string, unknown>[] })),
+    hotBlocklist(c.env.DB),
+  ]);
+  return c.json({ items: rows.results, blocked, minCount: HOT_MIN_COUNT, limit: HOT_LIMIT });
+});
+app.post('/api/admin/hot', async c => {
+  const body = await jsonObject(c);
+  const key = hotSearchKey(body.text);
+  if (!key || typeof body.blocked !== 'boolean') throw new Error('请选择要处理的热门词');
+  const list = new Set(await hotBlocklist(c.env.DB));
+  if (body.blocked) list.add(key); else list.delete(key);
+  await c.env.DB.prepare("INSERT INTO settings(key,value) VALUES('hot_blocklist',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(JSON.stringify([...list])).run();
+  return c.json({ ok: true, blocked: [...list] });
+});
+app.post('/api/admin/settings', async c => {
+  const body = await jsonObject(c);
+  if (typeof body.content_write_paused !== 'boolean') throw new Error('设置格式不正确');
+  await c.env.DB.prepare("INSERT INTO settings(key,value) VALUES('content_write_paused',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(body.content_write_paused ? '1' : '0').run();
+  return c.json({ ok: true, paused: body.content_write_paused });
 });
 app.notFound(c=>c.json({error:'接口不存在'},404));
 app.onError((err,c)=>{

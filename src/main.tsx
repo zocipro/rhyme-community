@@ -7,11 +7,13 @@ import { isSpoken, spokenFixes } from '../shared/spoken';
 import type { SpokenFix } from '../shared/spoken';
 import type { Syllable, Comparison } from '../shared/rhyme-core';
 import type { Word, RhymingWord, RhymePair, ScoreEntry } from '../shared/lookup';
+import { ApiError, api, date } from './api';
 import { WordInput } from './WordInput';
 import { ThemeToggle } from './ThemeToggle';
 import { Alignment } from './Alignment';
 import { RhymeFinder } from './RhymeFinder';
 import { RhymeGroup } from './RhymeGroup';
+import { AdminConsole, AdminGate } from './AdminConsole';
 import { hotSearchKey } from '../shared/library';
 import type { HotWord, RhymeSearch, SearchWord } from '../shared/library';
 import '@fontsource/anton/latin.css';
@@ -21,7 +23,7 @@ type User = { id:string; username:string; role:string; score:number };
 type DraftItem = { id:string; text:string; choices:string[] };
 type PreviewPair = { leftIndex:number; rightIndex:number; comparison:Comparison; duplicate?:RhymePair };
 type Preview = { items:{text:string;normalized:string;readings:Syllable[]}[]; pairs:PreviewPair[]; valid:boolean; totalPoints:number; pairCount:number };
-type Records = { pairs:RhymePair[]; scoreEntries?:ScoreEntry[]; hasMore:boolean; users?:{id:string;username:string;role:string}[]; logs?:{id:string;entity_type:string;reason:string;action:string;admin:string;created_at:string}[] };
+type Records = { pairs:RhymePair[]; scoreEntries?:ScoreEntry[]; hasMore:boolean };
 type View = 'library'|'mine'|'admin';
 type Screen = 'library'|'lookup'|'compose';
 type Pane = 'write'|'compare';
@@ -40,20 +42,6 @@ function initialDraft():{items:DraftItem[];requestId:string}{
   } catch { /* A stored draft is optional. */ }
   return {items:[blankItem(),blankItem()],requestId:crypto.randomUUID()};
 }
-class ApiError extends Error { constructor(message:string,public status:number,public data:unknown){super(message);} }
-async function api<T>(path:string,body?:unknown):Promise<T>{
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20_000);
-  const timeout=()=>new ApiError('等待服务器超时，请重试',408,null);
-  try{
-    let response:Response;
-    try{response=await fetch('/api'+path,{signal:controller.signal,credentials:'same-origin',headers:body?{'Content-Type':'application/json'}:undefined,method:body?'POST':'GET',body:body?JSON.stringify(body):undefined});}catch{if(controller.signal.aborted)throw timeout();throw new Error('网络连接暂时中断，请重试');}
-    let data:T & {error?:string};
-    try{data=await response.json();}catch{if(controller.signal.aborted)throw timeout();throw new ApiError('暂时无法读取服务器响应，请重试',response.status>=500?response.status:502,null);}
-    if(!response.ok)throw new ApiError(data.error||'操作失败，请重试',response.status,data);
-    return data;
-  }finally{clearTimeout(timer);}
-}
-function date(text:string){return new Date(text).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});}
 type Pronunciation = (text:string,choices?:string[])=>Syllable[];
 function resolveItem(item:DraftItem,pronunciation?:Pronunciation){
   try {
@@ -86,15 +74,14 @@ function PairPreviewCard({pair,items,onEdit,disabled,fixes,onFix}:{pair:PreviewP
 }
 function App(){
   const [user,setUser]=useState<User|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState('');
-  const [view,setView]=useState<View>('library'),[screen,setScreen]=useState<Screen>(()=>initialSubmission()||(history.state?.rhymeNavigation?.view==='library'&&history.state?.rhymeNavigation?.screen==='compose')?'compose':'library'),[pane,setPane]=useState<Pane>('write');
+  const [view,setView]=useState<View>(location.pathname==='/admin'?'admin':'library'),[screen,setScreen]=useState<Screen>(()=>initialSubmission()||(history.state?.rhymeNavigation?.view==='library'&&history.state?.rhymeNavigation?.screen==='compose')?'compose':'library'),[pane,setPane]=useState<Pane>('write');
   const [search,setSearch]=useState<RhymeSearch|null>(null),[hot,setHot]=useState<HotWord[]|null>(null),[query,setQuery]=useState(''),[appliedQuery,setAppliedQuery]=useState(''),[searchComposition,setSearchComposition]=useState(0);
   const [lookupWord,setLookupWord]=useState<SearchWord|null>(null),[rhymes,setRhymes]=useState<RhymingWord[]>([]),[rhymePage,setRhymePage]=useState(0),[rhymeMore,setRhymeMore]=useState(false),[rhymeLoading,setRhymeLoading]=useState(false),[rhymeError,setRhymeError]=useState('');
   const [wordLoading,setWordLoading]=useState(false),[wordError,setWordError]=useState('');
   const [auth,setAuth]=useState<'login'|'register'|'setup'|null>(location.pathname==='/setup'?'setup':null),[username,setUsername]=useState(''),[password,setPassword]=useState(''),[authError,setAuthError]=useState(''),[busy,setBusy]=useState(false);
   const [draft,setDraft]=useState(initialDraft),[submitError,setSubmitError]=useState(''),[preview,setPreview]=useState<Preview|null>(null),[previewError,setPreviewError]=useState(''),[previewBusy,setPreviewBusy]=useState(false),[previewRevision,setPreviewRevision]=useState(0);
-  const [records,setRecords]=useState<Records|null>(null),[recordPage,setRecordPage]=useState(0),[recordLoading,setRecordLoading]=useState(false),[recordError,setRecordError]=useState(''),[recordTab,setRecordTab]=useState<'pairs'|'scoreEntries'|'users'|'logs'>('pairs');
+  const [records,setRecords]=useState<Records|null>(null),[recordPage,setRecordPage]=useState(0),[recordLoading,setRecordLoading]=useState(false),[recordError,setRecordError]=useState(''),[recordTab,setRecordTab]=useState<'pairs'|'scoreEntries'>('pairs');
   const [recordRevision,setRecordRevision]=useState(0);
-  const [manage,setManage]=useState<{type:'pair'|'user';id:string;text:string}|null>(null),[reason,setReason]=useState(''),[resetPassword,setResetPassword]=useState(''),[manageError,setManageError]=useState('');
   const [unconfirmed,setUnconfirmed]=useState(initialSubmission),[recoveryMissing,setRecoveryMissing]=useState(false);
   const [previewFilter,setPreviewFilter]=useState<'all'|'issues'>('issues'),[focusWordId,setFocusWordId]=useState<string|null>(null),[passwordVisible,setPasswordVisible]=useState(false);
   const [dictionary,setDictionary]=useState<{pronunciation:Pronunciation}|null>(null),[dictionaryLoading,setDictionaryLoading]=useState(false),[dictionaryError,setDictionaryError]=useState('');
@@ -122,12 +109,11 @@ function App(){
   const issueCount=issuePairs.length+missingPairs;
   const showIssues=previewFilter==='issues'&&issueCount>0;
   const visiblePairs=showIssues?issuePairs:currentPreview.pairs;
-  const recordTabs:typeof recordTab[] = view==='mine'?['pairs','scoreEntries']:['pairs','users','logs'];
+  const recordTabs:typeof recordTab[] = ['pairs','scoreEntries'];
 
   async function refreshUser(){const request=++userRequest.current;const data=await api<{user:User|null}>('/me');if(request===userRequest.current)setUser(data.user);return data.user;}
-  function openAuth(mode:'login'|'register'|'setup'='login'){if(!auth&&!manage)opener.current=document.activeElement as HTMLElement|null;setAuthError('');setAuth(mode);}
-  function openManage(value:NonNullable<typeof manage>){opener.current=document.activeElement as HTMLElement|null;setManageError('');setReason('');setResetPassword('');setManage(value);}
-  function sessionExpired(intent:'submit'|'recover'|null=null){userRequest.current++;recordRequest.current++;setUser(null);setRecords(null);setManage(null);setResetPassword('');setReason('');pendingSubmit.current=intent;openAuth();setAuthError('登录已过期，请重新登录。内容和读音已保留。');}
+  function openAuth(mode:'login'|'register'|'setup'='login'){if(!auth)opener.current=document.activeElement as HTMLElement|null;setAuthError('');setAuth(mode);}
+  function sessionExpired(intent:'submit'|'recover'|null=null){userRequest.current++;recordRequest.current++;setUser(null);setRecords(null);pendingSubmit.current=intent;openAuth();setAuthError('登录已过期，请重新登录。内容和读音已保留。');}
   async function loadWords(q=query){
     if(q!==appliedQuery){setSearch(null);setAppliedQuery(q);}
     wordAttempt.current={q};const request=++wordRequest.current;setWordError('');
@@ -151,10 +137,10 @@ function App(){
   }
   async function loadRecords(which:View,p=0){
     const accountId=userRef.current?.id;
-    if(which==='library'||which!==viewRef.current||!accountId)return false;
+    if(which!=='mine'||which!==viewRef.current||!accountId)return false;
     recordAttempt.current=p;const request=++recordRequest.current;setRecordLoading(true);setRecordError('');
     const isCurrent=()=>request===recordRequest.current&&which===viewRef.current&&accountId===userRef.current?.id;
-    try{const data=await api<Records>(which==='admin'?`/admin/records?page=${p}`:`/profile?page=${p}`);if(!isCurrent())return false;setRecords(previous=>p&&previous?{...data,pairs:[...previous.pairs,...data.pairs],scoreEntries:[...(previous.scoreEntries||[]),...(data.scoreEntries||[])],users:[...(previous.users||[]),...(data.users||[])],logs:[...(previous.logs||[]),...(data.logs||[])]}:data);setRecordPage(p);return true;}
+    try{const data=await api<Records>(`/profile?page=${p}`);if(!isCurrent())return false;setRecords(previous=>p&&previous?{...data,pairs:[...previous.pairs,...data.pairs],scoreEntries:[...(previous.scoreEntries||[]),...(data.scoreEntries||[])]}:data);setRecordPage(p);return true;}
     catch(e){if(isCurrent()){if(e instanceof ApiError&&e.status===401)sessionExpired();else setRecordError((e as Error).message);}return false;}
     finally{if(request===recordRequest.current)setRecordLoading(false);}
   }
@@ -165,7 +151,7 @@ function App(){
   useEffect(()=>{if(!search?.query||search.error)return;const settled=appliedQuery;const timer=setTimeout(()=>recordSearch(settled),1500);return()=>clearTimeout(timer);},[search]);
   useEffect(()=>{
     recordRequest.current++;setRecords(null);setRecordPage(0);setRecordError('');setRecordLoading(false);
-    if(ready&&user&&view!=='library'&&(view!=='admin'||user.role==='admin'))loadRecords(view);
+    if(ready&&user&&view==='mine')loadRecords(view);
     return()=>{recordRequest.current++;};
   },[ready,user?.id,user?.role,view,recordRevision]);
   useEffect(()=>{
@@ -199,14 +185,15 @@ function App(){
     const nav:NavigationState={view,screen,pane,word:lookupWord};
     const key=(n:NavigationState)=>JSON.stringify([n.view,n.screen,n.pane,n.word?.id]);
     const previous=history.state?.rhymeNavigation as NavigationState|undefined;
-    if(!previous)history.replaceState({rhymeNavigation:nav},'');else if(key(previous)!==key(nav))history.pushState({rhymeNavigation:nav},'');
+    const url=view==='admin'?'/admin':'/';
+    if(!previous)history.replaceState({rhymeNavigation:nav},'',url);else if(key(previous)!==key(nav))history.pushState({rhymeNavigation:nav},'',url);
   },[view,screen,pane,lookupWord?.id]);
   useEffect(()=>{
     const back=(e:PopStateEvent)=>{
       const nav=e.state?.rhymeNavigation as NavigationState|undefined;if(!nav)return;
-      const nextView=nav.view==='admin'&&user?.role!=='admin'?(user?'mine':'library'):nav.view;
+      const nextView=nav.view==='admin'&&user&&user.role!=='admin'?'mine':nav.view;
       if(nextView!==nav.view)history.replaceState({...history.state,rhymeNavigation:{...nav,view:nextView}},'');
-      setAuth(null);setManage(null);pendingSubmit.current=null;setView(nextView);setScreen(nav.screen);setPane(nav.pane);setLookupWord(nav.word);setNotice('');
+      setAuth(null);pendingSubmit.current=null;setView(nextView);setScreen(nav.screen);setPane(nav.pane);setLookupWord(nav.word);setNotice('');
       rhymeRequest.current++;recordRequest.current++;setRhymeLoading(false);setRhymeError('');setRecordTab('pairs');setRecords(null);setRecordError('');
       if(nextView==='library'&&nav.screen==='lookup'&&nav.word)selectWord(nav.word);
       if(nextView!=='library')setRecordRevision(revision=>revision+1);
@@ -215,12 +202,12 @@ function App(){
   },[user]);
   useEffect(()=>{if(auth){setPassword('');setPasswordVisible(false);}},[auth]);
   useEffect(()=>{if(focusWordId&&pane==='write'&&screen==='compose'){const field=document.getElementById(`word-${focusWordId}`);if(field){field.focus();field.scrollIntoView({block:'nearest',inline:'nearest'});setFocusWordId(null);}}},[focusWordId,pane,screen,draft.items]);
-  useEffect(()=>{if(ready&&view==='admin'&&user?.role!=='admin')navigate(user?'mine':'library');},[ready,user?.role,view]);
+  useEffect(()=>{if(ready&&view==='admin'&&user&&user.role!=='admin')navigate('mine');},[ready,user?.role,view]);
   useEffect(()=>{if(submitError||previewError)document.getElementById(`compose-${pane}`)?.scrollTo({top:0});},[submitError,previewError,pane,screen,view]);
-  const dialogOpen=!!auth||!!manage;
+  const dialogOpen=!!auth;
   useEffect(()=>{
     if(!dialogOpen)return;
-    const handler=(e:KeyboardEvent)=>{const dialog=document.querySelector<HTMLElement>('[role="dialog"]');if(!dialog)return;if(e.key==='Escape'&&!busyRef.current){e.preventDefault();setAuth(null);setManage(null);pendingSubmit.current=null;return;}if(e.key==='Tab'){const focusable=[...dialog.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href]')];const first=focusable[0],last=focusable.at(-1);if(!dialog.contains(document.activeElement)){e.preventDefault();first?.focus();}else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}};
+    const handler=(e:KeyboardEvent)=>{const dialog=document.querySelector<HTMLElement>('[role="dialog"]');if(!dialog)return;if(e.key==='Escape'&&!busyRef.current){e.preventDefault();setAuth(null);pendingSubmit.current=null;return;}if(e.key==='Tab'){const focusable=[...dialog.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href]')];const first=focusable[0],last=focusable.at(-1);if(!dialog.contains(document.activeElement)){e.preventDefault();first?.focus();}else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}};
     document.addEventListener('keydown',handler);return()=>{document.removeEventListener('keydown',handler);if(opener.current?.isConnected&&!opener.current.matches(':disabled'))opener.current.focus();else document.querySelector<HTMLElement>('#compose-tab-write,.sc-brand')?.focus();};
   },[dialogOpen]);
   function editDraft(update:(items:DraftItem[])=>DraftItem[]){setDraft(previous=>({items:update(previous.items),requestId:crypto.randomUUID()}));setSubmitError('');setPreview(null);setPreviewError('');setPreviewFilter('issues');previewRequest.current++;}
@@ -287,14 +274,6 @@ function App(){
     try{const token=decodeURIComponent(location.hash.slice(1));await api(auth==='setup'?'/setup':`/auth/${auth}`,{username,password,...(auth==='setup'?{token}:{})});if(auth==='setup')history.replaceState(null,'','/');const signedIn=await refreshUser();const intent=pendingSubmit.current;pendingSubmit.current=null;setAuth(null);setPassword('');if(intent==='recover')await recoverSubmission(signedIn,true);else if(intent==='submit')await performSubmit(signedIn);}
     catch(e){setAuthError((e as Error).message);}finally{setBusy(false);}
   }
-  async function moderate(e:React.FormEvent){
-    e.preventDefault();if(!manage)return;setBusy(true);setManageError('');
-    try{if(manage.type==='user')await api('/admin/reset-password',{id:manage.id,password:resetPassword});else await api('/admin/withdraw',{type:'pair',id:manage.id,reason});}
-    catch(e){if(e instanceof ApiError&&e.status===401){setManage(null);sessionExpired();}else setManageError((e as Error).message);setBusy(false);return;}
-    setManage(null);setResetPassword('');setReason('');setNotice('处理已完成。');
-    const updates=await Promise.allSettled([refreshActiveRecords(),refreshUser(),loadWords(wordAttempt.current.q)]);
-    if(updates.some(result=>result.status==='rejected'||result.value===false))setNotice('处理已完成，显示暂未刷新；请重新读取记录。');else setNotice('处理完成，积分和记录已更新。');setBusy(false);
-  }
   function choosePane(next:Pane){setPane(next);}
   function pairFixes(pair:PreviewPair){
     const left=resolved[pair.leftIndex]?.data,right=resolved[pair.rightIndex]?.data;
@@ -337,17 +316,14 @@ function App(){
     {view==='library'?<><h1 className="sc-screen-reader-only">押韵共创 · {screen==='compose'?'想押韵':screen==='lookup'?'押韵互查':'词库'}</h1>
       <div className="sc-game-grid"><aside className="sc-panel sc-topic-panel sc-finder"><div className="sc-finder-head"><span className="sc-eyebrow">RHYME LAB / 说唱押韵共创</span><span className="sc-sticker" aria-hidden="true">先到<br/>先记</span><h2>输入一个词，<span className="sc-highlight">找出所有押韵</span></h2></div><form className="sc-search" role="search" onSubmit={e=>{e.preventDefault();commitSearch(query);}}><Search size={20}/><input aria-label="搜索押韵词" placeholder="比如：光芒、说唱、自由" value={query} onChange={e=>setQuery(e.target.value)} onCompositionStart={()=>{searchComposing.current=true;}} onCompositionEnd={()=>{searchComposing.current=false;setSearchComposition(value=>value+1);}} enterKeyHint="search"/>{query&&<button type="button" className="sc-search-clear" aria-label="清空搜索" onClick={()=>{setQuery('');loadWords('');document.querySelector<HTMLInputElement>('[aria-label="搜索押韵词"]')?.focus();}}><X size={16}/></button>}<button type="submit" aria-label="搜索">找押韵</button></form><RhymeFinder search={search} query={appliedQuery} hot={hot} loading={wordLoading} error={wordError} selectedId={lookupWord?.id} onWord={selectWord} onCompose={openComposer} onHot={commitSearch} onRetry={()=>loadWords(wordAttempt.current.q)}/></aside>
       <section className="sc-panel sc-play-panel" aria-label={screen==='compose'?'想押韵':'押韵互查'}>{screen==='compose'?composer:screen==='lookup'&&lookupWord?<RhymeGroup word={lookupWord} items={rhymes} loading={rhymeLoading} error={rhymeError} more={rhymeMore} onWord={selectWord} onMore={()=>selectWord(lookupWord,rhymePage+1)} onRetry={()=>selectWord(lookupWord,rhymes.length?rhymePage+1:0)} onCompose={openComposer} onBack={showLibrary} date={date}/>:<div className="sc-start"><div className="sc-start-icon sc-record-icon"><Disc3 size={48} strokeWidth={1.35} aria-hidden="true"/></div><span className="sc-eyebrow">RHYME LAB / 说唱押韵共创</span><span className="sc-sticker" aria-hidden="true">先到<br/>先记</span><h2>选一个词，<span className="sc-highlight">找到整组灵感</span></h2><p>选词互查，或写下你自己的押韵。<br/>每对关系，只记录最先提交者。</p><button className="sc-btn" onClick={()=>openComposer()}><Plus size={18}/>我来想一个押韵</button><div className="sc-rules"><div><span>01</span><strong>韵母押</strong><p>对应韵母属于同韵部<br/>得 N 分</p></div><div><span>02</span><strong>声调押</strong><p>对应声调全部相同<br/>得 N 分</p></div><div><span>03</span><strong>混合押韵</strong><p>逐字押声调或韵母<br/>得 N 分</p></div><div className="sc-gold-rule"><span><Sparkles size={16}/></span><strong>完美押韵</strong><p>韵母 + 声调都押上<br/>得 2N 分</p></div></div><small>N 是两个词中较短的汉字数，比较双方末尾 N 字。</small><div className="sc-ticker" aria-hidden="true"><div>{[0,1].map(round=>['单押','双押','三押','韵母押','声调押','混合押韵','完美押韵'].map(label=><span key={round+label}>{label}</span>))}</div></div></div>}</section></div>
-    </>:<><div className="sc-page-heading"><div><div className="sc-eyebrow">{view==='mine'?'灵感档案':'内容与账号'}</div><h1>{view==='mine'?'我的押韵':'共创管理'}<span>.</span></h1><p>{view==='mine'?`你的原创积累，共 ${user?.score||0} 分。`:'撤回后保留首次归属，关联积分自动扣回。'}</p></div></div><section className="sc-panel sc-record-panel">{!ready?<div className="sc-empty" role="status"><LoaderCircle size={24} className="sc-spin"/><p>正在确认登录状态…</p></div>:!user?<div className="sc-profile-gate"><div className="sc-start-icon"><UserRound size={30}/></div><h2>让灵感有个名字</h2><p>登录后，你的押韵与积分<br/>都会留在创作档案里。</p><button className="sc-btn" onClick={()=>openAuth()}>登录 / 注册</button></div>:<><div className="sc-mobile-only sc-profile-summary"><div><strong>{user.username}</strong><span>{user.score} 分 · 我的原创积累</span></div><button className="sc-link" disabled={busy} onClick={logout}>退出登录</button></div><div className="sc-tabs" role="tablist" aria-label={view==='mine'?'我的记录':'管理记录'}>{recordTabs.map(tab=><button key={tab} role="tab" id={`records-tab-${tab}`} aria-controls="records-panel" aria-selected={recordTab===tab} tabIndex={recordTab===tab?0:-1} className={recordTab===tab?'sc-tab-active':''} onClick={()=>setRecordTab(tab)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const index=recordTabs.indexOf(tab),next=e.key==='Home'?recordTabs[0]:e.key==='End'?recordTabs[recordTabs.length-1]:recordTabs[(index+(e.key==='ArrowRight'?1:recordTabs.length-1))%recordTabs.length];setRecordTab(next);document.getElementById(`records-tab-${next}`)?.focus();}}}>{({pairs:'押韵关系',scoreEntries:'积分来源',users:'账号',logs:'处理记录'})[tab]}</button>)}</div>{recordError&&<div className="sc-inline-state" role="alert"><p>{recordError}</p><button className="sc-link" onClick={()=>loadRecords(view,recordAttempt.current)}>重新读取记录</button></div>}<div className="sc-records" id="records-panel" role="tabpanel" tabIndex={0} aria-labelledby={`records-tab-${recordTab}`} aria-busy={recordLoading}>{recordLoading&&!records?<div className="sc-empty"><LoaderCircle size={24} className="sc-spin"/><p>正在读取记录…</p></div>:!records?null:<>
-      {recordTab==='pairs'&&records.pairs.map(pair=><article className="sc-record" key={pair.id}><div><strong>{pair.left.text} ↔ {pair.right.text}</strong><p>{kindLabels[pair.kind]} · {pair.n} 押 · {pair.author} 最先提交</p><small>{date(pair.created_at)} · {pair.status==='withdrawn'?'已撤回':`+${pair.points} 分`}</small><RecordedDetails pair={pair}/></div>{view==='admin'&&pair.status==='active'&&<button className="sc-link sc-danger" onClick={()=>{openManage({type:'pair',id:pair.id,text:`${pair.left.text} ↔ ${pair.right.text}`});}}>撤回</button>}</article>)}
+    </>:view==='admin'?(!ready?<section className="sc-panel sc-record-panel"><div className="sc-empty" role="status"><LoaderCircle size={24} className="sc-spin"/><p>正在确认登录状态…</p></div></section>:user?.role==='admin'?<AdminConsole me={user} onSessionExpired={()=>sessionExpired()} onChanged={()=>{refreshUser().catch(()=>{});if(wordAttempt.current.q)loadWords(wordAttempt.current.q);}}/>:<AdminGate onLogin={()=>openAuth()}/>):<><div className="sc-page-heading"><div><div className="sc-eyebrow">{view==='mine'?'灵感档案':'内容与账号'}</div><h1>{view==='mine'?'我的押韵':'共创管理'}<span>.</span></h1><p>{view==='mine'?`你的原创积累，共 ${user?.score||0} 分。`:'撤回后保留首次归属，关联积分自动扣回。'}</p></div></div><section className="sc-panel sc-record-panel">{!ready?<div className="sc-empty" role="status"><LoaderCircle size={24} className="sc-spin"/><p>正在确认登录状态…</p></div>:!user?<div className="sc-profile-gate"><div className="sc-start-icon"><UserRound size={30}/></div><h2>让灵感有个名字</h2><p>登录后，你的押韵与积分<br/>都会留在创作档案里。</p><button className="sc-btn" onClick={()=>openAuth()}>登录 / 注册</button></div>:<><div className="sc-mobile-only sc-profile-summary"><div><strong>{user.username}</strong><span>{user.score} 分 · 我的原创积累</span></div><button className="sc-link" disabled={busy} onClick={logout}>退出登录</button></div><div className="sc-tabs" role="tablist" aria-label={view==='mine'?'我的记录':'管理记录'}>{recordTabs.map(tab=><button key={tab} role="tab" id={`records-tab-${tab}`} aria-controls="records-panel" aria-selected={recordTab===tab} tabIndex={recordTab===tab?0:-1} className={recordTab===tab?'sc-tab-active':''} onClick={()=>setRecordTab(tab)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const index=recordTabs.indexOf(tab),next=e.key==='Home'?recordTabs[0]:e.key==='End'?recordTabs[recordTabs.length-1]:recordTabs[(index+(e.key==='ArrowRight'?1:recordTabs.length-1))%recordTabs.length];setRecordTab(next);document.getElementById(`records-tab-${next}`)?.focus();}}}>{({pairs:'押韵关系',scoreEntries:'积分来源',users:'账号',logs:'处理记录'})[tab]}</button>)}</div>{recordError&&<div className="sc-inline-state" role="alert"><p>{recordError}</p><button className="sc-link" onClick={()=>loadRecords(view,recordAttempt.current)}>重新读取记录</button></div>}<div className="sc-records" id="records-panel" role="tabpanel" tabIndex={0} aria-labelledby={`records-tab-${recordTab}`} aria-busy={recordLoading}>{recordLoading&&!records?<div className="sc-empty"><LoaderCircle size={24} className="sc-spin"/><p>正在读取记录…</p></div>:!records?null:<>
+      {recordTab==='pairs'&&records.pairs.map(pair=><article className="sc-record" key={pair.id}><div><strong>{pair.left.text} ↔ {pair.right.text}</strong><p>{kindLabels[pair.kind]} · {pair.n} 押 · {pair.author} 最先提交</p><small>{date(pair.created_at)} · {pair.status==='withdrawn'?'已撤回':`+${pair.points} 分`}</small><RecordedDetails pair={pair}/></div></article>)}
       {recordTab==='scoreEntries'&&records.scoreEntries?.map(entry=><article className="sc-record" key={entry.id}><div><strong>{entry.left_text} ↔ {entry.right_text}</strong><p>{entry.source==='legacy'?'历史积分':'原创押韵积分'} · {date(entry.created_at)}</p><small>{entry.active?`+${entry.points} 分`:'已撤回 / 不计分'}</small></div></article>)}
-      {recordTab==='users'&&records.users?.map(account=><article className="sc-record" key={account.id}><div><strong>{account.username}</strong><p>{account.role==='admin'?'管理员':'普通用户'}</p></div>{account.role!=='admin'&&<button className="sc-link" onClick={()=>{openManage({type:'user',id:account.id,text:account.username});}}>重置密码</button>}</article>)}
-      {recordTab==='logs'&&records.logs?.map(log=><article className="sc-record" key={log.id}><div><strong>{log.action==='withdraw'?'撤回押韵关系':log.action==='reset-password'?'重置密码':'历史处理记录'}</strong><p>{log.reason}</p><small>{log.admin} · {date(log.created_at)}</small></div></article>)}
       {!records[recordTab]?.length&&<div className="sc-empty"><BookOpen size={27}/><p>{view==='mine'?(recordTab==='pairs'?'还没有收录押韵':'有效的押韵词对，会为你积累积分。'):'这里还没有记录。'}</p>{view==='mine'&&<button type="button" className="sc-btn" onClick={()=>openComposer()}><Plus size={16}/>我来想一个押韵</button>}</div>}
     </>}</div>{records?.hasMore&&<button className="sc-load-more" disabled={recordLoading} onClick={()=>loadRecords(view,recordPage+1)}>加载更多记录</button>}</>}</section></>}
     <footer className="sc-footer"><span>softcloud. / 押韵共创</span><span>亲手写下 · 先到先记 · 每份灵感都有名字</span></footer></main>
     <nav inert={dialogOpen} className="sc-bottom-nav" aria-label="手机导航"><button aria-current={view==='library'&&screen!=='compose'?'page':undefined} onClick={showLibrary}><BookOpen size={21}/><span>词库</span></button><button aria-current={view==='library'&&screen==='compose'?'page':undefined} onClick={()=>openComposer()}><span className="sc-create-icon"><Plus size={23}/></span><span>想押韵</span></button><button aria-current={view==='mine'?'page':undefined} onClick={()=>navigate('mine')}><UserRound size={21}/><span>我的</span></button>{user?.role==='admin'&&<button aria-current={view==='admin'?'page':undefined} onClick={()=>navigate('admin')}><Shield size={21}/><span>管理</span></button>}</nav>
     {auth&&<div className="sc-overlay"><section className="sc-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title"><button className="sc-modal-close" aria-label="关闭登录窗口" disabled={busy} onClick={()=>{setAuth(null);pendingSubmit.current=null;if(location.pathname==='/setup')history.replaceState(null,'','/');}}><X/></button><div className="sc-modal-icon"><UserRound size={25}/></div><h2 id="auth-title">{auth==='setup'?'建立管理员账号':auth==='register'?'加入押韵共创':'欢迎回来'}</h2><p>{auth==='setup'?'一次性初始化，之后你也使用相同的投稿入口。':pendingSubmit.current?'灵感已保留，登录后继续收录。':'登录后收录原创押韵，换设备也能保留创作与积分。'}</p><form className="sc-auth-form" onSubmit={authenticate}><div className="sc-auth-fields"><label className="sc-field">用户名<input autoFocus autoComplete="username" required minLength={2} maxLength={24} value={username} onChange={e=>setUsername(e.target.value)} placeholder="2–24 位中文、字母或数字"/></label><label className="sc-field">密码<span className="sc-password-field"><input type={passwordVisible?'text':'password'} required minLength={10} maxLength={128} autoComplete={auth==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)} placeholder="至少 10 位"/><button type="button" aria-label={passwordVisible?'隐藏密码':'显示密码'} aria-pressed={passwordVisible} onClick={()=>setPasswordVisible(value=>!value)}>{passwordVisible?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>{authError&&<p className="sc-error" role="alert">{authError}</p>}</div><button className="sc-btn sc-full" disabled={busy} type="submit">{busy?'正在处理…':auth==='setup'?'建立管理员账号':auth==='register'?'注册并登录':'登录'}</button></form>{auth!=='setup'&&<button className="sc-switch" disabled={busy} onClick={()=>openAuth(auth==='login'?'register':'login')}>{auth==='login'?'没有账号？注册一个':'已有账号？直接登录'}</button>}</section></div>}
-    {manage&&<div className="sc-overlay"><section className="sc-modal" role="dialog" aria-modal="true" aria-labelledby="manage-title"><button className="sc-modal-close" aria-label="关闭管理窗口" disabled={busy} onClick={()=>setManage(null)}><X/></button><h2 id="manage-title">{manage.type==='user'?'重置账号密码':'撤回无效押韵'}</h2><p className="sc-manage-text">{manage.text}</p><form onSubmit={moderate}>{manage.type==='user'?<label className="sc-field">新密码<input autoFocus type="password" required minLength={10} maxLength={128} value={resetPassword} onChange={e=>setResetPassword(e.target.value)}/></label>:<label className="sc-field">撤回原因<textarea autoFocus required minLength={2} value={reason} onChange={e=>setReason(e.target.value)} placeholder="填写原因，保留在处理记录中"/></label>}{manageError&&<p className="sc-error" role="alert">{manageError}</p>}<button className="sc-btn sc-full" disabled={busy}>{busy?'正在处理…':'确认处理'}</button></form></section></div>}
     {(wordLoading||rhymeLoading)&&<div className="sc-loading" role="status"><LoaderCircle size={16} className="sc-spin"/>正在读取</div>}
   </div>;
 }
