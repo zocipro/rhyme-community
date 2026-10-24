@@ -720,7 +720,8 @@ details[open]>.sc-alignment,details[open]>.sc-lookup-source,details[open]>.sc-he
 /* ---------- Mobile: separate 词库 / 想押韵 / 我的 screens ---------- */
 @media(max-width:760px){
   html,body,#root{height:100%;overflow:hidden}
-  .sc-app{height:var(--sc-app-height,100dvh);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+  /* Fixed to the visual viewport: height and top follow it, so Safari's keyboard pan leaves no gap. */
+  .sc-app{position:fixed;top:0;left:0;right:0;height:var(--sc-app-height,100dvh);transform:translateY(var(--sc-app-top,0px));display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
   .sc-mobile-only{display:block}
   .sc-shell{width:calc(100% - 32px)}
 

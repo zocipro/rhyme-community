@@ -176,9 +176,11 @@ function App(){
   },[draft.requestId,readyForPreview,previewRevision]);
   useEffect(()=>{
     const viewport=window.visualViewport;let restingHeight=viewport?.height||innerHeight,lastWidth=innerWidth,focusFrame=0;
-    const update=()=>{const height=viewport?.height||innerHeight;if(innerWidth!==lastWidth){restingHeight=height;lastWidth=innerWidth;}else restingHeight=Math.max(restingHeight,height);document.documentElement.style.setProperty('--sc-app-height',`${height}px`);const typing=document.activeElement?.matches('input,textarea,select');document.documentElement.dataset.scKeyboard=String(matchMedia('(max-width:760px)').matches&&height<restingHeight-120&&(!!typing||document.documentElement.dataset.scKeyboard==='true'));cancelAnimationFrame(focusFrame);focusFrame=requestAnimationFrame(()=>{const field=document.activeElement;if(field?.matches('input,textarea,select'))field.scrollIntoView({block:'nearest',inline:'nearest'});});};
-    update();viewport?.addEventListener('resize',update);window.addEventListener('resize',update);document.addEventListener('focusin',update);document.addEventListener('focusout',update);
-    return()=>{cancelAnimationFrame(focusFrame);viewport?.removeEventListener('resize',update);window.removeEventListener('resize',update);document.removeEventListener('focusin',update);document.removeEventListener('focusout',update);};
+    // Safari ignores interactive-widget and pans the visual viewport instead of resizing the page; the app follows the pan.
+    const place=()=>document.documentElement.style.setProperty('--sc-app-top',`${Math.max(0,viewport?.offsetTop||0)}px`);
+    const update=()=>{const height=viewport?.height||innerHeight;place();if(innerWidth!==lastWidth){restingHeight=height;lastWidth=innerWidth;}else restingHeight=Math.max(restingHeight,height);document.documentElement.style.setProperty('--sc-app-height',`${height}px`);const typing=document.activeElement?.matches('input,textarea,select');document.documentElement.dataset.scKeyboard=String(matchMedia('(max-width:760px)').matches&&height<restingHeight-120&&(!!typing||document.documentElement.dataset.scKeyboard==='true'));cancelAnimationFrame(focusFrame);focusFrame=requestAnimationFrame(()=>{const field=document.activeElement;if(field?.matches('input,textarea,select'))field.scrollIntoView({block:'nearest',inline:'nearest'});});};
+    update();viewport?.addEventListener('resize',update);viewport?.addEventListener('scroll',place);window.addEventListener('resize',update);document.addEventListener('focusin',update);document.addEventListener('focusout',update);
+    return()=>{cancelAnimationFrame(focusFrame);viewport?.removeEventListener('resize',update);viewport?.removeEventListener('scroll',place);window.removeEventListener('resize',update);document.removeEventListener('focusin',update);document.removeEventListener('focusout',update);};
   },[]);
   useEffect(()=>{
     if(location.pathname==='/setup')return;
