@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronRight, Flame, LoaderCircle, Mic2, Plus, Sparkles } from 'lucide-react';
 import { kindLabels, markedPinyin, normalize } from '../shared/rhyme-core';
 import type { HotWord, RhymeSearch, SearchMatch, SearchTier, SearchWord } from '../shared/library';
+import { RulesLink } from './RulesSheet';
 
 type Props = {
   search: RhymeSearch|null; query: string; hot: HotWord[]|null; loading: boolean; error: string; selectedId?: string;
@@ -42,11 +43,10 @@ function HotWords({ hot, onHot }: { hot: HotWord[]|null; onHot: (text: string) =
 function Idle({ hot, onHot, onCompose }: Pick<Props, 'hot' | 'onHot' | 'onCompose'>) {
   return <div className="sc-topic-list sc-finder-idle">
     <HotWords hot={hot} onHot={onHot}/>
-    <div className="sc-finder-rules">
-      <div className="sc-rules"><div><span>01</span><strong>韵母押</strong><p>对应韵母属于同韵部</p></div><div><span>02</span><strong>声调押</strong><p>对应声调全部相同</p></div><div><span>03</span><strong>混合押韵</strong><p>逐字押声调或韵母</p></div><div className="sc-gold-rule"><span><Sparkles size={16}/></span><strong>完美押韵</strong><p>韵母 + 声调都押上</p></div></div>
-      <button type="button" className="sc-btn" onClick={() => onCompose()}><Plus size={18}/>我来想一个押韵</button>
+    <div className="sc-finder-actions">
+      <button type="button" className="sc-btn sc-btn-quiet" onClick={() => onCompose()}><Plus size={17}/>我来想一个押韵</button>
+      <RulesLink/>
     </div>
-    <div className="sc-ticker" aria-hidden="true"><div>{[0, 1].map(round => ['单押', '双押', '三押', '四押', '韵母押', '声调押', '完美押韵'].map(label => <span key={round + label}>{label}</span>))}</div></div>
   </div>;
 }
 
