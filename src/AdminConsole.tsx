@@ -166,7 +166,7 @@ function PairRow({ pair, onUser, onWithdraw, onRestore }: { pair: RhymePair; onU
     </div>
     <p className="sc-admin-pair-meta">
       {onUser ? <button type="button" className="sc-link" onClick={() => onUser(pair.author_id)}>{pair.author}</button> : <span>{pair.author}</span>}
-      <span>{pair.n} 押 · {withdrawn ? '不计分' : `+${pair.points} 分`}</span><time dateTime={pair.created_at}>{date(pair.created_at)}</time>
+      <span>{pair.n} 押 · {withdrawn ? '不计分' : `+${pair.points} 分`}{pair.likes ? ` · ♥ ${pair.likes}` : ''}</span><time dateTime={pair.created_at}>{date(pair.created_at)}</time>
     </p>
     <div className="sc-admin-pair-actions">
       <details onToggle={e => setOpen(e.currentTarget.open)} className="sc-record-details"><summary>逐字对照</summary>{open && <Alignment result={pair.comparison} readOnly/>}</details>

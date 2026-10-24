@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Disc3, LoaderCircle, PenLine } from 'lucide-react';
+import { ArrowLeft, Disc3, Heart, LoaderCircle, PenLine } from 'lucide-react';
+import { ApiError, api } from './api';
 import { kindLabels, rhymeFinal } from '../shared/rhyme-core';
 import { Alignment } from './Alignment';
 import type { RhymePair, RhymingWord } from '../shared/lookup';
@@ -9,25 +10,44 @@ type Props = {
   word: SearchWord; items: RhymingWord[]; loading: boolean; error: string; more: boolean;
   onWord: (word: SearchWord) => void; onMore: () => void; onRetry: () => void; onCompose: (word: SearchWord) => void; onBack: () => void;
   date: (text: string) => string;
+  me: { id: string } | null; onNeedLogin: () => void;
 };
 
-function Relation({ pair, date }: { pair: RhymePair } & Pick<Props, 'date'>) {
+// Optimistic: the heart flips at once and rolls back if the server says no.
+function LikeButton({ pair, me, onNeedLogin }: { pair: RhymePair } & Pick<Props, 'me' | 'onNeedLogin'>) {
+  const [state, setState] = useState({ liked: !!pair.liked, likes: pair.likes ?? 0 }), [busy, setBusy] = useState(false), [error, setError] = useState('');
+  const own = me?.id === pair.author_id;
+  async function toggle() {
+    if (!me) { onNeedLogin(); return; }
+    const previous = state, next = { liked: !state.liked, likes: state.likes + (state.liked ? -1 : 1) };
+    setState(next); setBusy(true); setError('');
+    try { const data = await api<{ liked: boolean; likes: number }>(`/rhymes/${pair.id}/like`, { liked: next.liked }); setState(data); }
+    catch (e) { setState(previous); if (e instanceof ApiError && e.status === 401) onNeedLogin(); else setError((e as Error).message); }
+    finally { setBusy(false); }
+  }
+  return <button type="button" className={`sc-like ${state.liked ? 'sc-like-on' : ''}`} aria-pressed={state.liked} disabled={busy || own}
+    title={own ? '这是你的押韵' : error || (state.liked ? '取消点赞' : '点赞')} aria-label={`${state.liked ? '取消点赞' : '点赞'}：${pair.left.text} ↔ ${pair.right.text}，${state.likes} 个赞`} onClick={toggle}>
+    <Heart size={15} aria-hidden="true"/><span>{state.likes || ''}</span>
+  </button>;
+}
+
+function Relation({ pair, date, me, onNeedLogin }: { pair: RhymePair } & Pick<Props, 'date' | 'me' | 'onNeedLogin'>) {
   const [open, setOpen] = useState(false);
   return <article className="sc-relation">
     <div className="sc-relation-line"><strong>{pair.left.text}<span aria-label="互押">↔</span>{pair.right.text}</strong><span className={`sc-badge sc-badge-${pair.kind}`}>{kindLabels[pair.kind]}</span></div>
-    <p className="sc-lookup-author"><span><span className="sc-credit-name">{pair.author}</span> 最先提交</span><span className="sc-credit-dot" aria-hidden="true">·</span><time dateTime={pair.created_at}>{date(pair.created_at)}</time></p>
+    <div className="sc-relation-meta"><p className="sc-lookup-author"><span><span className="sc-credit-name">{pair.author}</span> 最先提交</span><span className="sc-credit-dot" aria-hidden="true">·</span><time dateTime={pair.created_at}>{date(pair.created_at)}</time></p><LikeButton pair={pair} me={me} onNeedLogin={onNeedLogin}/></div>
     <details onToggle={e => setOpen(e.currentTarget.open)}><summary>查看逐字对照</summary>{open && <Alignment result={pair.comparison} readOnly/>}</details>
   </article>;
 }
 
 // Every member is shown the same way; the word you arrived from is only highlighted, never a heading.
-export function RhymeGroup({ word, items, loading, error, more, onWord, onMore, onRetry, onCompose, onBack, date }: Props) {
+export function RhymeGroup({ word, items, loading, error, more, onWord, onMore, onRetry, onCompose, onBack, date, me, onNeedLogin }: Props) {
   // A direct pair is shown from this word's side, so its left reading is this word's own.
   const direct = items.find(item => item.association === 'direct');
   const ending = direct ? rhymeFinal(direct.pair.left.readings.at(-1)?.final ?? '') : '';
   const members = [{ word, association: 'self' as const }, ...items.map(item => ({ word: item.word as SearchWord, association: item.association }))]
     .sort((a, b) => a.word.normalized.localeCompare(b.word.normalized, 'zh-Hans-CN'));
-  const pairs = [...new Map(items.map(item => [item.pair.id, item.pair])).values()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const pairs = [...new Map(items.map(item => [item.pair.id, item.pair])).values()].sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0) || a.created_at.localeCompare(b.created_at));
   return <div className="sc-lookup-panel sc-group-panel">
     <div className="sc-challenge-heading"><span className="sc-pill">押韵互查{ending && ` · -${ending}`}</span><button className="sc-link" onClick={onBack}><ArrowLeft size={14}/>返回搜索</button></div>
     <h2 className="sc-group-title">这些词<span className="sc-highlight">彼此押韵</span></h2>
@@ -38,7 +58,7 @@ export function RhymeGroup({ word, items, loading, error, more, onWord, onMore, 
         {member.association === 'self' ? <span className="sc-member" aria-current="true">{member.word.text}<span className="sc-screen-reader-only">（当前词）</span></span>
           : <button type="button" className={`sc-member ${member.association === 'group' ? 'sc-member-group' : ''}`} onClick={() => onWord(member.word)}>{member.word.text}{member.association === 'group' && <span className="sc-screen-reader-only">（同组词）</span>}</button>}
       </li>)}</ul>
-      {pairs.length > 0 && <section className="sc-relations" aria-labelledby="relations-title"><h3 id="relations-title">实际收录的关系</h3>{pairs.map(pair => <Relation key={pair.id} pair={pair} date={date}/>)}</section>}
+      {pairs.length > 0 && <section className="sc-relations" aria-labelledby="relations-title"><h3 id="relations-title">实际收录的关系</h3>{pairs.map(pair => <Relation key={pair.id} pair={pair} date={date} me={me} onNeedLogin={onNeedLogin}/>)}</section>}
       {!items.length && <div className="sc-empty">{loading ? <><LoaderCircle size={24} className="sc-spin"/><p>正在读取押韵…</p></> : !error && <><Disc3 size={30} strokeWidth={1.5} aria-hidden="true"/><p>这个词还没有有效押韵。<br/>写下新的灵感吧。</p></>}</div>}
       {more && <button className="sc-load-more" disabled={loading} onClick={onMore}>继续读取同组词</button>}
     </div>

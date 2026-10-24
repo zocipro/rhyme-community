@@ -717,3 +717,36 @@ test('每周排行：按本周有效积分排名，撤回的押韵不计，可�
   const lastWeek = await mine(first, 1);
   assert.deepEqual([lastWeek.me?.points, lastWeek.week.back], [a.data.points, 1], '上周榜单能看到');
 });
+
+test('点赞：需登录、不能赞自己、一人一赞可取消、停用账号不计、撤回后不能赞、不影响积分', async () => {
+  const author = client(), fan = client(), fan2 = client();
+  for (const [who, name] of [[author, '点赞作者'], [fan, '点赞粉丝'], [fan2, '点赞粉丝二']] as const) assert.equal((await who('/auth/register', { username: name + tag, password })).status, 201);
+  const saved = await author('/rhymes', batch(['点赞测试山河', '点赞测试丹泽']));
+  assert.equal(saved.status, 201);
+  const pair = saved.data.pairs[0], scoreBefore = (await author('/me')).data.user.score;
+  const like = (who: ReturnType<typeof client>, liked: unknown) => who(`/rhymes/${pair.id}/like`, { liked });
+  assert.equal((await like(publicApi, true)).status, 401);
+  assert.equal((await like(author, true)).status, 400, '不能给自己的押韵点赞');
+  assert.equal((await like(fan, 'yes')).status, 400);
+  assert.deepEqual((await like(fan, true)).data, { liked: true, likes: 1 });
+  assert.deepEqual((await like(fan, true)).data, { liked: true, likes: 1 }, '重复点赞不重复计数');
+  assert.deepEqual((await like(fan2, true)).data, { liked: true, likes: 2 });
+  const leftId = (await word('点赞测试山河')).id;
+  const asFan = (await fan(`/words/${leftId}/rhymes`)).data.items.find((item: any) => item.pair.id === pair.id).pair;
+  assert.deepEqual([asFan.likes, asFan.liked], [2, true], '互查页带点赞数和我是否赞过');
+  assert.equal((await publicApi(`/words/${leftId}/rhymes`)).data.items.find((item: any) => item.pair.id === pair.id).pair.liked, false);
+  assert.equal((await author('/profile')).data.pairs.find((p: any) => p.id === pair.id).likes, 2, '我的押韵里看到收到的赞');
+  assert.deepEqual((await like(fan2, false)).data, { liked: false, likes: 1 });
+  assert.deepEqual((await like(fan2, false)).data, { liked: false, likes: 1 }, '重复取消不出错');
+  const fanId = (await fan('/me')).data.user.id;
+  assert.equal((await admin('/admin/users/status', { id: fanId, disabled: true, reason: '点赞停用测试' })).status, 200);
+  assert.equal((await publicApi(`/rhymes/${pair.id}`)).data.pair.likes, 0, '停用账号的赞不计入');
+  assert.equal((await admin('/admin/users/status', { id: fanId, disabled: false })).status, 200);
+  assert.equal((await publicApi(`/rhymes/${pair.id}`)).data.pair.likes, 1, '恢复后重新计入');
+  assert.equal((await author('/me')).data.user.score, scoreBefore, '点赞不影响积分');
+  assert.equal((await admin('/admin/settings', { content_write_paused: true })).status, 200);
+  try { assert.equal((await like(fan2, true)).status, 503, '暂停投稿时也暂停点赞'); }
+  finally { assert.equal((await admin('/admin/settings', { content_write_paused: false })).status, 200); }
+  assert.equal((await admin('/admin/withdraw', { type: 'pair', id: pair.id, reason: '点赞撤回测试' })).status, 200);
+  assert.equal((await like(fan2, true)).status, 404, '撤回后不能点赞');
+});
