@@ -1,164 +1,225 @@
-# 押韵共创
+<div align="center">
 
-说唱押韵共创社区：用户写下互相押韵的词，服务器按普通话韵部与声调逐字核验，记录每组关系的最先提交者。正式内容全部来自用户，不导入押韵库或测试种子。
+<a href="https://ya.zoci.pro"><img src="docs/screenshots/banner.jpg" alt="押韵共创 · softcloud" width="100%"></a>
 
-技术栈为 React、TypeScript、Vite、Hono、Cloudflare Workers Static Assets 与 D1。颜色、字号、间距与动效使用 `--sc-*` 令牌。
+<h3>说唱押韵共创社区 · 写下互相押韵的词，逐字核验，先到先记</h3>
 
-| 环境 | 地址 | 说明 |
-| --- | --- | --- |
-| 正式 | https://ya.zoci.pro | Worker `rhyme-community-ya`，Workers Builds 从 `main` 自动部署，绑定生产 D1 `352be9ba-ecc6-4240-b5d8-277741a449bd` |
+<p>
+  <a href="https://ya.zoci.pro"><img src="https://img.shields.io/badge/live-ya.zoci.pro-c8ff2e?style=flat-square&labelColor=0a0a0b" alt="Live"></a>
+  <img src="https://img.shields.io/badge/Cloudflare-Workers%20%2B%20D1-f38020?style=flat-square&labelColor=0a0a0b&logo=cloudflare&logoColor=white" alt="Cloudflare Workers + D1">
+  <img src="https://img.shields.io/badge/React-19-61dafb?style=flat-square&labelColor=0a0a0b&logo=react&logoColor=61dafb" alt="React 19">
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&labelColor=0a0a0b&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Hono-4-ff5b11?style=flat-square&labelColor=0a0a0b&logo=hono&logoColor=white" alt="Hono">
+</p>
 
-完整源码：[zocipro/rhyme-community](https://github.com/zocipro/rhyme-community)。上线门槛见 `READINESS.md`，已验证结果见 `VERIFICATION.md`，资源 ID 见 `deployment.json` 与 `wrangler.jsonc`。
+<p>
+  <a href="https://ya.zoci.pro"><b>在线体验</b></a> ·
+  <a href="#功能">功能</a> ·
+  <a href="#押韵规则">押韵规则</a> ·
+  <a href="#本地开发">本地开发</a> ·
+  <a href="#部署">部署</a> ·
+  <a href="#接口">接口</a>
+</p>
 
-## 截图
+</div>
 
-本地 `wrangler dev` + 本地 D1 测试数据，酸绿 Cypher 配色。深色为默认，浅色由页头切换。
+<br>
 
-### 词库首页（搜索框 + 热门词汇）
+**押韵共创**是一个为说唱写作准备的押韵词库。用户成组写下互相押韵的词，服务器按普通话韵部和声调**逐字核验**，全部两两押上才收录；每一对押韵关系**永久记录最先提交的人**。词库里的每个词都来自用户，没有导入任何外部押韵表。
 
-![桌面 · 深色首页](docs/screenshots/home-desktop-dark.jpg)
-![桌面 · 浅色首页](docs/screenshots/home-desktop-light.jpg)
-![手机 · 深色首页](docs/screenshots/home-mobile-dark.jpg)
-![手机 · 浅色首页](docs/screenshots/home-mobile-light.jpg)
+<br>
 
-### 搜索结果（按单押 / 双押 / 三押分区）
+<table>
+  <tr>
+    <td width="66%"><img src="docs/screenshots/search-desktop.jpg" alt="搜索押韵与对等互查"></td>
+    <td width="34%"><img src="docs/screenshots/compose-mobile.jpg" alt="投稿：逐对核验与口语读音"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>找押韵</b> · 按单押 / 双押分区，右侧查看整组互押关系</sub></td>
+    <td align="center"><sub><b>想押韵</b> · 逐对核验，一键改用口语读音</sub></td>
+  </tr>
+</table>
 
-![桌面 · 深色搜索](docs/screenshots/search-desktop-dark.jpg)
-![桌面 · 浅色搜索](docs/screenshots/search-desktop-light.jpg)
-![手机 · 深色搜索](docs/screenshots/search-mobile-dark.jpg)
-![手机 · 浅色搜索](docs/screenshots/search-mobile-light.jpg)
+## 功能
 
-### 对等互查
+- **一个词，找出所有押韵** · 输入任意词，结果按末尾连续押上韵母的字数分区：单押、双押、三押……多押在前，只押声调的放最后。首页附热门词汇。
+- **逐字核验** · 一次写 2–50 个词，必须两两押韵才整批收录。每一对都能展开逐字对照，看清哪个字押了韵母、哪个字押了声调。
+- **说唱怎么读，就怎么押** · 「怂」字典读 sǒng，大家都读 sóng。常见口语读音作为额外选项提供；差一个读音就能押上时，核验页直接给出一键修正。
+- **先到先记** · 规范化后的无向词对全站唯一。第一位成功收录的人永久保留归属和时间，撤回也不会改写。
+- **对等互查** · 点开一个词，看到和它直接或间接押韵的整组词，以及支撑这组关系的每一条实际收录。
+- **管理后台** · `/admin`：数据概览、账号停用与重置、按人或按词撤回与恢复押韵（积分同步）、屏蔽热门词、暂停投稿，每次操作都有审计记录。
+- **手机优先** · 独立的「词库 / 想押韵 / 我的」三屏，长内容各自滚动，主要按钮始终可见；适配 320px 小屏和 iOS Safari 键盘。默认浅色，可切换深色。
 
-![桌面 · 深色互查](docs/screenshots/group-desktop-dark.jpg)
-![桌面 · 浅色互查](docs/screenshots/group-desktop-light.jpg)
-![手机 · 深色互查](docs/screenshots/group-mobile-dark.jpg)
-![手机 · 浅色互查](docs/screenshots/group-mobile-light.jpg)
+<table>
+  <tr>
+    <td width="66%"><img src="docs/screenshots/admin-desktop.jpg" alt="管理后台概览"></td>
+    <td width="34%"><img src="docs/screenshots/admin-mobile.jpg" alt="管理后台 · 账号详情"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>管理后台</b> · 收录趋势、押韵类型与贡献排行</sub></td>
+    <td align="center"><sub><b>账号详情</b> · 重置密码、停用、撤回全部押韵</sub></td>
+  </tr>
+</table>
 
-### 我的
+<details>
+<summary><b>更多截图</b></summary>
+<br>
+<table>
+  <tr>
+    <td width="66%"><img src="docs/screenshots/home-desktop.jpg" alt="词库首页"></td>
+    <td width="34%"><img src="docs/screenshots/search-mobile-dark.jpg" alt="手机 · 深色搜索"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>词库首页</sub></td>
+    <td align="center"><sub>手机 · 深色模式</sub></td>
+  </tr>
+</table>
+<sub>截图来自本地 <code>wrangler dev</code> 与演示数据。</sub>
+</details>
 
-![桌面 · 深色我的](docs/screenshots/mine-desktop-dark.jpg)
-![桌面 · 浅色我的](docs/screenshots/mine-desktop-light.jpg)
-![手机 · 深色我的](docs/screenshots/mine-mobile-dark.jpg)
-![手机 · 浅色我的](docs/screenshots/mine-mobile-light.jpg)
+## 押韵规则
 
-## 词库：搜索押韵
+两个词按**较短一方的字数 N** 对齐末尾，逐字比较。每个位置至少押上韵母或声调中的一项：
 
-首页（词库）是一个押韵搜索框。输入任意词，用项目既有的韵部与声调规则比对全部已收录词，结果按末尾连续押上韵母的字数分区：单押、双押、三押、四押…（数据支持几押就显示几押，多押在前）；只押声调的合法押韵列在最后。查询词本身单独标出，不混入分区。
+| 种类 | 条件 | 得分 | 例 |
+| --- | --- | --- | --- |
+| 韵母押 | 每个位置韵母同韵部 | N | 说唱 ↔ 多光 |
+| 声调押 | 每个位置声调相同 | N | 山河 ↔ 斑驳 |
+| 混合押韵 | 每个位置押韵母或声调之一 | N | 山河天地人 ↔ 风云星底任 |
+| **完美押韵** | 韵母与声调全部押上 | **2N** | 光芒 ↔ 苍茫 |
 
-搜索框下方为「热门词汇」，按被搜索次数排序。只统计已确认的搜索（提交、点击热门词，或结果稳定约 1.5 秒），不计每个按键；规范化后须为 2–12 个汉字。同一来源每天每词只计一次、每天最多 40 个不同词，并受统一写入限流；至少两个来源搜过才上榜。界面只展示词，不展示次数。
+- **读音**：普通话字典读音，不自动变调；多音字可在投稿时选择，选定读音随词对保存。
+- **韵部**：允许介音不同 —— `a/ia/ua` · `o/uo` · `ai/uai` · `ei/uei` · `ao/iao` · `ou/iou` · `an/ian/uan/üan` · `en/uen/ün` · `ang/iang/uang` · `eng/ueng` · `ong/iong` · `ie/üe`，其余韵母按自身比较；成音节鼻音保留 `m/n/ng`。
+- **口语读音**：精选的「字典没有、大众普遍这样读」的读音，只作为额外选项，默认仍是字典读音。目前包括 怂 sóng、档 dǎng、绕 rǎo、暂 zǎn、质 zhǐ、潜 qiǎn、期 qí、危 / 微 wéi、室 shǐ、塑 suò、酵 xiào、堤 tí、拎 līng、粳 gēng、骰 shǎi、寻 xín（含对应繁体），定义在 [`shared/spoken.ts`](shared/spoken.ts)。不在表里的字不能随意改声调。
+- **整批原子**：任一词对未押上、已被收录或已撤回，整批不保存、不计分，输入和读音选择保留。服务器重算分数，`requestId` 保证网络重试不会重复加分。
 
-词语界面不显示「已收录 N 对」等计数。点开一词进入对等互查：这些词彼此押韵，间接相连者标为「同组词」，并列出实际收录的关系（A ↔ B、种类、最先提交者与时间、逐字对照）。
+## 技术架构
 
-## 想押韵：投稿与计分
+```mermaid
+flowchart LR
+  U["浏览器<br/>React 19 · Vite"] -- "/api/*" --> W["Cloudflare Worker<br/>Hono"]
+  U -- "静态资源" --> A["Workers Static Assets"]
+  W --> D[("D1 · SQLite")]
+  G["GitHub main"] -- "Workers Builds<br/>构建 · 迁移 · 部署" --> W
+```
 
-主投稿入口是「想押韵 / 我来想一个押韵」，不再有先出题、再答题的流程。一次填写 2–50 个词，每词至少两个汉字。词可复用于新的组合；规范化后的无向词对全站唯一，正反顺序和不同读音不会产生第二个名额。
+| 层 | 选型 |
+| --- | --- |
+| 前端 | React 19、TypeScript、Vite；单页应用，读音字典（`pinyin-pro`）进入投稿页时才加载 |
+| 后端 | Hono on Cloudflare Workers，与静态资源同域部署 |
+| 数据 | Cloudflare D1；批量写入在单个事务中完成 |
+| 规则 | `shared/` 下的纯 TypeScript，前后端共用同一套押韵判定 |
+| 安全 | scrypt 加盐哈希，HttpOnly / SameSite=Lax Cookie，来源校验与分级限流 |
+| 设计 | `--sc-*` 设计令牌；Anton 本地打包，不加载外部字体或 CDN；尊重「减少动态效果」 |
 
-所有词必须两两押韵。每对按较短词的汉字数 N 对齐双方末尾；每个位置的韵部或声调至少匹配一项，可混合。普通有效押韵 N 分，韵部与声调全部相同为完美押韵 2N 分。每个新词对单独计分，预览显示逐对结果和合计。任一词对无效、已收录或已撤回，整批不保存、不计分，保留输入和读音选择。
+<details>
+<summary><b>目录结构</b></summary>
 
-服务器重算分数并在同一事务中保存；`requestId` 使网络重试返回原结果而不重复加分。首次归属只属于真实词对，永远保留最早成功保存者与时间。词本身不归属于「出题者」；同组间接成员也不获得虚构的首创记录。
+```text
+src/              React 前端：词库、投稿、我的、管理后台（AdminConsole.tsx）
+worker/           Hono API 与账号认证
+shared/           押韵规则：读音、韵部、口语读音、词对比较、搜索分区
+migrations/       D1 迁移（0001 – 0004）
+tests/            规则单元测试与 API 集成测试
+scripts/          初始化、迁移、只读核验脚本
+docs/screenshots/ README 截图
+```
+</details>
 
-## 读音与判定
+## 本地开发
 
-保留原文。规范化统一全半角并忽略标点、空白和默认不可见字符。单次请求最多 2 MiB；全部词合计最多 10,000 个汉字，全部词对按较短词累计的比较位置最多 20,000。超出预算在解析读音前拒绝，输入仍保留。
+需要 Node.js 22+ 与 pnpm。
 
-使用普通话字典读音，不自动变调。多音字可选择合法读音，每个词在一个批次中使用同一套选择，选定读音随词对保存。成音节鼻音保留 `m/n/ng`，空韵母不会产生匹配。
+```sh
+pnpm install --frozen-lockfile
+cp .dev.vars.example .dev.vars          # 填入自己生成的 BOOTSTRAP_TOKEN
+pnpm exec wrangler d1 migrations apply DB --local
+pnpm build                              # 类型检查 + 构建前端（本地不会执行远程迁移）
+pnpm worker                             # http://127.0.0.1:8787
+pnpm bootstrap http://127.0.0.1:8787    # 一次性建立管理员
+```
 
-韵母按明确韵部比较，允许介音不同：`a/ia/ua`、`o/uo`、`ai/uai`、`ei/uei`、`ao/iao`、`ou/iou`、`an/ian/uan/üan`、`en/uen/ün`、`ang/iang/uang`、`eng/ueng`、`ong/iong`、`ie/üe`；其他韵母按自身匹配。逐字对照保留完整韵母和声调：匹配为蓝色、不匹配为红色、完美为金色，均有文字标签。
+| 命令 | 内容 |
+| --- | --- |
+| `pnpm test` | 押韵规则单元测试 |
+| `pnpm test:integration` | API 集成测试：自建临时配置、端口与本地 D1，不触碰项目 `.dev.vars` 或线上数据 |
+| `pnpm build` | `tsc` + Vite 构建 |
 
-词库互查基于有效关系的连通组。直接投稿过的词对展示首次作者、时间和读音对照；间接成员标为「同组词」，展示支撑它入组的实际关系。撤回后按剩余有效关系重新分组。
+改规则跑 `pnpm test`，改数据库或接口跑 `pnpm test:integration`，发布前跑 `pnpm build`。
 
-## 界面、账号与管理
+## 部署
 
-手机底部导航为独立的「词库 / 想押韵 / 我的」；长内容各自滚动，主要按钮保持可见。桌面词库为居中搜索；打开一词后左侧结果、右侧互查。投稿页用「填写词语 / 逐对核验」切换。可匿名预览，登录后提交；登录、换页与同一标签页刷新保留草稿（sessionStorage）。成功保存的内容和积分由 D1 跨设备同步。
+唯一正式环境：Worker `rhyme-community-ya`，域名 [ya.zoci.pro](https://ya.zoci.pro)，D1 数据库 `rhyme-community`。
 
-视觉为第三轮「Cypher」说唱海报风：默认深色（近黑底 `#0a0a0b` + 荧光酸绿 `#c8ff2e`），浅色为纸色底 + 加深的酸绿文字。页头切换并保存在本机。标题与数字使用本地打包的 Anton（仅拉丁字形），中文回退系统粗黑体；拼音、编号使用等宽字体。贴纸徽章、划重点、跑马灯与 EQ 节拍微动效用 `--sc-beat`（约 96 BPM），在「减少动态效果」下全部停止。不加载外部字体或 CDN。
+- **自动部署**：合并到 `main` 后，Cloudflare Workers Builds 运行 `pnpm run build` 并部署，通常一分钟内上线。
+- **数据库迁移**：只有 `main` 分支的构建会对线上 D1 执行待应用迁移；迁移失败则构建失败、不部署。设置 `RHYME_SKIP_REMOTE_MIGRATIONS=1` 可跳过，手动补跑用 `pnpm exec wrangler d1 migrations apply DB --remote`。
+- **结构性迁移前**：先在后台「设置」暂停投稿 → 备份并核对 → 迁移 → 发布 → 恢复投稿。不要把测试数据写入线上数据库。
+- **部署到自己的账号**：修改 `wrangler.jsonc` 中的账号、Worker 名、数据库 ID 与域名，用 `wrangler secret put BOOTSTRAP_TOKEN` 保存初始化令牌，然后 `npx wrangler deploy`。
 
-用户名/密码注册登录，独立随机盐和 scrypt 哈希，Cookie 为 HttpOnly/SameSite=Lax，线上为 Secure。服务器检查来源、限流和管理权限。管理员通过一次性私有初始化建立，普通注册不能成为管理员。
+<details>
+<summary><b>数据迁移记录</b></summary>
 
-「我的」展示本人押韵关系、累计积分和积分来源。管理员可撤回一条关系、处理普通账号和查看审计；撤回保留原文、首次归属与唯一键，扣回相关积分，并按剩余有效关系更新分组。
+| 文件 | 内容 |
+| --- | --- |
+| `0001_initial.sql` | 账号、会话与早期出题 / 答题表 |
+| `0002_mixed_rhyme.sql` | 混合押韵 |
+| `0003_direct_pairs.sql` | 词、无向押韵关系、批次与积分明细；早期出题数据按原作者迁移，旧表保留归档 |
+| `0004_search_counts.sql` | 热门词计数（只新增表） |
 
-输入法组合期间只显示临时文字，确认时提交一次，取消不重置已选读音。读音字典进入投稿页时才加载。核验每次展示 40 个词对，可继续加载；全部词对仍照常校验和计分。查重未完成不能收录。
+管理后台的停用、恢复、热门词屏蔽与投稿暂停都复用现有表，无需新迁移。
+</details>
 
-## 主要接口
+## 接口
 
-列表每页 30 条。服务器不接受客户端指定分数。旧出题/答题写接口返回 410；旧只读接口仅内部归档兼容。
+所有写接口要求 JSON、同源请求，并受限流保护；列表每页 30 条。服务器从不接受客户端给出的分数。
+
+<details>
+<summary><b>公开与账号接口</b></summary>
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
 | GET | `/api/health` | 探活 |
-| GET | `/api/me` | 当前会话与积分 |
-| POST | `/api/auth/register` `/login` `/logout` | 注册、登录、退出 |
-| GET / POST | `/api/setup` | 一次性管理员初始化 |
-| POST | `/api/rhymes/preview` | `{items:[{text,readings?:string[]}]}` → 读音、逐对结果、重复归属、有效状态及总分 |
-| POST | `/api/rhymes` | `{requestId,items}` → 批次、真实词对、新增积分、重放标志 |
-| GET | `/api/rhymes/requests/:requestId` | 仅查当前账号原提交；写入暂停期间仍可确认 |
-| GET | `/api/library/search?q=` | `{search:{query,error,exact,tiers}}`；`tier` 为末尾连续押上韵母的字数（0 为只押声调） |
-| GET | `/api/search/hot` | `{items:[{text}]}`，至少两个来源搜过；表未建立时为 `[]` |
-| POST | `/api/search/hits` | `{q}` → `{recorded}`；失败不阻断搜索 |
-| GET | `/api/words` `/api/words/:id/rhymes` `/api/rhymes/:id` | 词与关系只读分页 |
-| GET | `/api/profile` | 我的关系与积分来源 |
-| GET | `/api/admin/records` | 管理记录 |
-| POST | `/api/admin/withdraw` | `{type:'pair',id,reason}` |
-| POST | `/api/admin/reset-password` | `{id,password}` |
+| GET | `/api/me` | 当前账号与积分 |
+| POST | `/api/auth/register` · `/login` · `/logout` | 注册、登录、退出 |
+| GET · POST | `/api/setup` | 一次性管理员初始化 |
+| GET | `/api/library/search?q=` | 押韵搜索，按 `tier`（末尾连续押上韵母的字数）分区 |
+| GET | `/api/search/hot` | 热门词汇 |
+| POST | `/api/search/hits` | 记录一次已确认的搜索 |
+| POST | `/api/rhymes/preview` | 预览：读音、逐对结果、重复归属与合计分数 |
+| POST | `/api/rhymes` | 收录 `{requestId, items}`，整批原子保存 |
+| GET | `/api/rhymes/requests/:requestId` | 确认本人上次提交的结果 |
+| GET | `/api/words` · `/api/words/:id/rhymes` · `/api/rhymes/:id` | 词与押韵关系 |
+| GET | `/api/profile` | 我的押韵与积分来源 |
 
-API 请求读取正文有 20 秒超时。结果未确认的提交另存账号、词语、读音与 `requestId`，刷新后先查询原提交；确认旧提交不会清空后来编辑的新草稿。
+</details>
 
-## 数据迁移
+<details>
+<summary><b>管理接口</b>（仅管理员）</summary>
 
-| 文件 | 作用 |
-| --- | --- |
-| `0001_initial.sql` | 初始账号、旧 topics/answers、会话 |
-| `0002_mixed_rhyme.sql` | 混合押韵标记 |
-| `0003_direct_pairs.sql` | 增量：词、无向关系、批次、积分明细及旧 ID 映射；旧表保留归档 |
-| `0004_search_counts.sql` | **只新建** `search_counts`、`search_hits`，不改不删已有表 |
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/api/admin/overview` | 概览数字、14 天收录、类型占比、贡献排行 |
+| GET | `/api/admin/users` · `/api/admin/users/:id` | 账号列表（搜索 / 筛选）与账号详情 |
+| POST | `/api/admin/users/status` | 停用或启用账号，停用即下线 |
+| POST | `/api/admin/users/withdraw-all` | 撤回某账号的全部有效押韵 |
+| POST | `/api/admin/reset-password` | 重置普通账号密码 |
+| GET | `/api/admin/pairs` | 按词语或作者搜索全站押韵 |
+| POST | `/api/admin/withdraw` · `/api/admin/restore` | 撤回或恢复一组押韵，积分同步 |
+| GET · POST | `/api/admin/hot` | 热门词列表与屏蔽 |
+| POST | `/api/admin/settings` | 暂停或恢复投稿 |
+| GET | `/api/admin/logs` · `/api/admin/records` | 处理记录 |
 
-`0003` 只把实际答案迁成原题与答案的关系，作者取原答案记录；不把原出题者转为押韵作者，不补造兄弟答案之间的关系。正反重复合并时最早归属不变。每位用户已有积分逐条保留。没有有效押韵的旧单独题目不进入新词库。
+</details>
 
-`0004` 与仍在运行的旧 Worker 兼容；表未建立时热门词汇为空、搜索不计数。`pnpm run build` 仅在 Workers Builds（`WORKERS_CI=1`）末尾执行 `wrangler d1 migrations apply DB --remote`；失败则构建失败、不部署。本地和测试不执行。`RHYME_SKIP_REMOTE_MIGRATIONS=1` 可关闭。手工补跑：`pnpm exec wrangler d1 migrations apply DB --remote`。
+## 更多文档
 
-发布前：暂停内容写入（`content_write_paused=1`）→ 备份核对 → 迁移 → 发布 → 解除暂停。迁移末尾设置 `pair_model_ready=1`。不要把测试数据写入生产 D1。
+- [`AGENTS.md`](AGENTS.md) — 内容规则与协作约定
+- [`READINESS.md`](READINESS.md) — 上线门槛
+- [`VERIFICATION.md`](VERIFICATION.md) — 已验证结果
+- [`deployment.json`](deployment.json) · [`wrangler.jsonc`](wrangler.jsonc) — 部署位置与资源 ID
 
-## 开发与验证
+<br>
 
-需要 Node.js 22+ 与 pnpm，按 `pnpm-lock.yaml` 安装：
-
-```sh
-pnpm install --frozen-lockfile
-cp .dev.vars.example .dev.vars   # 填入自己生成的 BOOTSTRAP_TOKEN
-pnpm exec wrangler d1 migrations apply DB --local
-pnpm test                        # 押韵规则
-pnpm test:integration            # 数据库 / API
-pnpm build                       # tsc + Vite；本地不跑远程迁移
-pnpm worker                      # http://127.0.0.1:8787
-```
-
-开发初始化凭证禁止用于线上。新库执行 `pnpm bootstrap http://127.0.0.1:8787` 走一次性管理员初始化。
-
-集成测试自行生成临时配置、空闲端口、本地 D1 和初始化凭证，不依赖项目 `.dev.vars`。覆盖历史迁移、整批回滚、并发、幂等、计分、权限、读音、整组互查、撤回、账号重置与事务故障回滚。
-
-`node scripts/test-word-input.mjs /absolute/temporary/directory/node_modules/jsdom` 对 React 输入组件跑 6 项 IME 回归；官方 jsdom 只装在项目外临时目录，不改锁文件。
-
-`verify-pairs-production-readonly.mjs` 与 `verify-maturity-production-readonly.mjs` 只读正式站 `ya.zoci.pro`。`audit-pair-migration.mjs production before|after` 核对历史字段和积分。仓库里仍留着已下线的 staging 校验脚本，不要再对它们执行写入。数据库备份与私人管理员入口放项目目录外，不进源码包。
-
-## 部署
-
-唯一正式环境是 Worker `rhyme-community-ya`、自定义域名 `ya.zoci.pro`，D1 为 `rhyme-community`（`352be9ba-ecc6-4240-b5d8-277741a449bd`）。`wrangler.jsonc` 直接描述该环境；`workers_dev` 关闭。旧 Worker `rhyme-community`、`rhyme-community-staging` 与域名 `yy.zoci.pro` 已删除。
-
-Workers Builds 从 `main` 运行 `pnpm run build`（含 `WORKERS_CI=1` 时对上述 D1 执行待应用迁移）再部署。推荐部署命令：
-
-```sh
-npx wrangler deploy
-```
-
-若构建触发器仍生成 `wrangler.ya.json`，下面两段都仍然有效（配置已被写成正式值，生成步骤只是再写一份相同文件）：
-
-```sh
-node scripts/write-ya-config.mjs && npx wrangler deploy -c wrangler.ya.json
-```
-
-```sh
-node -e 'const fs=require("fs");const c=JSON.parse(fs.readFileSync("wrangler.jsonc","utf8"));c.name="rhyme-community-ya";delete c.env;delete c["$schema"];c.workers_dev=false;c.routes=[{pattern:"ya.zoci.pro",custom_domain:true}];fs.writeFileSync("wrangler.ya.json",JSON.stringify(c,null,2))' && npx wrangler deploy -c wrangler.ya.json
-```
-
-独立部署到自己的 Cloudflare 时，改 `wrangler.jsonc` 中的账号、Worker 名、数据库 ID 与域名，并用 `wrangler secret put BOOTSTRAP_TOKEN` 保存初始化令牌。`.dev.vars`、真实密钥、备份与会话数据不进仓库。
+<div align="center">
+<sub><b>softcloud.</b> / 押韵共创 · 亲手写下 · 先到先记 · 每份灵感都有名字</sub>
+</div>
