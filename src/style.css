@@ -429,6 +429,49 @@ details[open]>.sc-alignment,details[open]>.sc-lookup-source,details[open]>.sc-he
 .sc-preview-retry{margin-left:var(--sc-space-3)}
 .sc-preview-results,.sc-word-fields{overscroll-behavior:contain}
 
+/* ---------- 歌词本 ---------- */
+.sc-compose-links{display:flex;align-items:center;gap:var(--sc-space-4)}
+.sc-compose-links .sc-link{min-height:40px;color:var(--sc-muted)}
+.sc-compose-links .sc-link:hover:enabled{color:var(--sc-text)}
+.sc-compose-links .sc-lyrics-entry{color:var(--sc-accent-text)}
+.sc-lyrics{display:flex;flex-direction:column;min-height:420px;height:min(680px,calc(100dvh - 320px));overflow:hidden;animation:sc-rise .45s var(--sc-ease-out)}
+.sc-lyrics .sc-compose-heading h2{display:flex;align-items:center;gap:10px}
+.sc-lyrics .sc-compose-heading h2 svg{color:var(--sc-accent-text)}
+.sc-lyrics-tabs{display:none}
+.sc-lyrics-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--sc-space-5)}
+.sc-lyrics-pane{display:flex;flex-direction:column;min-height:0}
+.sc-lyrics-write textarea{flex:1;min-height:0;resize:none;padding:14px 16px;background:var(--sc-bg);font-size:var(--sc-text-lg);font-weight:700;line-height:2;letter-spacing:.03em}
+.sc-lyrics-tools{display:flex;align-items:center;gap:var(--sc-space-3);min-height:36px;padding-top:var(--sc-space-2);font-size:var(--sc-text-xs);color:var(--sc-subtle);flex-shrink:0}
+.sc-lyrics-tools>span{margin-left:auto;font-variant-numeric:tabular-nums}
+.sc-lyrics-clear{color:var(--sc-muted)}
+.sc-lyrics-to-check{display:none}
+.sc-lyrics-check{overflow:auto;padding:0 6px 12px;scrollbar-width:thin;overscroll-behavior:contain}
+.sc-lyrics-summary{position:sticky;top:0;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:6px 0 12px;margin-bottom:4px;border-bottom:1px solid var(--sc-border);background:var(--sc-panel-bg,var(--sc-bg))}
+.sc-lyrics-summary strong{margin-right:4px;font-size:var(--sc-text-sm);font-weight:800}
+/* Lines sharing a rhyme ending share a color; six colors cycle. */
+.sc-rhyme-c0{--sc-rc:var(--sc-accent-text)}.sc-rhyme-c1{--sc-rc:var(--sc-match)}.sc-rhyme-c2{--sc-rc:var(--sc-gold)}
+.sc-rhyme-c3{--sc-rc:#9b6cf0}.sc-rhyme-c4{--sc-rc:#16a394}.sc-rhyme-c5{--sc-rc:#f07a32}
+.sc-lyrics-ending{padding:2px 10px;border-radius:var(--sc-radius-pill);background:color-mix(in srgb,var(--sc-rc) 15%,transparent);color:var(--sc-rc);font-family:var(--sc-font-mono);font-size:var(--sc-text-2xs);font-weight:700}
+.sc-lyric-lines{margin:0;padding:0;list-style:none}
+.sc-lyric-line{display:grid;grid-template-columns:24px minmax(0,1fr) auto;align-items:start;gap:10px;padding:9px 0;border-bottom:1px dashed var(--sc-border);animation:sc-fade .25s var(--sc-ease)}
+.sc-lyric-stanza{margin-top:var(--sc-space-4);border-top:2px solid var(--sc-border-strong)}
+.sc-lyric-no{padding-top:4px;font-family:var(--sc-font-mono);font-size:var(--sc-text-2xs);color:var(--sc-subtle);text-align:right;font-variant-numeric:tabular-nums}
+.sc-lyric-text{min-width:0}
+.sc-lyric-text p{font-size:var(--sc-text-md);font-weight:700;line-height:1.7;letter-spacing:.02em;overflow-wrap:anywhere}
+.sc-lyric-text mark{white-space:nowrap;padding:0 2px;border-radius:4px;background:color-mix(in srgb,var(--sc-rc) 18%,transparent);box-shadow:inset 0 -2px 0 var(--sc-rc);color:inherit}
+.sc-lyric-text small{display:block;font-family:var(--sc-font-mono);font-size:var(--sc-text-2xs);color:var(--sc-rc,var(--sc-muted))}
+.sc-lyric-rhyme{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.sc-lyric-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:var(--sc-radius-pill);background:color-mix(in srgb,var(--sc-rc) 15%,transparent);color:var(--sc-rc);font-size:var(--sc-text-2xs);font-weight:800;white-space:nowrap}
+.sc-lyric-perfect{box-shadow:inset 0 0 0 1px var(--sc-gold-border)}
+.sc-lyric-rhyme .sc-link{min-height:28px;padding:2px 0;font-size:var(--sc-text-2xs)}
+/* Narrow panels: write and check become tabs, like 填写词语 / 逐对核验. */
+@media(max-width:1100px){
+  .sc-lyrics-tabs{display:flex;margin-bottom:var(--sc-space-3)}
+  .sc-lyrics-body{grid-template-columns:minmax(0,1fr)}
+  .sc-lyrics[data-pane=write] .sc-lyrics-check,.sc-lyrics[data-pane=check] .sc-lyrics-write{display:none}
+  .sc-lyrics-to-check{display:inline-flex}
+}
+
 /* ---------- Records ---------- */
 .sc-tabs{margin-bottom:var(--sc-space-2);flex-wrap:wrap;align-self:flex-start}
 .sc-tabs button{flex:0 1 auto;padding:6px 18px}
@@ -662,8 +705,9 @@ details[open]>.sc-alignment,details[open]>.sc-lookup-source,details[open]>.sc-he
   .sc-topic-list{flex:1;min-height:0;max-height:none;overflow:auto;margin:0 -6px;padding:0 4px 8px;scrollbar-width:thin;scrollbar-gutter:stable}
   .sc-play-panel{padding:var(--sc-space-6) var(--sc-space-6) var(--sc-space-5)!important}
   .sc-play-panel:has(.sc-start){padding-bottom:0!important}
-  .sc-rhyme-form{flex:1;min-height:0;height:auto}
+  .sc-rhyme-form,.sc-lyrics{flex:1;min-height:0;height:auto}
   .sc-compose-intro{display:none}
+  .sc-lyrics-body{margin-top:var(--sc-space-4)}
   .sc-compose-tabs{margin-top:var(--sc-space-4);margin-bottom:var(--sc-space-4)}
   .sc-lookup-panel{flex:1;min-height:0;overflow:hidden}
   .sc-lookup-panel>.sc-meta{flex-shrink:0}
@@ -740,8 +784,8 @@ details[open]>.sc-alignment,details[open]>.sc-lookup-source,details[open]>.sc-he
   .sc-game-grid>.sc-panel{--sc-panel-bg:var(--sc-bg);flex:1;min-height:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
   .sc-app[data-mobile-screen=library] .sc-topic-panel{display:flex;flex-direction:column}
   .sc-app[data-mobile-screen=library] .sc-play-panel{display:none}
-  .sc-app[data-mobile-screen=lookup] .sc-topic-panel,.sc-app[data-mobile-screen=compose] .sc-topic-panel{display:none}
-  .sc-app[data-mobile-screen=lookup] .sc-play-panel,.sc-app[data-mobile-screen=compose] .sc-play-panel{display:flex;flex-direction:column}
+  .sc-app[data-mobile-screen=lookup] .sc-topic-panel,.sc-app[data-mobile-screen=compose] .sc-topic-panel,.sc-app[data-mobile-screen=lyrics] .sc-topic-panel{display:none}
+  .sc-app[data-mobile-screen=lookup] .sc-play-panel,.sc-app[data-mobile-screen=compose] .sc-play-panel,.sc-app[data-mobile-screen=lyrics] .sc-play-panel{display:flex;flex-direction:column}
 
   .sc-finder-head{margin-bottom:var(--sc-space-3)}
   .sc-finder-head h2{font-size:clamp(20px,6.6vw,26px);line-height:1.2;white-space:nowrap}
@@ -771,7 +815,9 @@ details[open]>.sc-alignment,details[open]>.sc-lookup-source,details[open]>.sc-he
   .sc-pair svg{width:11px}
   .sc-result-note{margin-top:10px}
 
-  .sc-rhyme-form{flex:1;height:auto;min-height:0;overflow:hidden}
+  .sc-rhyme-form,.sc-lyrics{flex:1;height:auto;min-height:0;overflow:hidden}
+  .sc-lyrics-write textarea{font-size:var(--sc-text-md);padding:12px 14px}
+  .sc-lyric-text p{font-size:var(--sc-text-base)}
   .sc-compose-heading{gap:10px}
   .sc-compose-heading .sc-eyebrow{font-size:10px;margin-bottom:4px;letter-spacing:.12em}
   .sc-compose-heading h2{font-size:var(--sc-text-2xl)}
@@ -905,6 +951,7 @@ html[data-sc-keyboard=true] .sc-bottom-nav{display:none}
 /* Short phones (e.g. 320×640): drop secondary copy so the check list keeps real room to scroll. */
 @media(max-width:760px) and (max-height:700px){
   .sc-compose-heading .sc-eyebrow,.sc-compose-intro,.sc-word-help,.sc-preview-results>.sc-help{display:none}
+  .sc-lyrics-tabs{margin:var(--sc-space-2) 0}
   .sc-compose-heading h2{font-size:var(--sc-text-xl)}
   .sc-compose-tabs{margin:var(--sc-space-2) 0}
   .sc-compose-tabs button{min-height:34px}
