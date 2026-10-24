@@ -232,7 +232,7 @@ select{color:var(--sc-text)}
 .sc-rules-link{color:var(--sc-muted)}
 .sc-rules-link:hover:enabled{color:var(--sc-text)}
 /* Idle hot words stay on one scrollable line. */
-.sc-finder-idle .sc-hot-list{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:4px 2px;margin:-4px -2px;mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.sc-finder-idle .sc-hot-list{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:4px 0;margin:-4px 0;mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 .sc-finder-idle .sc-hot-list::-webkit-scrollbar{display:none}
 .sc-finder-idle .sc-hot-list li{flex-shrink:0}
 .sc-start-rules{margin-top:var(--sc-space-4)}
