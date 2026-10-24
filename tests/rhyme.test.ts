@@ -174,3 +174,26 @@ test('拼音显示为声调符号，存储仍为数字调',()=>{
   assert.deepEqual(['song2','gua4','liu2','gui4','lv4','lü3','nü3','xue2','ma0','er2','hng','ng2','m4'].map(markedPinyin),
     ['sóng','guà','liú','guì','lǜ','lǚ','nǚ','xué','ma','ér','hng','ńg','m̀'].map(x=>x.normalize('NFC')));
 });
+test('歌词本：按段落找押韵行、几押、韵脚，空行分段，非汉字行不参与',async()=>{
+  const {analyzeLyrics,splitHighlight,rhymeWord}=await import('../shared/lyrics.ts');
+  const verse='深夜的街灯照亮我的光芒\n回头看过去，一片苍茫！\n不管有多难 我都不慌忙\n把梦想写进每一行\n\n(Hook)\n说唱是我的信仰\n节奏在心里回荡';
+  const a=analyzeLyrics(verse,pronunciation);
+  assert.deepEqual(a.lines.map(l=>[l.index,l.stanza,l.ending]),[[0,0,'ang'],[1,0,'ang'],[2,0,'ang'],[3,0,'ang'],[5,1,''],[6,1,'ang'],[7,1,'ang']]);
+  const [l0,l1,l2,l3,hook,l6,l7]=a.lines;
+  assert.equal(l0.partner,null);
+  assert.deepEqual([l1.partner,l1.rhymes,l1.perfect],[0,2,true],'苍茫 ↔ 光芒 双押且声调相同');
+  assert.deepEqual([l2.partner,l2.rhymes],[1,2],'慌忙 就近押 苍茫');
+  assert.equal(l3.rhymes,1,'一行 只有末字押上');
+  assert.equal(hook.partner,null);assert.equal(hook.highlight,0);
+  assert.deepEqual([l6.partner,l7.partner,l7.rhymes],[null,5,1],'跨段不配对；信仰 ↔ 回荡 单押');
+  assert.equal(l0.highlight,2,'被后面的双押标记');
+  assert.equal(a.best,2);assert.equal(a.rhymedLines,6);
+  assert.deepEqual(a.endings,[{ending:'ang',lines:6}]);
+  assert.deepEqual(splitHighlight('回头看过去，一片苍茫！',2),['回头看过去，一片','苍茫','！']);
+  assert.deepEqual(splitHighlight('(Hook)',2),['(Hook)','','']);
+  assert.equal(rhymeWord('回头看过去，一片苍茫！',2),'苍茫');
+  assert.equal(rhymeWord('把梦想写进每一行',1),'一行','至少取两个字作投稿词');
+  const spoken=analyzeLyrics('今天我又认怂\n明天还是不服',pronunciation);
+  assert.equal(spoken.lines[1].rhymes,0,'韵母不同不算押韵脚');
+  assert.equal(analyzeLyrics('',pronunciation).lines.length,0);
+});
