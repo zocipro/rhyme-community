@@ -692,3 +692,28 @@ test('管理后台：仅管理员可用；撤回全部与恢复同步积分；�
   const actions = (await admin('/admin/logs')).data.items.filter((log: any) => log.entity_id === id || log.entity_id === pair.id).map((log: any) => log.action);
   for (const action of ['enable', 'disable', 'restore', 'withdraw']) assert.ok(actions.includes(action), action);
 });
+
+test('每周排行：按本周有效积分排名，撤回的押韵不计，可回看上周', async () => {
+  const first = client(), second = client();
+  assert.equal((await first('/auth/register', { username: '排行甲' + tag, password })).status, 201);
+  assert.equal((await second('/auth/register', { username: '排行乙' + tag, password })).status, 201);
+  const a = await first('/rhymes', batch(['排行测试山河', '排行测试丹泽', '排行测试干渴']));
+  const b = await second('/rhymes', batch(['榜单测试山河', '榜单测试丹泽']));
+  assert.equal(a.status, 201); assert.equal(b.status, 201);
+  const mine = async (who: ReturnType<typeof client>, week = 0) => (await who(`/leaderboard/weekly?week=${week}`)).data;
+  const boardA = await mine(first), boardB = await mine(second);
+  assert.deepEqual([boardA.me.points, boardA.me.pairs, boardA.me.me], [a.data.points, 3, true]);
+  assert.deepEqual([boardB.me.points, boardB.me.pairs], [b.data.points, 1]);
+  assert.ok(boardA.me.rank < boardB.me.rank, '积分高的排名靠前');
+  assert.equal(boardA.items.length <= 10, true);
+  assert.ok(boardA.items.every((row: any) => Object.keys(row).sort().join() === 'me,pairs,points,rank,username'), '不暴露账号 ID');
+  assert.equal((await publicApi('/leaderboard/weekly')).data.me, null, '未登录没有个人排名');
+  assert.equal((await admin('/admin/withdraw', { type: 'pair', id: b.data.pairs[0].id, reason: '排行撤回测试' })).status, 200);
+  assert.equal((await mine(second)).me, null, '撤回后本周不再计分');
+  // Exactly one week back is always inside last week, whatever weekday the test runs on.
+  const firstId = (await first('/me')).data.user.id;
+  db(`UPDATE score_entries SET created_at=strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days') WHERE user_id=${quote(firstId)}`, true);
+  assert.equal((await mine(first)).me, null, '移到上周后本周无分');
+  const lastWeek = await mine(first, 1);
+  assert.deepEqual([lastWeek.me?.points, lastWeek.week.back], [a.data.points, 1], '上周榜单能看到');
+});

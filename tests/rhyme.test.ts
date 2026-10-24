@@ -197,3 +197,12 @@ test('歌词本：按段落找押韵行、几押、韵脚，空行分段，非�
   assert.equal(spoken.lines[1].rhymes,0,'韵母不同不算押韵脚');
   assert.equal(analyzeLyrics('',pronunciation).lines.length,0);
 });
+test('排行周：北京时间周一 0 点到下周一 0 点，可回看上周',async()=>{
+  const {weekRange}=await import('../shared/week.ts');
+  const week={start:'2026-10-18T16:00:00.000Z',end:'2026-10-25T16:00:00.000Z'};
+  assert.deepEqual(weekRange(new Date('2026-10-21T12:00:00Z')),week,'周三晚上属于 10/19 这一周');
+  assert.deepEqual(weekRange(new Date('2026-10-18T16:00:00Z')),week,'周一 0 点整是新一周的开始');
+  assert.deepEqual(weekRange(new Date('2026-10-25T15:59:59Z')),week,'周日 23:59:59 仍是本周');
+  assert.equal(weekRange(new Date('2026-10-25T16:00:00Z')).start,'2026-10-25T16:00:00.000Z','下周一 0 点进入下一周');
+  assert.deepEqual(weekRange(new Date('2026-10-21T12:00:00Z'),1),{start:'2026-10-11T16:00:00.000Z',end:'2026-10-18T16:00:00.000Z'});
+});
