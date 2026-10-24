@@ -11,6 +11,7 @@ import type { RhymingWord, Word, RhymePair } from '../shared/lookup';
 import { hotSearchKey, searchRhymes } from '../shared/library';
 import type { HotWord, RhymeSearch } from '../shared/library';
 import { digest, hashPassword, verifyPassword, validateAccount } from './auth';
+import { weekRange } from '../shared/week';
 
 type User = { id: string; username: string; role: 'user' | 'admin'; disabled: number };
 type AppEnv = { Bindings: Env; Variables: { user: User | null; pairReady: boolean } };
@@ -341,6 +342,24 @@ app.post('/api/rhymes',async c=>{
     throw error;
   }
   return c.json(await submissionResult(c,{id,points:preview.totalPoints},false),201);
+});
+// Weekly leaderboard: points earned this week (or last week with ?week=1) from rhymes that are still active.
+// Withdrawn rhymes and disabled accounts drop out; ties share a rank and list whoever got there first.
+const LEADERBOARD_SIZE = 10;
+app.get('/api/leaderboard/weekly', async c => {
+  if (!c.get('pairReady')) return c.json(pausedError, 503);
+  const back = c.req.query('week') === '1' ? 1 : 0, { start, end } = weekRange(new Date(), back), me = c.get('user')?.id ?? '';
+  const { results } = await c.env.DB.prepare(`WITH weekly AS (
+      SELECT s.user_id,SUM(s.points) AS points,COUNT(DISTINCT s.pair_id) AS pairs,MIN(s.created_at) AS first_at
+      FROM score_entries s JOIN rhyme_pairs p ON p.id=s.pair_id JOIN users u ON u.id=s.user_id
+      WHERE s.status='active' AND p.status='active' AND u.disabled=0 AND s.created_at>=? AND s.created_at<?
+      GROUP BY s.user_id
+    ), ranked AS (
+      SELECT w.*,u.username,RANK() OVER (ORDER BY w.points DESC,w.pairs DESC) AS rank FROM weekly w JOIN users u ON u.id=w.user_id
+    ) SELECT user_id,username,points,pairs,rank FROM ranked WHERE rank<=? OR user_id=? ORDER BY rank,first_at,username`).bind(start, end, LEADERBOARD_SIZE, me).all();
+  const row = (r: Record<string, unknown>) => ({ rank: Number(r.rank), username: String(r.username), points: Number(r.points), pairs: Number(r.pairs), me: r.user_id === me });
+  const mine = results.find(r => r.user_id === me);
+  return c.json({ week: { start, end, back }, items: results.filter(r => Number(r.rank) <= LEADERBOARD_SIZE).slice(0, LEADERBOARD_SIZE).map(row), me: mine ? row(mine) : null });
 });
 app.get('/api/profile',async c=>{
   const user=c.get('user');if(!user)return c.json({error:'请先登录'},401);
