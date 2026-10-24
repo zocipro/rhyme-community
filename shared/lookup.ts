@@ -6,6 +6,7 @@ export type PairWord = { word_id: string; text: string; normalized: string; read
 export type RhymePair = {
   id: string; left: PairWord; right: PairWord; n: number; kind: Exclude<RhymeKind, 'none'>; points: number;
   author: string; author_id: string; created_at: string; status: 'active' | 'withdrawn'; comparison: Comparison;
+  likes?: number; liked?: boolean; // liked is only set where the request knows who is asking
 };
 export type RhymingWord = { word: Word; association: 'direct' | 'group'; pair: RhymePair };
 export type ScoreEntry = {

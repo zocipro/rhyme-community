@@ -18,7 +18,9 @@ type AppEnv = { Bindings: Env; Variables: { user: User | null; pairReady: boolea
 const app = new Hono<AppEnv>();
 const topicSelect = `SELECT t.*,u.username AS author,(SELECT COUNT(*) FROM answers a WHERE a.topic_id=t.id AND a.status='active') AS answer_count FROM topics t JOIN users u ON u.id=t.author_id`;
 const legacyScoreSql = `SELECT COALESCE(SUM(a.points),0) AS score FROM answers a JOIN topics t ON t.id=a.topic_id WHERE a.author_id=? AND a.status='active' AND t.status='active'`;
-const pairSelect = `SELECT p.*,l.normalized AS left_normalized,r.normalized AS right_normalized,u.username AS author FROM rhyme_pairs p JOIN words l ON l.id=p.left_word_id JOIN words r ON r.id=p.right_word_id JOIN users u ON u.id=p.author_id`;
+// Likes from disabled accounts stop counting, like their other content signals.
+const pairLikes = `(SELECT COUNT(*) FROM pair_likes pl JOIN users lu ON lu.id=pl.user_id WHERE pl.pair_id=p.id AND lu.disabled=0) AS likes`;
+const pairSelect = `SELECT p.*,l.normalized AS left_normalized,r.normalized AS right_normalized,u.username AS author,${pairLikes} FROM rhyme_pairs p JOIN words l ON l.id=p.left_word_id JOIN words r ON r.id=p.right_word_id JOIN users u ON u.id=p.author_id`;
 const activeWord = `EXISTS(SELECT 1 FROM rhyme_pairs active_pair WHERE active_pair.status='active' AND (active_pair.left_word_id=w.id OR active_pair.right_word_id=w.id))`;
 const wordSelect = `SELECT w.*,(SELECT COUNT(*) FROM rhyme_pairs count_pair WHERE count_pair.status='active' AND (count_pair.left_word_id=w.id OR count_pair.right_word_id=w.id)) AS pair_count FROM words w`;
 const scoreSql = `SELECT COALESCE(SUM(s.points),0) AS score FROM score_entries s JOIN rhyme_pairs p ON p.id=s.pair_id WHERE s.user_id=? AND s.status='active' AND p.status='active'`;
@@ -33,7 +35,7 @@ const publicWord = (row: Record<string, unknown>): Word => ({ id: String(row.id)
 const publicPair = (row: Record<string, unknown>, reverse = false): RhymePair => {
   const left = { word_id: String(row.left_word_id), text: String(row.left_text), normalized: String(row.left_normalized), readings: JSON.parse(String(row.left_readings)) as Syllable[] };
   const right = { word_id: String(row.right_word_id), text: String(row.right_text), normalized: String(row.right_normalized), readings: JSON.parse(String(row.right_readings)) as Syllable[] };
-  return { id: String(row.id), left: reverse ? right : left, right: reverse ? left : right, n: Number(row.n), kind: row.kind as RhymePair['kind'], points: Number(row.points), author: String(row.author), author_id: String(row.author_id), created_at: String(row.created_at), status: row.status as RhymePair['status'], comparison: compareRecordedRhyme(left.readings, right.readings, reverse) };
+  return { id: String(row.id), left: reverse ? right : left, right: reverse ? left : right, n: Number(row.n), kind: row.kind as RhymePair['kind'], points: Number(row.points), author: String(row.author), author_id: String(row.author_id), created_at: String(row.created_at), status: row.status as RhymePair['status'], comparison: compareRecordedRhyme(left.readings, right.readings, reverse), likes: Number(row.likes ?? 0), ...(row.liked === undefined ? {} : { liked: Number(row.liked) === 1 }) };
 };
 const pausedError = { error: '正在更新押韵收录功能，输入已保留，请稍后重试' };
 async function jsonObject(c: Context<AppEnv>): Promise<Record<string, any>> {
@@ -63,7 +65,7 @@ app.use('/api/*', async (c, next) => {
   await next();
 });
 app.use('/api/*', async (c, next) => {
-  if (c.req.method === 'POST' && ['/api/topics','/api/answers','/api/rhymes','/api/admin/withdraw','/api/admin/restore','/api/admin/users/withdraw-all'].includes(c.req.path)) {
+  if (c.req.method === 'POST' && (['/api/topics','/api/answers','/api/rhymes','/api/admin/withdraw','/api/admin/restore','/api/admin/users/withdraw-all'].includes(c.req.path) || /^\/api\/rhymes\/[^/]+\/like$/.test(c.req.path))) {
     const paused = await c.env.DB.prepare("SELECT value FROM settings WHERE key='content_write_paused'").first<{value:string}>();
     if (paused?.value === '1') return c.json(pausedError,503);
   }
@@ -250,12 +252,13 @@ app.get('/api/words/:id/rhymes', async c => {
       ROW_NUMBER() OVER (PARTITION BY w.id ORDER BY CASE WHEN p.left_word_id=? OR p.right_word_id=? THEN 0 ELSE 1 END,p.created_at,p.id) AS candidate_rank
     FROM words w JOIN component c ON c.id=w.id JOIN rhyme_pairs p ON (p.left_word_id=w.id OR p.right_word_id=w.id) AND p.status='active'
     WHERE w.id<>?
-  ) SELECT p.*,l.normalized AS left_normalized,r.normalized AS right_normalized,u.username AS author,
+  ) SELECT p.*,l.normalized AS left_normalized,r.normalized AS right_normalized,u.username AS author,${pairLikes},
+    EXISTS(SELECT 1 FROM pair_likes ml WHERE ml.pair_id=p.id AND ml.user_id=?) AS liked,
     w.id AS word_id,w.text AS word_text,w.normalized AS word_normalized,w.n AS word_n,c.association,
     (SELECT COUNT(*) FROM rhyme_pairs count_pair WHERE count_pair.status='active' AND (count_pair.left_word_id=w.id OR count_pair.right_word_id=w.id)) AS pair_count
   FROM candidates c JOIN rhyme_pairs p ON p.id=c.candidate_pair_id JOIN words l ON l.id=p.left_word_id JOIN words r ON r.id=p.right_word_id
     JOIN users u ON u.id=p.author_id JOIN words w ON w.id=c.candidate_word_id
-  WHERE c.candidate_rank=1 ORDER BY p.created_at,p.id,w.id LIMIT 31 OFFSET ?`).bind(id,id,id,id,id,id,page*30).all();
+  WHERE c.candidate_rank=1 ORDER BY p.created_at,p.id,w.id LIMIT 31 OFFSET ?`).bind(id,id,id,id,id,id,c.get('user')?.id??'',page*30).all();
   const items:RhymingWord[]=results.slice(0,30).map(record=>({
     word:{id:String(record.word_id),text:String(record.word_text),normalized:String(record.word_normalized),n:Number(record.word_n),pair_count:Number(record.pair_count)},
     association:record.association as RhymingWord['association'],pair:publicPair(record,record.association==='direct' && record.right_word_id===id)
@@ -342,6 +345,21 @@ app.post('/api/rhymes',async c=>{
     throw error;
   }
   return c.json(await submissionResult(c,{id,points:preview.totalPoints},false),201);
+});
+// Likes: one per user per active pair, not on your own pair; they reorder relations and never touch points.
+app.post('/api/rhymes/:id/like', async c => {
+  if (!c.get('pairReady')) return c.json(pausedError, 503);
+  const user = c.get('user'); if (!user) return c.json({ error: '请先登录' }, 401);
+  const body = await jsonObject(c);
+  if (typeof body.liked !== 'boolean') throw new Error('请选择点赞或取消点赞');
+  const pair = await c.env.DB.prepare("SELECT id,author_id FROM rhyme_pairs WHERE id=? AND status='active'").bind(c.req.param('id')).first<{ id: string; author_id: string }>();
+  if (!pair) return c.json({ error: '押韵已撤回或不存在' }, 404);
+  if (pair.author_id === user.id) return c.json({ error: '不能给自己的押韵点赞' }, 400);
+  await (body.liked
+    ? c.env.DB.prepare('INSERT INTO pair_likes(pair_id,user_id,created_at) VALUES(?,?,?) ON CONFLICT DO NOTHING').bind(pair.id, user.id, now())
+    : c.env.DB.prepare('DELETE FROM pair_likes WHERE pair_id=? AND user_id=?').bind(pair.id, user.id)).run();
+  const count = await c.env.DB.prepare('SELECT COUNT(*) AS n FROM pair_likes pl JOIN users lu ON lu.id=pl.user_id WHERE pl.pair_id=? AND lu.disabled=0').bind(pair.id).first<{ n: number }>();
+  return c.json({ liked: body.liked, likes: count?.n || 0 });
 });
 // Weekly leaderboard: points earned this week (or last week with ?week=1) from rhymes that are still active.
 // Withdrawn rhymes and disabled accounts drop out; ties share a rank and list whoever got there first.

@@ -306,6 +306,15 @@ button.sc-member:focus-visible{border-radius:var(--sc-radius-md)}
 .sc-credit-dot{color:var(--sc-subtle)}
 .sc-lookup-source{margin:var(--sc-space-1) 0;color:var(--sc-muted);font-size:var(--sc-text-xs);line-height:1.7;overflow-wrap:anywhere}
 .sc-lookup-action{flex-shrink:0;margin-top:var(--sc-space-5);padding-top:var(--sc-space-4)}
+.sc-relation-meta{display:flex;justify-content:space-between;align-items:center;gap:var(--sc-space-3)}
+.sc-relation-meta .sc-lookup-author{min-width:0}
+/* Likes use the brand color: red already means "does not rhyme" in this design. */
+.sc-like{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;min-width:44px;min-height:34px;padding:4px 12px;border:1.5px solid var(--sc-border-strong);border-radius:var(--sc-radius-pill);color:var(--sc-muted);font-size:var(--sc-text-xs);font-weight:800;font-variant-numeric:tabular-nums}
+.sc-like:focus-visible{border-radius:var(--sc-radius-pill)}
+.sc-like:disabled{opacity:.55;cursor:default}
+.sc-like-on{border-color:var(--sc-accent-text);background:var(--sc-accent-soft);color:var(--sc-accent-text)}
+.sc-like-on svg{fill:currentColor;animation:sc-thump .3s var(--sc-ease-bounce)}
+@media(hover:hover){.sc-like:hover:enabled{border-color:var(--sc-accent-text);color:var(--sc-accent-text)}}
 .sc-lookup-action>.sc-btn{width:100%}
 
 /* Disclosure summaries share one chevron treatment. */
